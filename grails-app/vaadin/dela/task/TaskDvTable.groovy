@@ -14,7 +14,7 @@ class TaskDvTable extends DvTable {
     def storeService
 
     def TaskDvTable() {
-        storeService = getBean(StoreService.class)
+        storeService = getBean(dela.grails.StoreService.class)
     }
 
     protected Form createForm() {
