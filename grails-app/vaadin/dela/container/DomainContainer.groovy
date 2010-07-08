@@ -9,15 +9,9 @@ import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer
  */
 class DomainContainer extends LazyQueryContainer {
 
-    def DomainContainer(domainView, shortList = false) {
+    def DomainContainer(domainClass, selector, counter, columns) {
 
-        super(new DomainQueryFactory(
-                domainClass: domainView.domainClass,
-                selector: domainView.selector,
-                counter: domainView.counter,
-        ));
-
-        def columns = shortList ? domainView.shortColumns : domainView.columns
+        super(new DomainQueryFactory(domainClass: domainClass, selector: selector, counter: counter));
 
         columns.each {
             addContainerProperty(it.field, it.type as Class, it.defaultValue, it.readOnly, it.sortable)

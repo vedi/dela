@@ -1,4 +1,4 @@
-package dela
+package dela.ui
 
 import com.vaadin.Application
 import com.vaadin.data.Container
@@ -14,17 +14,19 @@ import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
+import dela.Setup
+import dela.Task
 import dela.grails.StoreService
-import dela.subject.SubjectListWindow
-import dela.task.TaskDvTable
-import dela.task.TaskDvUtils
+import dela.meta.MetaProvider
+import dela.ui.subject.SubjectListWindow
+import dela.ui.task.TaskTable
 
 public class DelaApplication extends Application implements DropHandler {
 
     private Window mainWindow
-    private TaskDvUtils dvUtils
+    private MetaProvider metaProvider
 
-    def domainView
+    def metaDomain
     def table
 
     StoreService storeService
@@ -42,11 +44,11 @@ public class DelaApplication extends Application implements DropHandler {
         storeService = getBean(StoreService.class)
         storeService.setup = loadSetup()
 
-        dvUtils = new TaskDvUtils(storeService:storeService)
+        metaProvider = new MetaProvider(storeService:storeService)
 
-        domainView = dvUtils.defaultDv
+        metaDomain = metaProvider.taskMeta
 
-        table = new TaskDvTable(domainView: domainView, formFieldFactory: dvUtils.defaultFff, dropHandler: this)
+        table = new TaskTable(metaDomain: metaDomain, dropHandler: this, metaProvider: metaProvider)
         table.setWidth "700"
 
 
@@ -68,7 +70,7 @@ public class DelaApplication extends Application implements DropHandler {
 
         button = new Button("subjects", new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
-                DelaApplication.this.mainWindow.addWindow(new SubjectListWindow())
+                DelaApplication.this.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
             }
         })
         verticalLayout.addComponent(button);

@@ -1,22 +1,22 @@
-package dela.task
+package dela.ui.task
 
 import com.vaadin.ui.Field
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.VerticalLayout
-import dela.DomainForm
+import dela.ui.common.EntityForm
 
 /**
  * @author vedi
  * date 04.07.2010
  * time 20:23:30
  */
-class TaskDomainForm extends DomainForm {
+class TaskForm extends EntityForm {
 
     def leftLayout
     def rightLayout
 
-    def TaskDomainForm() {
+    def TaskForm() {
         def mainLayout = new HorizontalLayout()
         leftLayout = new FormLayout()
         mainLayout.addComponent(leftLayout)

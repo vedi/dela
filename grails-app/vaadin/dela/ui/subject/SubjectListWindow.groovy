@@ -1,8 +1,6 @@
-package dela.subject
+package dela.ui.subject
 
 import com.vaadin.ui.Window
-import dela.DvTable
-import dela.SubjectDvUtils
 
 /**
  * @author vedi
@@ -11,10 +9,10 @@ import dela.SubjectDvUtils
  */
 class SubjectListWindow extends Window {
 
-    def domainView = SubjectDvUtils.DEFAULT_DV
+    def metaDomain
 
     def void attach() {
-        this.addComponent new DvTable(domainView: domainView, formFieldFactory: SubjectDvUtils.DEFAULT_FFF)
+        this.addComponent(new SubjectTable(metaDomain: metaDomain))
         this.content.setSizeUndefined()
         this.center()
 

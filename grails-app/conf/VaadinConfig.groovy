@@ -4,7 +4,7 @@ vaadin {
     //Your Vaadin application class that extends com.vaadin.Application:
 //    applicationClass = "org.vaadin.addons.lazyquerycontainer.ExampleApplication"
 //    applicationClass = "dela.MyVaadinApplication"
-    applicationClass = "dela.DelaApplication"
+    applicationClass = "dela.ui.DelaApplication"
 
     autowire = "byName" //how should dependencies be injected? other option is 'byType'
 

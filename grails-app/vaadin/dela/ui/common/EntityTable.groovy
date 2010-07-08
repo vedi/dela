@@ -1,4 +1,4 @@
-package dela
+package dela.ui.common
 
 import com.vaadin.data.Item
 import com.vaadin.data.util.BeanItem
@@ -7,13 +7,13 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.Form
-import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Table
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
+import dela.YesNoDialog
 import dela.container.DomainContainer
-import dela.container.DomainMeta
+import dela.meta.MetaDomain
 import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer
 
 /**
@@ -21,10 +21,9 @@ import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer
  * date 28.06.2010
  * time 18:11:29
  */
-class DvTable extends VerticalLayout implements ClickListener {
+public class EntityTable extends VerticalLayout implements ClickListener {
 
-    def DomainMeta domainView
-    def FormFieldFactory formFieldFactory
+    def MetaDomain metaDomain
 
     Table table
 
@@ -35,15 +34,29 @@ class DvTable extends VerticalLayout implements ClickListener {
 
     private LazyQueryContainer container
 
+    def formFieldFactory
+
+    def counter = {
+        metaDomain.domainClass.count()
+    }
+
+    def selector = {startIndex, count, sortProperty, ascendingState ->
+        if (sortProperty) {
+            metaDomain.domainClass.list(offset:startIndex,  max:count, sort:sortProperty, order:ascendingState)
+        } else {
+            metaDomain.domainClass.list(offset:startIndex,  max:count)
+        }
+    }
+
     def saveHandler = {item ->
-        domainView.domainClass.withTransaction {
+        metaDomain.domainClass.withTransaction {
             Long id = item.getItemProperty("id")?.value as Long
             def domain
             if (id) {
-                domain = domainView.domainClass.get(id)
+                domain = metaDomain.domainClass.get(id)
                 assert domain
             } else {
-                domain = domainView.domainClass.newInstance()
+                domain = metaDomain.domainClass.newInstance()
             }
             item.getItemPropertyIds().each {
                 if (!'id'.equals(it)) {
@@ -59,7 +72,7 @@ class DvTable extends VerticalLayout implements ClickListener {
         this.refresh()
     }
 
-    def DvTable() {
+    def EntityTable() {
         table = new Table()
         initToolBar()
     }
@@ -67,17 +80,16 @@ class DvTable extends VerticalLayout implements ClickListener {
     def setDropHandler(dropHandler) {
         table.dropHandler = dropHandler
     }
-    
+
     def getContainerDataSource() {
         table.containerDataSource
     }
-
-    def setContainerDataSource(containerDataSource) {
-        table.containerDataSource = containerDataSource
-    }
-
+    
     @Override
     public void attach() {
+
+        assert metaDomain
+
         initTable()
 
         super.attach()
@@ -102,15 +114,18 @@ class DvTable extends VerticalLayout implements ClickListener {
         this.addComponent horizontalLayout
     }
 
+    def setContainerDataSource(containerDataSource) {
+        table.containerDataSource = containerDataSource
+    }
+
     private def initTable() {
+
         this.table.immediate = true
         this.table.selectable = true
         this.table.nullSelectionAllowed = false
 
-        assert domainView
-
-        if (domainView.caption) {
-            this.caption = domainView.caption
+        if (metaDomain.caption) {
+            this.caption = metaDomain.caption
         }
 
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
@@ -121,21 +136,21 @@ class DvTable extends VerticalLayout implements ClickListener {
             }
         })
 
-        container = new DomainContainer(domainView)
+        container = new DomainContainer(metaDomain.domainClass, getSelector(), getCounter(), metaDomain.columns)
 
         this.table.setContainerDataSource(this.container)
 
-        def visibleColumns = domainView.gridVisible
-        this.table.setVisibleColumns(visibleColumns as Object[]);
-        this.table.setColumnHeaders(visibleColumns.collect {domainView.getDef(it)?.label ?: it} as String[])
-        visibleColumns.each {
-            this.table.setColumnWidth it, domainView.getColumnWidth(it)
-        }
+        this.table.setVisibleColumns(getGridVisibleColumns() as Object[]);
+        this.table.setColumnHeaders(getColumnHeaders())
 
-        this.table.setDragMode(Table.TableDragMode.ROW);
+        initGrid();
+
         this.table.setSizeFull()
 
         this.addComponent(this.table)
+    }
+
+    def initGrid() {
     }
 
     public void refresh() {
@@ -144,7 +159,7 @@ class DvTable extends VerticalLayout implements ClickListener {
 
     void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == addButton) {
-            showForm(new BeanItem(applyTemplate(domainView.domainClass.newInstance())))
+            showForm(new BeanItem(createDomain()))
             refresh()                           
         } else if (clickEvent.button == editButton) {
             if (table.value) {
@@ -161,10 +176,6 @@ class DvTable extends VerticalLayout implements ClickListener {
         }
     }
 
-    def applyTemplate(domain) {
-        domain
-    }
-
     void remove(Item item) {
         this.window.application.mainWindow.addWindow(new YesNoDialog(
                 "confirm delete",
@@ -173,8 +184,8 @@ class DvTable extends VerticalLayout implements ClickListener {
                     public void onDialogResult(boolean happy) {
                         Long id = item.getItemProperty("id")?.value as Long
                         assert id
-                        domainView.domainClass.withTransaction {
-                            def domain = domainView.domainClass.get(id)
+                        metaDomain.domainClass.withTransaction {
+                            def domain = metaDomain.domainClass.get(id)
                             assert domain
 
                             domain.delete()
@@ -185,13 +196,15 @@ class DvTable extends VerticalLayout implements ClickListener {
     }
 
     void showForm(selectedItem) {
-        Window window = new Window(domainView.domainClass.simpleName)
+        Window window = new Window(metaDomain.domainClass.simpleName)
 
         Form form = createForm()
 
-        form.formFieldFactory = formFieldFactory
+        if (getFormFieldFactory()) {
+            form.formFieldFactory = getFormFieldFactory()
+        }
         form.itemDataSource =  selectedItem
-        form.visibleItemProperties = domainView.editVisible
+        form.visibleItemProperties = getEditVisibleColumns()
         form.saveHandler = saveHandler
 
         window.addComponent(form)
@@ -202,13 +215,24 @@ class DvTable extends VerticalLayout implements ClickListener {
         this.window.application.mainWindow.addWindow window
     }
 
+    protected List<String> getGridVisibleColumns() {
+        return metaDomain.columns.collect {it.field}
+    }
+
+    protected List<String> getEditVisibleColumns() {
+        metaDomain.columns.collect {it.field}
+    }
+
     protected Form createForm() {
-        return new DomainForm()
+        return new EntityForm()
     }
 
-    def String getDescription() {
-        return "Static desc"
+    protected createDomain() {
+        return metaDomain.domainClass.newInstance()
     }
 
+    protected String[] getColumnHeaders() {
+        return getGridVisibleColumns().collect {metaDomain.getMetaColumn(it)?.label ?: it} as String[]
+    }
 
 }

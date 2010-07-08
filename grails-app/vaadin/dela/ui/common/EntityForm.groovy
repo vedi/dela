@@ -1,7 +1,8 @@
-package dela
+package dela.ui.common
 
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.Form
 
 /**
@@ -9,28 +10,31 @@ import com.vaadin.ui.Form
  * date 02.07.2010
  * time 23:15:53
  */
-class DomainForm extends Form implements Button.ClickListener {
+class EntityForm extends Form implements Button.ClickListener {
 
     def saveHandler
 
     Button commitButton
     Button discardButton
 
-    def DomainForm() {
+    def EntityForm() {
         this.writeThrough =  false
         this.invalidCommitted = false
     }
 
     def void attach() {
 
-        commitButton = new Button("commit", this as Button.ClickListener)
-        footer.addComponent(commitButton)
-
-        discardButton = new Button("discard", this as Button.ClickListener)
-        footer.addComponent(discardButton)
-
+        initButtons()
 
         super.attach();
+    }
+
+    protected def initButtons() {
+        commitButton = new Button("commit", this as ClickListener)
+        footer.addComponent(commitButton)
+
+        discardButton = new Button("discard", this as ClickListener)
+        footer.addComponent(discardButton)
     }
 
 

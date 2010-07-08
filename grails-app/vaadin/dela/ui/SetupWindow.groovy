@@ -1,4 +1,4 @@
-package dela
+package dela.ui
 
 import com.vaadin.data.Item
 import com.vaadin.data.util.BeanItem
@@ -9,7 +9,11 @@ import com.vaadin.ui.Form
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TwinColSelect
 import com.vaadin.ui.Window
+import dela.Setup
+import dela.State
+import dela.Subject
 import dela.grails.StoreService
+import dela.ui.common.EntityForm
 
 /**
  * @author vedi
@@ -22,7 +26,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         this.caption = 'Setup'
 
-        Form form = new DomainForm()
+        Form form = new EntityForm()
 
         Setup.withTransaction {
             def setupItem = loadSetup()
@@ -88,24 +92,29 @@ class SetupWindow extends Window implements FormFieldFactory {
     Field createField(Item item, Object propertyId, Component component) {
         if ('activeSubject'.equals(propertyId)) {
             def comboBox = new ComboBox(caption:'activeSubject', immediate: true)
-            SubjectDvUtils.DEFAULT_DV.selector(0, 100, null, null).each {
-                comboBox.addItem it
+            Subject.withTransaction {
+                Subject.findAll().each {
+                    comboBox.addItem it
+                }
             }
 
             comboBox
         } else if ('filterSubjects'.equals(propertyId)) {
             def twinColSelect = new TwinColSelect(caption:'filterSubjects', immediate: true)
-            SubjectDvUtils.DEFAULT_DV.selector(0, 100, null, null).each {
-                twinColSelect.addItem it
+            Subject.withTransaction {
+                Subject.findAll().each {
+                    twinColSelect.addItem it
+                }
             }
 
             twinColSelect
         } else if ('filterStates'.equals(propertyId)) {
             def twinColSelect = new TwinColSelect(caption:'filterStates', immediate: true)
-            StateDvUtils.DEFAULT_DV.selector(0, 100, null, null).each {
-                twinColSelect.addItem it
+            State.withTransaction {
+                State.findAll().each {
+                    twinColSelect.addItem it
+                }
             }
-
             twinColSelect
         }
     }
