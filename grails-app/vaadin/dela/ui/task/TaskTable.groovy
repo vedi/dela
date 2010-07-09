@@ -1,6 +1,12 @@
 package dela.ui.task
 
+import com.vaadin.data.Container
 import com.vaadin.data.Item
+import com.vaadin.event.dd.DragAndDropEvent
+import com.vaadin.event.dd.DropHandler
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion
+import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation
+import com.vaadin.ui.AbstractSelect
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.ComboBox
@@ -11,8 +17,10 @@ import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
+import dela.DataService
 import dela.Setup
 import dela.State
+import dela.StoreService
 import dela.Subject
 import dela.Task
 import dela.meta.MetaProvider
@@ -23,9 +31,10 @@ import dela.ui.common.EntityTable
  * date 04.07.2010
  * time 20:29:22
  */
-public class TaskTable extends EntityTable implements FormFieldFactory {
+public class TaskTable extends EntityTable implements FormFieldFactory, DropHandler  {
 
-    def storeService
+    StoreService storeService
+    DataService dataService
     Button completeButton
 
 
@@ -51,7 +60,9 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
     def MetaProvider metaProvider
 
     def TaskTable() {
-        storeService = getBean(dela.StoreService.class)
+        this.storeService = getBean(StoreService.class)
+        this.dataService = getBean(DataService.class)
+        this.dropHandler = this
     }
 
     protected Form createForm() {
@@ -84,18 +95,9 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
         if (clickEvent.button == completeButton) {
             def item = container.getItem(table.value)
             if (item) {
-                // TODO: Move to service
-                Task.withTransaction {
-                    State state = State.get(2) // FIXME: Hardcoded state id
-                    assert state
-
-                    Task task = Task.get(item.getItemProperty('id').value as Long)
-                    assert task
-                    if (!state.equals(task.state)) {
-                        task.state = state;
-                        task.merge()
-                        this.refresh()
-                    }
+                Long id = item.getItemProperty('id').value as Long
+                if (dataService.tryCompleteTask(id)) {
+                    this.refresh()
                 }
             }
         } else {
@@ -142,5 +144,44 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
 
             textField
         }
+    }
+
+    void drop(DragAndDropEvent dragAndDropEvent) {
+        def transferable = dragAndDropEvent.transferable
+        Container.Ordered container = transferable.sourceContainer
+
+        if (container.equals(this.table.containerDataSource)) {
+            Object sourceItemId = transferable.itemId
+
+            def dropData = dragAndDropEvent.targetDetails
+            def targetItemId = dropData.itemIdOver
+
+            if (targetItemId != null) {
+                double targetPower = container.getItem(targetItemId)?.getItemProperty('power')?.value?:0 as double
+                def anotherItemId
+                double defaultValue
+                if (dropData.dropLocation == VerticalDropLocation.BOTTOM) {
+                    anotherItemId = container.nextItemId(targetItemId)
+                    defaultValue = 0.0
+                } else {
+                    anotherItemId = container.prevItemId(targetItemId)
+                    defaultValue = 1.0
+                }
+                if (!targetItemId.equals(anotherItemId)) {
+                    double anotherPower = anotherItemId?(container.getItem(anotherItemId)?.getItemProperty('power')?.value?:defaultValue):defaultValue as double
+                    double newPower = Math.abs(targetPower + anotherPower) / 2.0
+
+                    def id = container.getItem(sourceItemId).getItemProperty('id').value as Long
+
+                    dataService.changeTaskPower(id, newPower)
+
+                    this.refresh()
+                }
+            }
+        }
+    }
+
+    AcceptCriterion getAcceptCriterion() {
+        return AbstractSelect.AcceptItem.ALL
     }
 }

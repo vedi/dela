@@ -82,10 +82,6 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         table.dropHandler = dropHandler
     }
 
-    def getContainerDataSource() {
-        table.containerDataSource
-    }
-    
     @Override
     public void attach() {
 

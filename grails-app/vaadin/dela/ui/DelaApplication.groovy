@@ -1,12 +1,6 @@
 package dela.ui
 
 import com.vaadin.Application
-import com.vaadin.data.Container
-import com.vaadin.event.dd.DragAndDropEvent
-import com.vaadin.event.dd.DropHandler
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion
-import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation
-import com.vaadin.ui.AbstractSelect
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -14,14 +8,13 @@ import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
-import dela.Setup
+import dela.DataService
 import dela.StoreService
-import dela.Task
 import dela.meta.MetaProvider
 import dela.ui.subject.SubjectListWindow
 import dela.ui.task.TaskTable
 
-public class DelaApplication extends Application implements DropHandler {
+public class DelaApplication extends Application {
 
     private Window mainWindow
     private MetaProvider metaProvider
@@ -30,6 +23,7 @@ public class DelaApplication extends Application implements DropHandler {
     def table
 
     StoreService storeService
+    DataService dataService 
 
     @Override
 	public void init() {
@@ -42,13 +36,15 @@ public class DelaApplication extends Application implements DropHandler {
         initButtons(horizontalLayout)
 
         storeService = getBean(StoreService.class)
-        storeService.setup = loadSetup()
+        dataService = getBean(DataService.class)
+
+        storeService.setup = dataService.loadSetup()
 
         metaProvider = new MetaProvider(storeService:storeService)
 
         metaDomain = metaProvider.taskMeta
 
-        table = new TaskTable(metaDomain: metaDomain, dropHandler: this, metaProvider: metaProvider)
+        table = new TaskTable(metaDomain: metaDomain, metaProvider: metaProvider)
         table.setWidth "700"
 
 
@@ -57,10 +53,6 @@ public class DelaApplication extends Application implements DropHandler {
 		setMainWindow(mainWindow)
 
 	}
-
-    def loadSetup() {
-        Setup.count() ? Setup.findAll()[0] : new Setup() // TODO: Move to service
-    }
 
     void initButtons(ComponentContainer componentContainer) {
         VerticalLayout verticalLayout = new VerticalLayout()
@@ -85,46 +77,4 @@ public class DelaApplication extends Application implements DropHandler {
         componentContainer.addComponent(verticalLayout)
     }
 
-
-    void drop(DragAndDropEvent dragAndDropEvent) {
-        def transferable = dragAndDropEvent.transferable
-        Container.Ordered container = transferable.sourceContainer
-
-        if (container.equals(this.table.containerDataSource)) {
-            Object sourceItemId = transferable.itemId
-
-            def dropData = dragAndDropEvent.targetDetails
-            def targetItemId = dropData.itemIdOver
-
-            if (targetItemId != null) {
-                double targetPower = container.getItem(targetItemId)?.getItemProperty('power')?.value?:0 as double
-                def anotherItemId
-                double defaultValue
-                if (dropData.dropLocation == VerticalDropLocation.BOTTOM) {
-                    anotherItemId = container.nextItemId(targetItemId)
-                    defaultValue = 0.0
-                } else {
-                    anotherItemId = container.prevItemId(targetItemId)
-                    defaultValue = 1.0
-                }
-                if (!targetItemId.equals(anotherItemId)) {
-                    double anotherPower = anotherItemId?(container.getItem(anotherItemId)?.getItemProperty('power')?.value?:defaultValue):defaultValue as double
-                    double newPower = Math.abs(targetPower + anotherPower) / 2.0
-
-                    // TODO: Move to service
-                    Task.withTransaction {
-                        Task task = Task.get(container.getItem(sourceItemId).getItemProperty('id').value as Long)
-                        task.power = newPower;
-                        task.save()
-                    }
-
-                    this.table.refresh()
-                }
-            }
-        }
-    }
-
-    AcceptCriterion getAcceptCriterion() {
-        return AbstractSelect.AcceptItem.ALL
-    }
 }
