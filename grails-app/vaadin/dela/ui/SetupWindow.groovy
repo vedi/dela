@@ -11,8 +11,8 @@ import com.vaadin.ui.TwinColSelect
 import com.vaadin.ui.Window
 import dela.Setup
 import dela.State
+import dela.StoreService
 import dela.Subject
-import dela.grails.StoreService
 import dela.ui.common.EntityForm
 
 /**

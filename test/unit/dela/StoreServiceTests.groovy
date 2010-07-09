@@ -1,4 +1,4 @@
-package dela.grails
+package dela
 
 import grails.test.GrailsUnitTestCase
 

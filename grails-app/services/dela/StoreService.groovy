@@ -1,6 +1,4 @@
-package dela.grails
-
-import dela.Setup
+package dela
 
 class StoreService {
 

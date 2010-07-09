@@ -15,8 +15,8 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.Setup
+import dela.StoreService
 import dela.Task
-import dela.grails.StoreService
 import dela.meta.MetaProvider
 import dela.ui.subject.SubjectListWindow
 import dela.ui.task.TaskTable
@@ -59,7 +59,7 @@ public class DelaApplication extends Application implements DropHandler {
 	}
 
     def loadSetup() {
-        Setup.count() ? Setup.findAll()[0] : new Setup()
+        Setup.count() ? Setup.findAll()[0] : new Setup() // TODO: Move to service
     }
 
     void initButtons(ComponentContainer componentContainer) {
@@ -96,7 +96,7 @@ public class DelaApplication extends Application implements DropHandler {
             def dropData = dragAndDropEvent.targetDetails
             def targetItemId = dropData.itemIdOver
 
-            if (targetItemId) {
+            if (targetItemId != null) {
                 double targetPower = container.getItem(targetItemId)?.getItemProperty('power')?.value?:0 as double
                 def anotherItemId
                 double defaultValue
@@ -111,6 +111,7 @@ public class DelaApplication extends Application implements DropHandler {
                     double anotherPower = anotherItemId?(container.getItem(anotherItemId)?.getItemProperty('power')?.value?:defaultValue):defaultValue as double
                     double newPower = Math.abs(targetPower + anotherPower) / 2.0
 
+                    // TODO: Move to service
                     Task.withTransaction {
                         Task task = Task.get(container.getItem(sourceItemId).getItemProperty('id').value as Long)
                         task.power = newPower;

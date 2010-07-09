@@ -66,11 +66,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
                     domain[it] = item.getItemProperty(it).value;
                 }
             }
-            if (!domain.save()) {
-                domain.errors.each {
-                    println it
-                }
-            }
+            def result = domain.save()
+            assert result
         }
         this.refresh()
     }

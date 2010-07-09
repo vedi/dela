@@ -51,7 +51,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
     def MetaProvider metaProvider
 
     def TaskTable() {
-        storeService = getBean(dela.grails.StoreService.class)
+        storeService = getBean(dela.StoreService.class)
     }
 
     protected Form createForm() {
