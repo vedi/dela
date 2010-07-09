@@ -29,7 +29,7 @@ class EntityForm extends Form implements Button.ClickListener {
         super.attach();
     }
 
-    protected def initButtons() {
+    protected void initButtons() {
         commitButton = new Button("commit", this as ClickListener)
         footer.addComponent(commitButton)
 
