@@ -25,5 +25,6 @@ class Task {
     static mapping = {
         subject lazy: false
         state lazy: false
+        description type: 'text'
     }
 }
