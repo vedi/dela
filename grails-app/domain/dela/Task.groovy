@@ -13,7 +13,7 @@ class Task {
     Date dateCreated
     Date lastUpdated
 
-    Double power = Math.random()
+    Double power
 
     State state
 

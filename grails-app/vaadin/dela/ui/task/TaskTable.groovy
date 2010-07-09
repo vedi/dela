@@ -1,6 +1,8 @@
 package dela.ui.task
 
 import com.vaadin.data.Item
+import com.vaadin.ui.Button
+import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Field
@@ -24,6 +26,8 @@ import dela.ui.common.EntityTable
 public class TaskTable extends EntityTable implements FormFieldFactory {
 
     def storeService
+    Button completeButton
+
 
     def selector = {startIndex, count, sortProperty, ascendingState ->
         if (sortProperty) {
@@ -57,7 +61,11 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
     def Object createDomain() {
         Task task = new Task()
         task.subject = storeService.setup.activeSubject
-        task.state = State.findAll()[0]
+        task.state = State.findAll()[0]  // FIXME: Жёсткая привязка к id состояния
+
+        def firstItemId = container.firstItemId();
+        double firstPower = firstItemId != null ? container.getItem(firstItemId)?.getItemProperty('power')?.value?:0.0 as double : 0.0;
+        task.power = (1.0 + firstPower) / 2;
         return task
     }
 
@@ -65,6 +73,37 @@ public class TaskTable extends EntityTable implements FormFieldFactory {
         this.table.setColumnWidth 'subject', 80
         this.table.setDragMode(TableDragMode.ROW)
     }
+
+    protected void initToolBar() {
+        super.initToolBar()
+
+        toolBarLayout.addComponent(completeButton = new Button('complete', this))
+    }
+
+    def void buttonClick(ClickEvent clickEvent) {
+        if (clickEvent.button == completeButton) {
+            def item = container.getItem(table.value)
+            if (item) {
+                // TODO: Move to service
+                Task.withTransaction {
+                    State state = State.get(2) // FIXME: Hardcoded state id
+                    assert state
+
+                    Task task = Task.get(item.getItemProperty('id').value as Long)
+                    assert task
+                    if (!state.equals(task.state)) {
+                        task.state = state;
+                        task.merge()
+                        this.refresh()
+                    }
+                }
+            }
+        } else {
+            super.buttonClick(clickEvent);
+        }
+    }
+
+
 
     Field createField(Item item, Object propertyId, Component component) {
         String label = metaDomain.getMetaColumn(propertyId)?.label?:propertyId

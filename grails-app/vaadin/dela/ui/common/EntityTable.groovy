@@ -7,6 +7,7 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.Form
+import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Table
 import com.vaadin.ui.VerticalLayout
@@ -27,12 +28,14 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     Table table
 
+    HorizontalLayout toolBarLayout
+
     Button addButton
     Button editButton
     Button removeButton
     Button refreshButton
 
-    private LazyQueryContainer container
+    protected LazyQueryContainer container
 
     def formFieldFactory
 
@@ -75,6 +78,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     def EntityTable() {
         table = new Table()
         initToolBar()
+        this.addComponent toolBarLayout
     }
 
     def setDropHandler(dropHandler) {
@@ -96,22 +100,20 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     }
 
-    private def initToolBar() {
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
+    protected void initToolBar() {
+        toolBarLayout = new HorizontalLayout();
 
         addButton = new Button("add", this);
-        horizontalLayout.addComponent addButton
+        toolBarLayout.addComponent addButton
 
         editButton = new Button("edit", this);
-        horizontalLayout.addComponent editButton
+        toolBarLayout.addComponent editButton
 
         removeButton = new Button("remove", this);
-        horizontalLayout.addComponent removeButton
+        toolBarLayout.addComponent removeButton
 
         refreshButton = new Button("refresh", this);
-        horizontalLayout.addComponent refreshButton
-
-        this.addComponent horizontalLayout
+        toolBarLayout.addComponent refreshButton
     }
 
     def setContainerDataSource(containerDataSource) {
@@ -162,13 +164,15 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             showForm(new BeanItem(createDomain()))
             refresh()                           
         } else if (clickEvent.button == editButton) {
-            if (table.value) {
-                showForm(container.getItem(table.value))
+            def item = container.getItem(table.value)
+            if (item) {
+                showForm(item)
                 refresh()
             }
         } else if (clickEvent.button == removeButton) {
-            if (table.value) {
-                remove(container.getItem(table.value))
+            def item = container.getItem(table.value)
+            if (item) {
+                remove(item)
                 refresh()
             }
         } else if (clickEvent.button == refreshButton) {
@@ -184,24 +188,28 @@ public class EntityTable extends VerticalLayout implements ClickListener {
                     public void onDialogResult(boolean happy) {
                         Long id = item.getItemProperty("id")?.value as Long
                         assert id
-                        metaDomain.domainClass.withTransaction {
-                            def domain = metaDomain.domainClass.get(id)
-                            assert domain
-
-                            domain.delete()
-                            refresh()
-                        }
+                        doRemove(id)
                     }
+
                 }))
     }
 
+    private def doRemove(long id) {
+        metaDomain.domainClass.withTransaction {
+            def domain = metaDomain.domainClass.get(id)
+            assert domain
+
+            domain.delete()
+            refresh()
+        }
+    }
     void showForm(selectedItem) {
         Window window = new Window(metaDomain.domainClass.simpleName)
 
         Form form = createForm()
 
         if (getFormFieldFactory()) {
-            form.formFieldFactory = getFormFieldFactory()
+            form.formFieldFactory = getFormFieldFactory() as FormFieldFactory
         }
         form.itemDataSource =  selectedItem
         form.visibleItemProperties = getEditVisibleColumns()
