@@ -155,18 +155,15 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == addButton) {
             showForm(new BeanItem(createDomain()))
-            refresh()                           
         } else if (clickEvent.button == editButton) {
             def item = container.getItem(table.value)
             if (item) {
                 showForm(item)
-                refresh()
             }
         } else if (clickEvent.button == removeButton) {
             def item = container.getItem(table.value)
             if (item) {
                 remove(item)
-                refresh()
             }
         } else if (clickEvent.button == refreshButton) {
             refresh()
@@ -178,10 +175,12 @@ public class EntityTable extends VerticalLayout implements ClickListener {
                 "confirm delete",
                 "are you sure?",
                 new YesNoDialog.Callback() {
-                    public void onDialogResult(boolean happy) {
-                        Long id = item.getItemProperty("id")?.value as Long
-                        assert id
-                        doRemove(id)
+                    public void onDialogResult(boolean yes) {
+                        if (yes) {
+                            Long id = item.getItemProperty("id")?.value as Long
+                            assert id
+                            doRemove(id)
+                        }
                     }
 
                 }))

@@ -18,13 +18,29 @@ class TaskForm extends EntityForm {
 
     def TaskForm() {
         def mainLayout = new HorizontalLayout()
+
         leftLayout = new FormLayout()
         mainLayout.addComponent(leftLayout)
+
+        def separator = new VerticalLayout()
+        separator.setWidth '32px'
+        mainLayout.addComponent(separator)
+
         rightLayout = new VerticalLayout()
+        rightLayout.setWidth '48px'
+        rightLayout.setHeight '100%'
         mainLayout.addComponent(rightLayout)
 
         this.layout = mainLayout
     }
+
+    def void attach() {
+        super.attach()
+
+        leftLayout.components[1].focus()
+    }
+
+
 
     protected void attachField(Object propertyId, Field field) {
         if (propertyId == null || field == null) {

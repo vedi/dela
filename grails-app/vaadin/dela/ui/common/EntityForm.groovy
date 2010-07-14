@@ -1,5 +1,7 @@
 package dela.ui.common
 
+import com.vaadin.event.ShortcutAction.KeyCode
+import com.vaadin.event.ShortcutAction.ModifierKey
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -31,9 +33,11 @@ class EntityForm extends Form implements Button.ClickListener {
 
     protected void initButtons() {
         commitButton = new Button("commit", this as ClickListener)
+        commitButton.setClickShortcut(KeyCode.ENTER, ModifierKey.CTRL)
         footer.addComponent(commitButton)
 
         discardButton = new Button("discard", this as ClickListener)
+        discardButton.setClickShortcut(KeyCode.ESCAPE)
         footer.addComponent(discardButton)
     }
 

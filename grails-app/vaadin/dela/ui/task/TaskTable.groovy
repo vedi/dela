@@ -23,6 +23,7 @@ import dela.State
 import dela.StoreService
 import dela.Subject
 import dela.Task
+import dela.YesNoDialog
 import dela.meta.MetaProvider
 import dela.ui.common.EntityTable
 
@@ -95,10 +96,20 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         if (clickEvent.button == completeButton) {
             def item = container.getItem(table.value)
             if (item) {
-                Long id = item.getItemProperty('id').value as Long
-                if (dataService.tryCompleteTask(id)) {
-                    this.refresh()
-                }
+                this.window.application.mainWindow.addWindow(new YesNoDialog(
+                        "confirm complete",
+                        "are you sure?",
+                        new YesNoDialog.Callback() {
+                            public void onDialogResult(boolean yes) {
+                                if (yes) {
+                                    Long id = item.getItemProperty('id').value as Long
+                                    if (dataService.tryCompleteTask(id)) {
+                                        this.refresh()
+                                    }
+                                }
+                            }
+
+                        }))
             }
         } else {
             super.buttonClick(clickEvent);
@@ -124,11 +135,11 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
             comboBox
         } else if (propertyId.equals('power')) {
-            Slider slider = new Slider(caption:'task power',
-                    min: 0.0, max: 1.0, resolution: 2, orientation: Slider.ORIENTATION_VERTICAL,
+            Slider slider = new Slider(caption:label,
+                    min: 0.01, max: 0.99, resolution: 2, orientation: Slider.ORIENTATION_VERTICAL,
                     immediate: true)
 
-            slider.setHeight("100px")
+            slider.setHeight "100%"
 
             slider
         } else {

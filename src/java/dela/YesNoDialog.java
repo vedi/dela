@@ -1,5 +1,6 @@
 package dela;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -12,37 +13,50 @@ import com.vaadin.ui.Window;
  */
 public class YesNoDialog extends Window implements Button.ClickListener {
 
-    Callback callback;
-    Button yes = new Button("Yes", this);
-    Button no = new Button("No", this);
+  Callback callback;
+  Button yes;
+  Button no;
 
-    public YesNoDialog(String caption, String question, Callback callback) {
-        super(caption);
+  public YesNoDialog(String caption, String question, Callback callback) {
+    super(caption);
 
-        setModal(true);
+    yes = new Button("Yes", this);
+    yes.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-        this.callback = callback;
+    no = new Button("No", this);
+    no.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 
-        if (question != null) {
-            addComponent(new Label(question));
-        }
 
-        HorizontalLayout hl = new HorizontalLayout();
-        hl.addComponent(yes);
-        hl.addComponent(no);
-        addComponent(hl);
+    setModal(true);
+
+    this.callback = callback;
+
+    if (question != null) {
+      addComponent(new Label(question));
     }
 
-    public void buttonClick(Button.ClickEvent event) {
-        if (getParent() != null) {
-            ((Window) getParent()).removeWindow(this);
-        }
-        callback.onDialogResult(event.getSource() == yes);
-    }
+    HorizontalLayout hl = new HorizontalLayout();
+    hl.addComponent(yes);
+    hl.addComponent(no);
+    addComponent(hl);
+  }
 
-    public interface Callback {
+  @Override
+  public void attach() {
+    super.attach();
+    no.focus();
+  }
 
-        public void onDialogResult(boolean resultIsYes);
+  public void buttonClick(Button.ClickEvent event) {
+    if (getParent() != null) {
+      ((Window) getParent()).removeWindow(this);
     }
+    callback.onDialogResult(event.getSource() == yes);
+  }
+
+  public interface Callback {
+
+    public void onDialogResult(boolean resultIsYes);
+  }
 
 }
