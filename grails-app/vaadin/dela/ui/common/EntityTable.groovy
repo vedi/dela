@@ -54,12 +54,13 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     def saveHandler = {item ->
         metaDomain.domainClass.withTransaction {
             Long id = item.getItemProperty("id")?.value as Long
+            boolean isNew = !id
             def domain
-            if (id) {
+            if (isNew) {
+                domain = metaDomain.domainClass.newInstance()
+            } else {
                 domain = metaDomain.domainClass.get(id)
                 assert domain
-            } else {
-                domain = metaDomain.domainClass.newInstance()
             }
             item.getItemPropertyIds().each {
                 if (!'id'.equals(it)) {
@@ -67,9 +68,14 @@ public class EntityTable extends VerticalLayout implements ClickListener {
                 }
             }
             def result = domain.save()
+
             assert result
+
+            this.refresh()
+            if (isNew) {
+                this.select(domain.id)
+            }
         }
-        this.refresh()
     }
 
     def EntityTable() {
@@ -235,4 +241,13 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         return getGridVisibleColumns().collect {metaDomain.getMetaColumn(it)?.label ?: it} as String[]
     }
 
+    protected select(Long id) {
+        def itemIds = this.container.getItemIds()
+        for (itemId in itemIds) {
+            if (this.container.getItem(itemId).getItemProperty('id').value.equals(id)) {
+                this.table.setValue(itemId)
+                break
+            }
+        }
+    }
 }

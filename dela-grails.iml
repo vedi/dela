@@ -49,7 +49,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="dela-grails-grailsPlugins" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -61,6 +60,7 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="dela-grails-grailsPlugins" />
   </component>
 </module>
 
