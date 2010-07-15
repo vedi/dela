@@ -1,14 +1,19 @@
 package dela.ui.task
 
 import com.vaadin.data.Container
+import com.vaadin.data.Container.Ordered
 import com.vaadin.data.Item
+import com.vaadin.event.ShortcutAction
+import com.vaadin.event.ShortcutListener
 import com.vaadin.event.dd.DragAndDropEvent
 import com.vaadin.event.dd.DropHandler
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion
+import com.vaadin.terminal.FileResource
 import com.vaadin.terminal.gwt.client.ui.dd.VerticalDropLocation
 import com.vaadin.ui.AbstractSelect
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Field
@@ -86,10 +91,41 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         this.table.setDragMode(TableDragMode.ROW)
     }
 
+    protected void initTable() {
+        super.initTable();
+
+        table.addShortcutListener(new ShortcutListener("moveDown", ShortcutAction.KeyCode.ARROW_DOWN, [ShortcutAction.ModifierKey.CTRL] as int[]) {
+            void handleAction(Object o, Object o1) {
+
+                def sourceItemId = TaskTable.this.table.value
+                def targetItemId = TaskTable.this.container.nextItemId(TaskTable.this.table.value)
+                def anotherItemId = TaskTable.this.container.nextItemId(targetItemId)
+                moveItem(TaskTable.this.container, targetItemId, anotherItemId, 0.0, sourceItemId)
+                TaskTable.this.table.value = targetItemId
+            }
+        });
+        table.addShortcutListener(new ShortcutListener("moveUp", ShortcutAction.KeyCode.ARROW_UP, [ShortcutAction.ModifierKey.CTRL] as int[]) {
+            void handleAction(Object o, Object o1) {
+                def sourceItemId = TaskTable.this.table.value
+                def targetItemId = TaskTable.this.container.prevItemId(TaskTable.this.table.value)
+                def anotherItemId = TaskTable.this.container.prevItemId(targetItemId)
+                moveItem(TaskTable.this.container, targetItemId, anotherItemId, 1.0, sourceItemId)
+                TaskTable.this.table.value = targetItemId
+            }
+        });
+
+    }
+
+
+
     protected void initToolBar() {
         super.initToolBar()
 
-        toolBarLayout.addComponent(completeButton = new Button('complete', this))
+        completeButton = new Button();
+        completeButton.setDescription('complete')
+        completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
+        completeButton.addListener(this as ClickListener)
+        toolBarLayout.addComponent(completeButton)
     }
 
     def void buttonClick(ClickEvent clickEvent) {
@@ -168,28 +204,32 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             def targetItemId = dropData.itemIdOver
 
             if (targetItemId != null) {
-                double targetPower = container.getItem(targetItemId)?.getItemProperty('power')?.value?:0 as double
                 def anotherItemId
-                double defaultValue
+                double defaultPowerValue
                 if (dropData.dropLocation == VerticalDropLocation.BOTTOM) {
                     anotherItemId = container.nextItemId(targetItemId)
-                    defaultValue = 0.0
+                    defaultPowerValue = 0.0
                 } else {
                     anotherItemId = container.prevItemId(targetItemId)
-                    defaultValue = 1.0
+                    defaultPowerValue = 1.0
                 }
                 if (!targetItemId.equals(anotherItemId)) {
-                    double anotherPower = anotherItemId?(container.getItem(anotherItemId)?.getItemProperty('power')?.value?:defaultValue):defaultValue as double
-                    double newPower = Math.abs(targetPower + anotherPower) / 2.0
-
-                    def id = container.getItem(sourceItemId).getItemProperty('id').value as Long
-
-                    dataService.changeTaskPower(id, newPower)
-
-                    this.refresh()
+                    moveItem(container, targetItemId, anotherItemId, defaultPowerValue, sourceItemId)
                 }
             }
         }
+    }
+
+    private def moveItem(Ordered container, targetItemId, anotherItemId, double defaultPowerValue, sourceItemId) {
+        double targetPower = container.getItem(targetItemId)?.getItemProperty('power')?.value ?: 0 as double
+        double anotherPower = anotherItemId ? (container.getItem(anotherItemId)?.getItemProperty('power')?.value ?: defaultPowerValue) : defaultPowerValue as double
+        double newPower = Math.abs(targetPower + anotherPower) / 2.0
+
+        def id = container.getItem(sourceItemId).getItemProperty('id').value as Long
+
+        dataService.changeTaskPower(id, newPower)
+
+        this.refresh()
     }
 
     AcceptCriterion getAcceptCriterion() {

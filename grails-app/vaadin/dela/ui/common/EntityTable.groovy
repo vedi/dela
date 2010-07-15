@@ -3,6 +3,9 @@ package dela.ui.common
 import com.vaadin.data.Item
 import com.vaadin.data.util.BeanItem
 import com.vaadin.event.ItemClickEvent
+import com.vaadin.event.ShortcutAction
+import com.vaadin.event.ShortcutListener
+import com.vaadin.terminal.FileResource
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -32,7 +35,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     Button addButton
     Button editButton
-    Button removeButton
+    Button deleteButton
     Button refreshButton
 
     protected LazyQueryContainer container
@@ -54,7 +57,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     def saveHandler = {item ->
         metaDomain.domainClass.withTransaction {
             Long id = item.getItemProperty("id")?.value as Long
-            boolean isNew = !id
+            boolean isNew = id == null
             def domain
             if (isNew) {
                 domain = metaDomain.domainClass.newInstance()
@@ -80,8 +83,6 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     def EntityTable() {
         table = new Table()
-        initToolBar()
-        this.addComponent toolBarLayout
     }
 
     def setDropHandler(dropHandler) {
@@ -93,6 +94,20 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
         assert metaDomain
 
+        table.addShortcutListener(new ShortcutListener("down", ShortcutAction.KeyCode.ARROW_DOWN, new int[0]) {
+            void handleAction(Object o, Object o1) {
+                EntityTable.this.table.select(EntityTable.this.table.nextItemId(EntityTable.this.table.getValue()))
+            }
+        });
+        table.addShortcutListener(new ShortcutListener("up", ShortcutAction.KeyCode.ARROW_UP, new int[0]) {
+            void handleAction(Object o, Object o1) {
+                EntityTable.this.table.select(EntityTable.this.table.prevItemId(EntityTable.this.table.getValue()))
+            }
+        });
+
+        initToolBar()
+        this.addComponent toolBarLayout
+
         initTable()
 
         super.attach()
@@ -102,16 +117,31 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     protected void initToolBar() {
         toolBarLayout = new HorizontalLayout();
 
-        addButton = new Button("add", this);
+        addButton = new Button();
+        addButton.setDescription("add")
+        addButton.setClickShortcut(ShortcutAction.KeyCode.INSERT)
+        addButton.setIcon(new FileResource(new File('web-app/images/skin/database_add.png'), this.window.application))
+        addButton.addListener(this as ClickListener)
         toolBarLayout.addComponent addButton
 
-        editButton = new Button("edit", this);
+        editButton = new Button();
+        editButton.setDescription("edit")
+        editButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
+        editButton.setIcon(new FileResource(new File('web-app/images/skin/database_edit.png'), this.window.application))
+        editButton.addListener(this as ClickListener)
         toolBarLayout.addComponent editButton
 
-        removeButton = new Button("remove", this);
-        toolBarLayout.addComponent removeButton
+        deleteButton = new Button();
+        deleteButton.setDescription("delete")
+        deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE)
+        deleteButton.setIcon(new FileResource(new File('web-app/images/skin/database_delete.png'), this.window.application))
+        deleteButton.addListener(this as ClickListener)
+        toolBarLayout.addComponent deleteButton
 
-        refreshButton = new Button("refresh", this);
+        refreshButton = new Button();
+        refreshButton.setDescription("refresh")
+        refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
+        refreshButton.addListener(this as ClickListener)
         toolBarLayout.addComponent refreshButton
     }
 
@@ -119,7 +149,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         table.containerDataSource = containerDataSource
     }
 
-    private def initTable() {
+    protected void initTable() {
 
         this.table.immediate = true
         this.table.selectable = true
@@ -166,7 +196,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             if (item) {
                 showForm(item)
             }
-        } else if (clickEvent.button == removeButton) {
+        } else if (clickEvent.button == deleteButton) {
             def item = container.getItem(table.value)
             if (item) {
                 remove(item)
