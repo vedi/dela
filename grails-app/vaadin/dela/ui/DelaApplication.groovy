@@ -1,6 +1,7 @@
 package dela.ui
 
 import com.vaadin.Application
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -58,11 +59,11 @@ public class DelaApplication extends Application {
 
     void initButtons(ComponentContainer componentContainer) {
         VerticalLayout verticalLayout = new VerticalLayout()
-        verticalLayout.setWidth "120"
+        verticalLayout.setWidth "120px"
 
         Button button
 
-        button = new Button()
+        button = createButton(verticalLayout)
         button.caption = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
         button.addListener(
                 new ClickListener() {
@@ -70,9 +71,8 @@ public class DelaApplication extends Application {
                         DelaApplication.this.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
                     }
                 })
-        verticalLayout.addComponent(button);
 
-        button = new Button()
+        button = createButton(verticalLayout)
         button.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
         button.addListener(
                 new ClickListener() {
@@ -80,9 +80,18 @@ public class DelaApplication extends Application {
                         DelaApplication.this.mainWindow.addWindow(new SetupWindow())
                     }
                 })
-        verticalLayout.addComponent(button);
 
         componentContainer.addComponent(verticalLayout)
+    }
+
+    private Button createButton(layout) {
+        def button = new Button()
+        button.setWidth "80%"
+
+        layout.addComponent(button);
+        layout.setComponentAlignment(button, Alignment.TOP_CENTER);
+
+        button
     }
 
 }
