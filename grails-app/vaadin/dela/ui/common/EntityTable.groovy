@@ -192,14 +192,14 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         if (clickEvent.button == addButton) {
             showForm(new BeanItem(createDomain()))
         } else if (clickEvent.button == editButton) {
-            if (table.value) {
+            if (table.value != null) {
                 def item = container.getItem(table.value)
                 if (item) {
                     showForm(item)
                 }
             }
         } else if (clickEvent.button == deleteButton) {
-            if (table.value) {
+            if (table.value != null) {
                 def item = container.getItem(table.value)
                 if (item) {
                     remove(item)

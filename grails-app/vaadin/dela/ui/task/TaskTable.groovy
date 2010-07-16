@@ -130,25 +130,28 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     def void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == completeButton) {
-            def item = container.getItem(table.value)
-            if (item) {
-                this.window.application.mainWindow.addWindow(new YesNoDialog(
-                        i18n('button.complete.confirm.caption', 'confirm complete'),
-                        i18n('button.complete.confirm.message', 'are you sure?'),
-                        i18n('button.yes.label', 'yes'),
-                        i18n('button.no.label', 'no'),
-                        new YesNoDialog.Callback() {
-                            public void onDialogResult(boolean yes) {
-                                if (yes) {
-                                    Long id = item.getItemProperty('id').value as Long
-                                    if (dataService.tryCompleteTask(id)) {
-                                        this.refresh()
+            if (table.value != null) {
+                def item = container.getItem(table.value)
+                if (item) {
+                    this.window.application.mainWindow.addWindow(new YesNoDialog(
+                            i18n('button.complete.confirm.caption', 'confirm complete'),
+                            i18n('button.complete.confirm.message', 'are you sure?'),
+                            i18n('button.yes.label', 'yes'),
+                            i18n('button.no.label', 'no'),
+                            new YesNoDialog.Callback() {
+                                public void onDialogResult(boolean yes) {
+                                    if (yes) {
+                                        Long id = item.getItemProperty('id').value as Long
+                                        if (dataService.tryCompleteTask(id)) {
+                                            this.refresh()
+                                        }
                                     }
                                 }
-                            }
 
-                        }))
+                            }))
+                }
             }
+
         } else {
             super.buttonClick(clickEvent);
         }
