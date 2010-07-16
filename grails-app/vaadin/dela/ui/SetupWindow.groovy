@@ -22,11 +22,13 @@ import dela.ui.common.EntityForm
  */
 class SetupWindow extends Window implements FormFieldFactory {
 
+    private Form form
+
     def SetupWindow() {
 
         this.caption = i18n("entity.setup.caption", "setup")
 
-        Form form = new EntityForm()
+        form = new EntityForm()
 
         Setup.withTransaction {
             def setupItem = loadSetup()
@@ -42,6 +44,14 @@ class SetupWindow extends Window implements FormFieldFactory {
         this.layout.setSizeUndefined()
         this.center()
     }
+
+    def void attach() {
+        super.attach();
+        
+        form.layout.components[0].focus()
+    }
+
+
 
     def loadSetup() {
         Setup.withTransaction {

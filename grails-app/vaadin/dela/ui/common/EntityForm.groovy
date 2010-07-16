@@ -54,6 +54,11 @@ class EntityForm extends Form implements Button.ClickListener {
             discard()
         }
 
-        window.application.mainWindow.removeWindow window      // TODO: Remove window dependency
+        def mainWindow = window.application.mainWindow
+        
+        // TODO: Remove dependency
+        mainWindow.removeWindow window
+        mainWindow.application.table.addButton.focus()
+        //\\
     }
 }
