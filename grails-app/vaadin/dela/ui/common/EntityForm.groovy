@@ -32,11 +32,15 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     protected void initButtons() {
-        commitButton = new Button("commit", this as ClickListener)
+        commitButton = new Button()
+        commitButton.caption = i18n('button.ok.label', 'ok')
+        commitButton.addListener(this as ClickListener)
         commitButton.setClickShortcut(KeyCode.ENTER, ModifierKey.CTRL)
         footer.addComponent(commitButton)
 
-        discardButton = new Button("discard", this as ClickListener)
+        discardButton = new Button()
+        discardButton.caption = i18n('button.cancel.label', 'cancel')
+        discardButton.addListener(this as ClickListener)
         discardButton.setClickShortcut(KeyCode.ESCAPE)
         footer.addComponent(discardButton)
     }

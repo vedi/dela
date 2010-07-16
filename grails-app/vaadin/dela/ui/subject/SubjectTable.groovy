@@ -29,7 +29,7 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component component) {
-        String label = metaDomain.getMetaColumn(propertyId)?.label?:propertyId
+        String label = getColumnLabel(propertyId)
         TextField textField = new TextField(label)
         textField.setNullRepresentation('')
 
@@ -50,7 +50,10 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
         protected void initButtons() {
             super.initButtons();
 
-            getFooter().addComponent(normalizeButton = new Button("normalize", this as Button.ClickListener))
+            normalizeButton = new Button()
+            normalizeButton.caption = i18n('button.normalize.label', 'normalize')
+            normalizeButton.addListener(this as Button.ClickListener)
+            getFooter().addComponent(normalizeButton)
         }
 
         def void buttonClick(ClickEvent clickEvent) {

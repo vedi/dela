@@ -11,5 +11,4 @@ class MetaColumn {
     def defaultValue
     boolean readOnly = false
     boolean sortable = false
-    String label
 }

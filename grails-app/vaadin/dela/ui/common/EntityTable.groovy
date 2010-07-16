@@ -118,28 +118,28 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         toolBarLayout = new HorizontalLayout();
 
         addButton = new Button();
-        addButton.setDescription("add")
+        addButton.setDescription(i18n('button.create.label', 'create'))
         addButton.setClickShortcut(ShortcutAction.KeyCode.INSERT)
         addButton.setIcon(new FileResource(new File('web-app/images/skin/database_add.png'), this.window.application))
         addButton.addListener(this as ClickListener)
         toolBarLayout.addComponent addButton
 
         editButton = new Button();
-        editButton.setDescription("edit")
+        editButton.setDescription(i18n('button.edit.label', 'edit'))
         editButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
         editButton.setIcon(new FileResource(new File('web-app/images/skin/database_edit.png'), this.window.application))
         editButton.addListener(this as ClickListener)
         toolBarLayout.addComponent editButton
 
         deleteButton = new Button();
-        deleteButton.setDescription("delete")
+        deleteButton.setDescription(i18n('button.delete.label', 'delete'))
         deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE)
         deleteButton.setIcon(new FileResource(new File('web-app/images/skin/database_delete.png'), this.window.application))
         deleteButton.addListener(this as ClickListener)
         toolBarLayout.addComponent deleteButton
 
         refreshButton = new Button();
-        refreshButton.setDescription("refresh")
+        refreshButton.setDescription(i18n('button.refresh.label', 'refresh'))
         refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
         toolBarLayout.addComponent refreshButton
@@ -155,9 +155,9 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         this.table.selectable = true
         this.table.nullSelectionAllowed = false
 
-        if (metaDomain.caption) {
-            this.caption = metaDomain.caption
-        }
+        String entityName = metaDomain.domainClass.simpleName
+
+        this.caption = i18n("entity.${entityName.toLowerCase()}.many.caption", "${entityName} list")
 
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
             public void itemClick(ItemClickEvent event) {
@@ -192,14 +192,18 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         if (clickEvent.button == addButton) {
             showForm(new BeanItem(createDomain()))
         } else if (clickEvent.button == editButton) {
-            def item = container.getItem(table.value)
-            if (item) {
-                showForm(item)
+            if (table.value) {
+                def item = container.getItem(table.value)
+                if (item) {
+                    showForm(item)
+                }
             }
         } else if (clickEvent.button == deleteButton) {
-            def item = container.getItem(table.value)
-            if (item) {
-                remove(item)
+            if (table.value) {
+                def item = container.getItem(table.value)
+                if (item) {
+                    remove(item)
+                }
             }
         } else if (clickEvent.button == refreshButton) {
             refresh()
@@ -208,8 +212,10 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     void remove(Item item) {
         this.window.application.mainWindow.addWindow(new YesNoDialog(
-                "confirm delete",
-                "are you sure?",
+                i18n('button.delete.confirm.caption', 'confirm delete'),
+                i18n('button.delete.confirm.message', 'are you sure?'),
+                i18n('button.yes.label', 'yes'),
+                i18n('button.no.label', 'no'),
                 new YesNoDialog.Callback() {
                     public void onDialogResult(boolean yes) {
                         if (yes) {
@@ -232,7 +238,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         }
     }
     void showForm(selectedItem) {
-        Window window = new Window(metaDomain.domainClass.simpleName)
+        String entityName = metaDomain.domainClass.simpleName
+        Window window = new Window(i18n("entity.${entityName.toLowerCase()}.caption", "${entityName}"))
 
         Form form = createForm()
 
@@ -268,7 +275,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     }
 
     protected String[] getColumnHeaders() {
-        return getGridVisibleColumns().collect {metaDomain.getMetaColumn(it)?.label ?: it} as String[]
+        return getGridVisibleColumns().collect {getColumnLabel(it)} as String[]
     }
 
     protected select(Long id) {
@@ -280,4 +287,9 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             }
         }
     }
+
+    def getColumnLabel(columnName) {
+        i18n("entity.${metaDomain.domainClass.simpleName.toLowerCase()}.field.${columnName}.label", columnName)
+    }
+
 }

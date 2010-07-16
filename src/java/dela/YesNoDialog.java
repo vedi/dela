@@ -17,13 +17,13 @@ public class YesNoDialog extends Window implements Button.ClickListener {
   Button yes;
   Button no;
 
-  public YesNoDialog(String caption, String question, Callback callback) {
+  public YesNoDialog(String caption, String question, String yesLabel, String noLabel, Callback callback) {
     super(caption);
 
-    yes = new Button("Yes", this);
+    yes = new Button(yesLabel, this);
     yes.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-    no = new Button("No", this);
+    no = new Button(noLabel, this);
     no.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
 
 
@@ -39,6 +39,10 @@ public class YesNoDialog extends Window implements Button.ClickListener {
     hl.addComponent(yes);
     hl.addComponent(no);
     addComponent(hl);
+  }
+
+  public YesNoDialog(String caption, String question, Callback callback) {
+    this(caption, question, "yes", "no", callback);
   }
 
   @Override

@@ -122,7 +122,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         super.initToolBar()
 
         completeButton = new Button();
-        completeButton.setDescription('complete')
+        completeButton.setDescription(i18n('button.complete.label', 'complete'))
         completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
         toolBarLayout.addComponent(completeButton)
@@ -133,8 +133,10 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             def item = container.getItem(table.value)
             if (item) {
                 this.window.application.mainWindow.addWindow(new YesNoDialog(
-                        "confirm complete",
-                        "are you sure?",
+                        i18n('button.complete.confirm.caption', 'confirm complete'),
+                        i18n('button.complete.confirm.message', 'are you sure?'),
+                        i18n('button.yes.label', 'yes'),
+                        i18n('button.no.label', 'no'),
                         new YesNoDialog.Callback() {
                             public void onDialogResult(boolean yes) {
                                 if (yes) {
@@ -152,10 +154,8 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         }
     }
 
-
-
     Field createField(Item item, Object propertyId, Component component) {
-        String label = metaDomain.getMetaColumn(propertyId)?.label?:propertyId
+        String label = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
             def comboBox = new ComboBox(caption:label, immediate: true)
             Subject.findAll().each {

@@ -16,7 +16,6 @@ class MetaProvider {
 
     public final MetaDomain taskMeta = new MetaDomain(
             domainClass: Task.class,
-            caption: "Tasks",
             columns: [
                     new MetaColumn(field: 'id', type:Long.class, readOnly: true),
                     new MetaColumn(field: 'name', readOnly: true),
@@ -24,13 +23,12 @@ class MetaProvider {
                     new MetaColumn(field: 'power', type:Double.class, ),
                     new MetaColumn(field: 'subject', type:Subject.class),
                     new MetaColumn(field: 'state', type:State.class),
-                    new MetaColumn(field: 'subjectVersion',type:Version.class, label: 'version'),
-                    new MetaColumn(field: 'dateCreated', type:Date.class, label:'creation date'),
+                    new MetaColumn(field: 'subjectVersion',type:Version.class),
+                    new MetaColumn(field: 'dateCreated', type:Date.class),
             ],
     )
 
     public final MetaDomain stateMeta = new MetaDomain(domainClass: State.class,
-            caption: "States",
             columns: [
                     new MetaColumn(field: 'name', readOnly: true, sortable: true),
             ],
@@ -38,7 +36,6 @@ class MetaProvider {
 
     public final MetaDomain subjectMeta = new MetaDomain(
             domainClass: Subject.class,
-            caption: "Subjects",
             columns: [
                     new MetaColumn(field: 'name', readOnly: true, sortable: true),
                     new MetaColumn(field: 'description'),

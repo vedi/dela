@@ -9,7 +9,9 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.DataService
+import dela.Setup
 import dela.StoreService
+import dela.Subject
 import dela.meta.MetaProvider
 import dela.ui.subject.SubjectListWindow
 import dela.ui.task.TaskTable
@@ -60,18 +62,24 @@ public class DelaApplication extends Application {
 
         Button button
 
-        button = new Button("subjects", new ClickListener() {
-            void buttonClick(ClickEvent clickEvent) {
-                DelaApplication.this.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
-            }
-        })
+        button = new Button()
+        button.caption = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
+        button.addListener(
+                new ClickListener() {
+                    void buttonClick(ClickEvent clickEvent) {
+                        DelaApplication.this.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
+                    }
+                })
         verticalLayout.addComponent(button);
 
-        button = new Button("setup", new ClickListener() {
-            void buttonClick(ClickEvent clickEvent) {
-                DelaApplication.this.mainWindow.addWindow(new SetupWindow())
-            }
-        })
+        button = new Button()
+        button.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
+        button.addListener(
+                new ClickListener() {
+                    void buttonClick(ClickEvent clickEvent) {
+                        DelaApplication.this.mainWindow.addWindow(new SetupWindow())
+                    }
+                })
         verticalLayout.addComponent(button);
 
         componentContainer.addComponent(verticalLayout)

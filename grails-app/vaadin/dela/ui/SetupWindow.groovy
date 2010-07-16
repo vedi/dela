@@ -24,7 +24,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
     def SetupWindow() {
 
-        this.caption = 'Setup'
+        this.caption = i18n("entity.setup.caption", "setup")
 
         Form form = new EntityForm()
 
@@ -90,8 +90,10 @@ class SetupWindow extends Window implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component component) {
+        String caption = i18n("entity.setup.field.${propertyId}.label", propertyId)
+
         if ('activeSubject'.equals(propertyId)) {
-            def comboBox = new ComboBox(caption:'activeSubject', immediate: true)
+            def comboBox = new ComboBox(caption: caption, immediate: true)
             Subject.withTransaction {
                 Subject.findAll().each {
                     comboBox.addItem it
@@ -100,7 +102,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
             comboBox
         } else if ('filterSubjects'.equals(propertyId)) {
-            def twinColSelect = new TwinColSelect(caption:'filterSubjects', immediate: true)
+            def twinColSelect = new TwinColSelect(caption: caption, immediate: true)
             Subject.withTransaction {
                 Subject.findAll().each {
                     twinColSelect.addItem it
@@ -109,7 +111,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
             twinColSelect
         } else if ('filterStates'.equals(propertyId)) {
-            def twinColSelect = new TwinColSelect(caption:'filterStates', immediate: true)
+            def twinColSelect = new TwinColSelect(caption: caption, immediate: true)
             State.withTransaction {
                 State.findAll().each {
                     twinColSelect.addItem it
