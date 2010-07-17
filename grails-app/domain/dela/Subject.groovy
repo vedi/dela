@@ -2,11 +2,14 @@ package dela
 
 class Subject {
 
-    static hasMany = [versions: Version]
+    static belongsTo = [owner : Account]
+    static hasMany = [versions : Version]
 
-    String name = "New subject" 
+    String name
 
     String description
+    
+    boolean isPublic
 
     static constraints = {
         description(nullable:true)
@@ -20,9 +23,21 @@ class Subject {
         return "$name($id)"
     }
 
-    def boolean equals(Object obj) {
-        return id?.equals(obj?.id);
+    boolean equals(o) {
+        if (o == null) return false;
+
+        if (this.is(o)) return true;
+
+        if (getClass() != o.class) return false;
+
+        Subject subject = (Subject) o;
+
+        if (id != subject.id) return false;
+
+        return true;
     }
 
-
+    int hashCode() {
+        return (id != null ? id.hashCode() : 0);
+    }
 }

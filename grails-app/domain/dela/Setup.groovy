@@ -2,6 +2,8 @@ package dela
 
 class Setup {
 
+    Account account 
+
     Subject activeSubject
 
     static hasMany = [filterSubjects: Subject, filterStates: State]

@@ -8,6 +8,8 @@ import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TextField
 import dela.DataService
+import dela.StoreService
+import dela.Subject
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 
@@ -19,13 +21,23 @@ import dela.ui.common.EntityTable
 class SubjectTable extends EntityTable implements FormFieldFactory {
 
     DataService dataService
+    StoreService storeService
 
     def gridVisibleColumns = ['name']
     def formFieldFactory = this
     def normalizeButton
 
+    def selector = {startIndex, count, sortProperty, ascendingState ->
+        Subject.findAllByOwnerOrIsPublic(storeService.account, true, [offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
+    }
+
+    def counter = {
+        Subject.countByOwnerOrIsPublic(storeService.account, true)
+    }
+
     def SubjectTable() {
-        dataService = getBean(DataService.class)
+        this.dataService = getBean(DataService.class)
+        this.storeService = getBean(StoreService.class)
     }
 
     Field createField(Item item, Object propertyId, Component component) {

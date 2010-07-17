@@ -41,10 +41,6 @@ public class YesNoDialog extends Window implements Button.ClickListener {
     addComponent(hl);
   }
 
-  public YesNoDialog(String caption, String question, Callback callback) {
-    this(caption, question, "yes", "no", callback);
-  }
-
   @Override
   public void attach() {
     super.attach();

@@ -4,9 +4,7 @@ class DataService {
 
     static transactional = true
 
-    def loadSetup() {
-        Setup.count() ? Setup.findAll()[0] : new Setup()
-    }
+    def anonymous
 
     def public changeTaskPower(id, double newPower) {
         Task.withTransaction {

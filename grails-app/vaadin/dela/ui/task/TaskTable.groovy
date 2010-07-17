@@ -50,12 +50,14 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         }
 
         Setup setup = storeService.setup
-        Task.findAllByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects, [offset:startIndex,  max:count, sort:'power', order:'desc'])
+        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
+            Task.findAllByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects, [offset:startIndex,  max:count, sort:'power', order:'desc']) : []
     }
 
     def counter = {
         Setup setup = storeService.setup
-        Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects)
+        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
+            Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects) : 0
     }
 
     def gridVisibleColumns = ['subject', 'name']

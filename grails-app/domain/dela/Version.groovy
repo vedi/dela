@@ -4,7 +4,7 @@ class Version {
 
     static belongsTo = [subject : Subject]
 
-    String name = "New version"
+    String name
 
     String description
 

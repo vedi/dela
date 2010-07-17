@@ -7,8 +7,10 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
+import dela.Account
 import dela.DataService
 import dela.Setup
 import dela.StoreService
@@ -25,23 +27,28 @@ public class DelaApplication extends Application {
     def metaDomain
     def table
 
+    Label stateLabel
+
     StoreService storeService
     DataService dataService 
 
     @Override
 	public void init() {
 
-		mainWindow = new Window("Dela Application");
+		mainWindow = new Window("Dela");
+
+        VerticalLayout verticalLayout = new VerticalLayout()
+        mainWindow.setContent(verticalLayout)
+
+        initTopPanel(verticalLayout)
 
         HorizontalLayout horizontalLayout = new HorizontalLayout()
-        mainWindow.setContent(horizontalLayout)
+        verticalLayout.addComponent(horizontalLayout)
 
         initButtons(horizontalLayout)
 
         storeService = getBean(StoreService.class)
         dataService = getBean(DataService.class)
-
-        storeService.setup = dataService.loadSetup()
 
         metaProvider = new MetaProvider(storeService:storeService)
 
@@ -51,14 +58,38 @@ public class DelaApplication extends Application {
         table.setWidth "700"
 
 
-		mainWindow.addComponent(table)
+		horizontalLayout.addComponent(table)
 
 		setMainWindow(mainWindow)
 
 	}
 
+    void initTopPanel(layout) {
+        HorizontalLayout horizontalLayout = new HorizontalLayout()
+        horizontalLayout.setWidth "100%"
+        horizontalLayout.setMargin true
+
+        Button loginButton = new Button(i18n('button.login.label', 'login'))
+        loginButton.addListener(new ClickListener() {
+            void buttonClick(ClickEvent clickEvent) {
+                storeService.origAccount = Account.get(2)
+                stateLabel.caption = storeService.account
+            }
+        })
+        horizontalLayout.addComponent(loginButton)
+        horizontalLayout.setComponentAlignment(loginButton, Alignment.TOP_RIGHT)
+
+        stateLabel = new Label("${storeService.account}")
+        stateLabel.setWidth null
+        horizontalLayout.addComponent(stateLabel)
+        horizontalLayout.setComponentAlignment(stateLabel, Alignment.TOP_RIGHT)
+
+        layout.addComponent(horizontalLayout)
+    }
+
     void initButtons(ComponentContainer componentContainer) {
         VerticalLayout verticalLayout = new VerticalLayout()
+        verticalLayout.setMargin true
         verticalLayout.setWidth "120px"
 
         Button button
@@ -86,10 +117,10 @@ public class DelaApplication extends Application {
 
     private Button createButton(layout) {
         def button = new Button()
-        button.setWidth "80%"
+        button.setWidth "100%"
 
         layout.addComponent(button);
-        layout.setComponentAlignment(button, Alignment.TOP_CENTER);
+//        layout.setComponentAlignment(button, Alignment.TOP_CENTER);
 
         button
     }
