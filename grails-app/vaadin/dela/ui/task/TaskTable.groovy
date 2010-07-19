@@ -163,7 +163,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         String label = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
             def comboBox = new ComboBox(caption:label, immediate: true)
-            Subject.findAll().each {
+            Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
                 comboBox.addItem it
             }
 

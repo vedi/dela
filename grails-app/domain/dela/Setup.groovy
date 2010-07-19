@@ -9,6 +9,7 @@ class Setup {
     static hasMany = [filterSubjects: Subject, filterStates: State]
 
     static mapping = {
+        account lazy:false
         activeSubject lazy:false
         filterSubjects lazy:false
         filterStates lazy:false

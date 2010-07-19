@@ -70,9 +70,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
                     domain[it] = item.getItemProperty(it).value;
                 }
             }
-            def result = domain.save()
 
-            assert result
+            assert domain.save(), domain.errors
 
             this.refresh()
             if (isNew) {
@@ -162,7 +161,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
             public void itemClick(ItemClickEvent event) {
                 if (event.doubleClick) {
-                    showForm(event.item)
+                    showForm(event.item, canEdit(event.item))
                 }
             }
         })
@@ -190,18 +189,20 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == addButton) {
-            showForm(new BeanItem(createDomain()))
+            if (canInsert()) {
+                showForm(new BeanItem(createDomain()))
+            }
         } else if (clickEvent.button == editButton) {
             if (table.value != null) {
                 def item = container.getItem(table.value)
                 if (item) {
-                    showForm(item)
+                    showForm(item, canEdit(item))
                 }
             }
         } else if (clickEvent.button == deleteButton) {
             if (table.value != null) {
                 def item = container.getItem(table.value)
-                if (item) {
+                if (item && canDelete(item)) {
                     remove(item)
                 }
             }
@@ -237,16 +238,20 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             refresh()
         }
     }
-    void showForm(selectedItem) {
+    void showForm(selectedItem, editable = true) {
         String entityName = metaDomain.domainClass.simpleName
         Window window = new Window(i18n("entity.${entityName.toLowerCase()}.caption", "${entityName}"))
 
         Form form = createForm()
+        form.editable = editable
 
         if (getFormFieldFactory()) {
             form.formFieldFactory = getFormFieldFactory() as FormFieldFactory
         }
-        form.itemDataSource =  selectedItem
+
+        metaDomain.domainClass.withTransaction {
+            form.itemDataSource =  selectedItem
+        }
         form.visibleItemProperties = getEditVisibleColumns()
         form.saveHandler = saveHandler
 
@@ -291,5 +296,18 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     def getColumnLabel(columnName) {
         i18n("entity.${metaDomain.domainClass.simpleName.toLowerCase()}.field.${columnName}.label", columnName)
     }
+
+    def canDelete(item) {
+        return true
+    }
+
+    def canInsert() {
+        return true
+    }
+
+    def canEdit(item) {
+        return true
+    }
+
 
 }

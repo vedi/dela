@@ -31,7 +31,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         this.caption = i18n("entity.setup.caption", "setup")
 
-        form = new EntityForm()
+        form = new EntityForm(editable:true)
 
         setup = storeService.setup
 

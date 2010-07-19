@@ -17,6 +17,11 @@ class Account {
         setup(nullable:true)
     }
 
+    static mapping = {
+        subjects lazy: false
+        setup lazy: false
+    }
+
     def String toString() {
         return login
     }
@@ -36,5 +41,13 @@ class Account {
 
     int hashCode() {
         return (id != null ? id.hashCode() : 0);
+    }
+
+    def isNotAnonymous() {
+        this.role != Account.ANONYMOUS
+    }
+
+    def isAdmin() {
+        this.role == Account.ADMIN
     }
 }

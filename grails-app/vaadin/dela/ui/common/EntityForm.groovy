@@ -16,8 +16,10 @@ class EntityForm extends Form implements Button.ClickListener {
 
     def saveHandler
 
-    Button commitButton
-    Button discardButton
+    boolean editable = false
+
+    Button okButton
+    Button cancelButton
 
     def EntityForm() {
         this.writeThrough =  false
@@ -32,22 +34,24 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     protected void initButtons() {
-        commitButton = new Button()
-        commitButton.caption = i18n('button.ok.label', 'ok')
-        commitButton.addListener(this as ClickListener)
-        commitButton.setClickShortcut(KeyCode.ENTER, ModifierKey.CTRL)
-        footer.addComponent(commitButton)
+        if (editable) {
+            okButton = new Button()
+            okButton.caption = i18n('button.ok.label', 'ok')
+            okButton.addListener(this as ClickListener)
+            okButton.setClickShortcut(KeyCode.ENTER, ModifierKey.CTRL)
+            footer.addComponent(okButton)
+        }
 
-        discardButton = new Button()
-        discardButton.caption = i18n('button.cancel.label', 'cancel')
-        discardButton.addListener(this as ClickListener)
-        discardButton.setClickShortcut(KeyCode.ESCAPE)
-        footer.addComponent(discardButton)
+        cancelButton = new Button()
+        cancelButton.caption = editable ? i18n('button.cancel.label', 'cancel') : i18n('button.close.label', 'close')
+        cancelButton.addListener(this as ClickListener)
+        cancelButton.setClickShortcut(KeyCode.ESCAPE)
+        footer.addComponent(cancelButton)
     }
 
 
     void buttonClick(ClickEvent clickEvent) {
-        if (clickEvent.button == commitButton) {
+        if (clickEvent.button == okButton) {
             commit()
             saveHandler(getItemDataSource())
         } else {

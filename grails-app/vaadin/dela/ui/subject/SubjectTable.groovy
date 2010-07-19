@@ -53,6 +53,18 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
         textField
     }
 
+    def canInsert() {
+        return storeService.account.isNotAnonymous()
+    }
+
+    def canEdit(item) {
+        return storeService.account.isAdmin() || (storeService.account.isNotAnonymous() && storeService.account.equals(item.getItemProperty('owner').value))
+    }
+
+    def canDelete(item) {
+        return canEdit(item)
+    }
+
     protected EntityForm createForm() {
         return new SubjectForm()
     }
@@ -62,10 +74,12 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
         protected void initButtons() {
             super.initButtons();
 
-            normalizeButton = new Button()
-            normalizeButton.caption = i18n('button.normalize.label', 'normalize')
-            normalizeButton.addListener(this as Button.ClickListener)
-            getFooter().addComponent(normalizeButton)
+            if (editable) {
+                normalizeButton = new Button()
+                normalizeButton.caption = i18n('button.normalize.label', 'normalize')
+                normalizeButton.addListener(this as Button.ClickListener)
+                getFooter().addComponent(normalizeButton)
+            }
         }
 
         def void buttonClick(ClickEvent clickEvent) {
