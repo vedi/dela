@@ -15,14 +15,13 @@ class Subject {
 
     static constraints = {
         owner(validator: {val, obj ->
-
             obj.validateOwner(val)
         })
         description(nullable:true)
     }
 
     def validateOwner(owner) {
-        return owner.isAdmin() || owner.equals(storeService.account)
+        return storeService.account.isAdmin() || owner.equals(storeService.account)
     }
 
     def beforeInsert() {
@@ -36,28 +35,6 @@ class Subject {
 
     def beforeDelete() {
         beforeUpdate()
-    }
-
-    def canEdit(item) {
-//        return isAdmin() || (notAnonymous() && isOwner(item))
-        true
-    }
-
-    def canDelete(item) {
-//        return canEdit(item)
-        true
-    }
-
-    private boolean isOwner(item) {
-        return storeService.account.equals(item.getItemProperty('owner').value)
-    }
-
-    private boolean notAnonymous() {
-        return storeService.account.role != Account.ANONYMOUS
-    }
-
-    private boolean isAdmin() {
-        return storeService.account.role == Account.ADMIN
     }
 
     static mapping = {

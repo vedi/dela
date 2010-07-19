@@ -9,7 +9,9 @@ import com.vaadin.ui.Form
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TwinColSelect
 import com.vaadin.ui.Window
+import dela.Setup
 import dela.State
+import dela.StoreService
 import dela.Subject
 import dela.ui.common.EntityForm
 
@@ -20,8 +22,8 @@ import dela.ui.common.EntityForm
  */
 class SetupWindow extends Window implements FormFieldFactory {
 
-    def storeService
-    def setup
+    StoreService storeService
+    Setup setup
 
     private Form form
 

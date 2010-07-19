@@ -40,6 +40,10 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
         this.storeService = getBean(StoreService.class)
     }
 
+    protected Object createDomain() {
+        return new Subject(owner: storeService.account)
+    }
+
     Field createField(Item item, Object propertyId, Component component) {
         String label = getColumnLabel(propertyId)
         TextField textField = new TextField(label)

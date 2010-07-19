@@ -79,6 +79,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     def Object createDomain() {
         Task task = new Task()
+        task.author = storeService.account
         task.subject = storeService.setup.activeSubject
         task.state = State.findAll()[0]  // FIXME: Жёсткая привязка к id состояния
 
@@ -196,6 +197,21 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
             textField
         }
+    }
+
+    def Boolean canDelete(item) {
+        return canEdit(item)
+    }
+
+    def Boolean canEdit(item) {
+        def author = item.getItemProperty('author').value
+        def subject = item.getItemProperty('subject').value
+        return storeService.account.isAdmin() || (author.equals(storeService.account) &&
+                (subject.isPublic || subject.owner.equals(author)))
+    }
+
+    def Boolean canInsert() {
+        return storeService.account.isNotAnonymous()
     }
 
     void drop(DragAndDropEvent dragAndDropEvent) {

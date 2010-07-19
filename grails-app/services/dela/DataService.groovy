@@ -11,7 +11,7 @@ class DataService {
             Task task = Task.get(id)
             task.power = newPower;
             def result = task.save()
-            assert result
+            assert result, task.errors
         }
     }
 
@@ -25,7 +25,7 @@ class DataService {
             if (!state.equals(task.state)) {
                 task.state = state
                 def result = task.merge()
-                assert result
+                assert result, task.errors
                 return true
             } else {
                 return false
@@ -51,7 +51,7 @@ class DataService {
                     task.power = currentPower
                     currentPower += step
                     def result = task.merge()
-                    assert result
+                    assert result, task.errors
                 }
             }
         }
