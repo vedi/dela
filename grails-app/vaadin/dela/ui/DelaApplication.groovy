@@ -15,6 +15,7 @@ import dela.Setup
 import dela.StoreService
 import dela.Subject
 import dela.meta.MetaProvider
+import dela.ui.account.ConfirmRegistrationWindow
 import dela.ui.account.LoginWindow
 import dela.ui.account.RegisterWindow
 import dela.ui.subject.SubjectListWindow
@@ -32,6 +33,8 @@ public class DelaApplication extends Application {
     DataService dataService
 
     HorizontalLayout topLayout
+
+    ConfirmRegistrationWindow confirmRegistrationWindow
 
     @Override
 	public void init() {
@@ -73,6 +76,10 @@ public class DelaApplication extends Application {
 
         layout.addComponent(topLayout)
 
+        refreshTopPanelContent()
+    }
+
+    def refreshTopPanelContent() {
         if (!storeService.isLoggedIn()) {
             showAnonymousPanel()
         } else {
@@ -128,7 +135,7 @@ public class DelaApplication extends Application {
 
     def registerCallback = {account ->
         if (this.storeService.register(account)) {
-            this.mainWindow.showNotification i18n('registration.success.message', "registration completed") //TODO: i18n
+            this.mainWindow.showNotification i18n('registration.success.message', "registration completed wait a mail") //TODO: i18n
         } else {
             this.mainWindow.showNotification i18n('registration.failed.message', "registration failed") //TODO: i18n
         }
@@ -181,5 +188,19 @@ public class DelaApplication extends Application {
         topLayout.addComponent loggedInLayout
         topLayout.setComponentAlignment(loggedInLayout, Alignment.TOP_RIGHT)
     }
+
+    def Window getWindow(String name) {
+        if ('confirmRegistration'.equals(name)) {
+            if (!confirmRegistrationWindow) {
+                confirmRegistrationWindow = new ConfirmRegistrationWindow()
+                confirmRegistrationWindow.name = name
+                addWindow(confirmRegistrationWindow)
+            }
+            confirmRegistrationWindow
+        } else {
+            return super.getWindow(name);
+        }
+    }
+
 
 }

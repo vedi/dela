@@ -42,11 +42,13 @@ class StoreService {
     def auth(login, password) {
         assert !origAccount
         def foundAccount = Account.findByLoginAndPassword(login, password)
-        if (foundAccount) {
+        if (foundAccount && foundAccount.state == Account.STATE_ACTIVE) {
             origAccount = foundAccount
+            return foundAccount
+        } else {
+            return null
         }
         
-        return foundAccount
     }
     
     def logout() {
@@ -69,5 +71,19 @@ class StoreService {
         // TODO: Send mail
 
         return true
+    }
+
+    boolean confirmRegistration(String uuid) {
+        assert uuid
+        Account account = Account.findByUuid(uuid)
+        if (account && account.state == Account.STATE_CREATING) {
+            origAccount = account
+            account.state = Account.STATE_ACTIVE
+            assert account.save(), account.errors
+
+            return true
+        } else {
+            return false
+        }
     }
 }
