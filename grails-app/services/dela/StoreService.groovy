@@ -39,4 +39,35 @@ class StoreService {
         }
     }
 
+    def auth(login, password) {
+        assert !origAccount
+        def foundAccount = Account.findByLoginAndPassword(login, password)
+        if (foundAccount) {
+            origAccount = foundAccount
+        }
+        
+        return foundAccount
+    }
+    
+    def logout() {
+        assert origAccount
+        origAccount = null
+    }
+    
+    def isLoggedIn() {
+        origAccount != null
+    }
+
+    boolean register(Account account) {
+        assert account
+        assert !account.id
+        account.state = Account.STATE_CREATING
+        account.role = Account.ROLE_USER
+        account.uuid = UUID.randomUUID().toString()
+        assert account.save(), account.errors
+        
+        // TODO: Send mail
+
+        return true
+    }
 }

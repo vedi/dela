@@ -2,18 +2,26 @@ package dela
 
 class Account {
 
-    static ANONYMOUS    = 0
-    static USER         = 50
-    static ADMIN        = 100
+    public static ROLE_ANONYMOUS    = 0
+    public static ROLE_USER         = 50
+    public static ROLE_ADMIN        = 100
+
+    public static STATE_BLOCKED     = 0
+    public static STATE_CREATING    = 10
+    public static STATE_ACTIVE      = 100
 
     static hasOne = [setup : Setup]
     static hasMany = [subjects : Subject]
 
     String login
     String email
+    String password
+    String uuid
     byte role
+    byte state
 
     static constraints = {
+        login(unique:true)
         setup(nullable:true)
     }
 
@@ -44,10 +52,10 @@ class Account {
     }
 
     def isNotAnonymous() {
-        this.role != Account.ANONYMOUS
+        this.role != Account.ROLE_ANONYMOUS
     }
 
     def isAdmin() {
-        this.role == Account.ADMIN
+        this.role == Account.ROLE_ADMIN
     }
 }

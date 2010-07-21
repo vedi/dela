@@ -12,9 +12,9 @@ class BootStrap {
      }
 
     void initAnonymous(servletContext) {
-        Account account = Account.findByRole(Account.ANONYMOUS)
+        Account account = Account.findByRole(Account.ROLE_ANONYMOUS)
         if (!account) {
-            account = new Account(login:'anonymous', email:'none', role:Account.ANONYMOUS)
+            account = new Account(login:'anonymous', email:'none', role:Account.ROLE_ANONYMOUS)
             account.save()
         }
 
