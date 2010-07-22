@@ -6,6 +6,8 @@ class StoreService {
     static scope = "session"
 
     def dataService
+    def mailService
+
     private Setup setup
 
     def origAccount
@@ -27,6 +29,7 @@ class StoreService {
     }
 
     def setSetup(Setup setup) {
+        //TODO: There is a bug
         if (origAccount) {
             if (!setup.account) {
                 setup.account = origAccount
@@ -68,9 +71,17 @@ class StoreService {
         account.uuid = UUID.randomUUID().toString()
         assert account.save(), account.errors
         
-        // TODO: Send mail
+        sendRegistrationMail(account.email, account.uuid) //OPT: send in queue
 
         return true
+    }
+
+    def sendRegistrationMail(String email, uuid) {
+        mailService.sendMail {
+            to email
+            subject "Registration on dela-app" //TODO: i18n
+            html "<a href='http://localhost:8080/dela-grails/confirmRegistration?uuid=$uuid'>confirm registration</a>"  //TODO: i18n
+        }
     }
 
     boolean confirmRegistration(String uuid) {

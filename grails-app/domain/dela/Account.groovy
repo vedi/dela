@@ -21,7 +21,9 @@ class Account {
     byte state
 
     static constraints = {
-        login(unique:true)
+        login(unique:true, minSize: 3)
+        password(minSize: 5)
+        email(email:true)
         setup(nullable:true)
     }
 
