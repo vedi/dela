@@ -39,6 +39,7 @@ class MetaProvider {
             columns: [
                     new MetaColumn(field: 'name', readOnly: true, sortable: true),
                     new MetaColumn(field: 'description'),
+                    new MetaColumn(field: 'isPublic'),
             ],
     )
 }

@@ -3,6 +3,7 @@ package dela.ui.subject
 import com.vaadin.data.Item
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.CheckBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
@@ -46,15 +47,22 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
     Field createField(Item item, Object propertyId, Component component) {
         String label = getColumnLabel(propertyId)
-        TextField textField = new TextField(label)
-        textField.setNullRepresentation('')
+        if ('isPublic'.equals(propertyId)) {
+            def checkBox = new CheckBox(label)
+            checkBox.readOnly = !this.storeService.account.isAdmin()
+            checkBox
+        } else {
+            TextField textField = new TextField(label)
+            textField.setNullRepresentation('')
 
-        if ('description'.equals(propertyId)) {
-            textField.setRows(10)
-            textField.setColumns(30)
+            if ('description'.equals(propertyId)) {
+                textField.setRows(10)
+                textField.setColumns(30)
+            }
+
+            textField
         }
 
-        textField
     }
 
     def canInsert() {

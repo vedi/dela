@@ -33,9 +33,10 @@ class StoreService {
         if (origAccount) {
             if (!setup.account) {
                 setup.account = origAccount
-                origAccount.setup = setup
             }
-            assert setup.merge(), setup.errors
+            assert (setup = setup.merge()), setup.errors
+            
+            origAccount.setup = setup
             origAccount.merge()
         } else {
             this.setup = setup

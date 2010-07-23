@@ -25,12 +25,13 @@ class Subject {
     }
 
     def beforeInsert() {
-        assert storeService.account.isNotAnonymous()
+        assert storeService.account.isNotAnonymous() && (storeService.account.isAdmin() || !isPublic)
     }
 
     def beforeUpdate() {
         assert storeService.account.isAdmin() ||
-                (storeService.account.isNotAnonymous() && storeService.account.equals(this.owner))
+                (storeService.account.isNotAnonymous() && storeService.account.equals(this.owner) &&
+                        getPersistentValue('isPublic') != isPublic)
     }
 
     def beforeDelete() {
