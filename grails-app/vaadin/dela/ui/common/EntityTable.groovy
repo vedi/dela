@@ -6,6 +6,7 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutListener
 import com.vaadin.terminal.FileResource
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -13,6 +14,7 @@ import com.vaadin.ui.Form
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Table
+import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.YesNoDialog
@@ -104,7 +106,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             }
         });
 
-        initToolBar()
+        toolBarLayout = new HorizontalLayout();
+        initToolBar(toolBarLayout)
         this.addComponent toolBarLayout
 
         initTable()
@@ -113,35 +116,57 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
     }
 
-    protected void initToolBar() {
-        toolBarLayout = new HorizontalLayout();
+    def void initSearchBar(toolBar) {
+        def searchText = new TextField()
+
+        toolBar.addComponent(searchText)
+        toolBar.setComponentAlignment(searchText, Alignment.TOP_RIGHT)
+
+
+        def searchButton = new Button('find')
+        searchButton.addListener(
+                new ClickListener() {
+                    void buttonClick(ClickEvent event) {
+                        EntityTable.this.findEntities(searchText.value)
+                    }
+
+                })
+        toolBar.addComponent(searchButton)
+        toolBar.setComponentAlignment(searchButton, Alignment.TOP_RIGHT)
+    }
+
+    def void  findEntities(Object searchText) {
+
+    }
+
+    protected void initToolBar(toolBar) {
 
         addButton = new Button();
         addButton.setDescription(i18n('button.create.label', 'create'))
         addButton.setClickShortcut(ShortcutAction.KeyCode.INSERT)
         addButton.setIcon(new FileResource(new File('web-app/images/skin/database_add.png'), this.window.application))
         addButton.addListener(this as ClickListener)
-        toolBarLayout.addComponent addButton
+        toolBar.addComponent addButton
 
         editButton = new Button();
         editButton.setDescription(i18n('button.edit.label', 'edit'))
         editButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
         editButton.setIcon(new FileResource(new File('web-app/images/skin/database_edit.png'), this.window.application))
         editButton.addListener(this as ClickListener)
-        toolBarLayout.addComponent editButton
+        toolBar.addComponent editButton
 
         deleteButton = new Button();
         deleteButton.setDescription(i18n('button.delete.label', 'delete'))
         deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE)
         deleteButton.setIcon(new FileResource(new File('web-app/images/skin/database_delete.png'), this.window.application))
         deleteButton.addListener(this as ClickListener)
-        toolBarLayout.addComponent deleteButton
+        toolBar.addComponent deleteButton
 
         refreshButton = new Button();
         refreshButton.setDescription(i18n('button.refresh.label', 'refresh'))
         refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
-        toolBarLayout.addComponent refreshButton
+        toolBar.addComponent refreshButton
     }
 
     def setContainerDataSource(containerDataSource) {
@@ -178,6 +203,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         this.table.setSizeFull()
 
         this.addComponent(this.table)
+        this.setExpandRatio(this.table, 1.0f)
     }
 
     def initGrid() {

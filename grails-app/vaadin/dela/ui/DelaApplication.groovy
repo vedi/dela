@@ -42,12 +42,15 @@ public class DelaApplication extends Application {
 		mainWindow = new Window("Dela");
 
         VerticalLayout verticalLayout = new VerticalLayout()
+        verticalLayout.setSizeFull()
         mainWindow.setContent(verticalLayout)
 
         initTopPanel(verticalLayout)
-
+            
         HorizontalLayout horizontalLayout = new HorizontalLayout()
+        horizontalLayout.setSizeFull()
         verticalLayout.addComponent(horizontalLayout)
+        verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
 
         initButtons(horizontalLayout)
 
@@ -59,10 +62,10 @@ public class DelaApplication extends Application {
         metaDomain = metaProvider.taskMeta
 
         table = new TaskTable(metaDomain: metaDomain, metaProvider: metaProvider)
-        table.setWidth "700"
-
+        table.setSizeFull()
 
 		horizontalLayout.addComponent(table)
+        horizontalLayout.setExpandRatio(table, 1.0f)
 
 		setMainWindow(mainWindow)
 

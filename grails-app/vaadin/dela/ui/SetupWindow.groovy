@@ -7,7 +7,7 @@ import com.vaadin.ui.Component
 import com.vaadin.ui.Field
 import com.vaadin.ui.Form
 import com.vaadin.ui.FormFieldFactory
-import com.vaadin.ui.TwinColSelect
+import com.vaadin.ui.OptionGroup
 import com.vaadin.ui.Window
 import dela.Setup
 import dela.State
@@ -77,22 +77,22 @@ class SetupWindow extends Window implements FormFieldFactory {
 
             comboBox
         } else if ('filterSubjects'.equals(propertyId)) {
-            def twinColSelect = new TwinColSelect(caption: caption, immediate: true)
+            def select = new OptionGroup(caption: caption, immediate: true, multiSelect:true)
             Subject.withTransaction {
                 Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
-                    twinColSelect.addItem it
+                    select.addItem it
                 }
             }
 
-            twinColSelect
+            select
         } else if ('filterStates'.equals(propertyId)) {
-            def twinColSelect = new TwinColSelect(caption: caption, immediate: true)
+            def select = new OptionGroup(caption: caption, immediate: true, multiSelect:true)
             State.withTransaction {
                 State.findAll().each {
-                    twinColSelect.addItem it
+                    select.addItem it
                 }
             }
-            twinColSelect
+            select
         }
     }
 }

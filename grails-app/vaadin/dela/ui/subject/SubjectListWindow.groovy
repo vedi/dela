@@ -15,8 +15,13 @@ class SubjectListWindow extends Window {
 
         super.attach()
 
-        this.addComponent(new SubjectTable(metaDomain: metaDomain))
-        this.content.setSizeUndefined()
+        
+        def table = new SubjectTable(metaDomain: metaDomain)
+        table.setWidth "100%"
+        table.setHeight "100%"
+        this.addComponent(table)
+        this.content.setWidth "300px"
+        this.content.setHeight "350px"
         this.center()
     }
 }

@@ -121,14 +121,14 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
 
 
-    protected void initToolBar() {
-        super.initToolBar()
+    protected void initToolBar(toolBar) {
+        super.initToolBar(toolBar)
 
         completeButton = new Button();
         completeButton.setDescription(i18n('button.complete.label', 'complete'))
         completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
-        toolBarLayout.addComponent(completeButton)
+        toolBar.addComponent(completeButton)
     }
 
     def void buttonClick(ClickEvent clickEvent) {
@@ -161,23 +161,23 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
     }
 
     Field createField(Item item, Object propertyId, Component component) {
-        String label = getColumnLabel(propertyId)
+        String caption = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
-            def comboBox = new ComboBox(caption:label, immediate: true)
+            def comboBox = new ComboBox(caption:caption, immediate: true)
             Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
                 comboBox.addItem it
             }
 
             comboBox
         } else if (propertyId.equals('state')) {
-            def comboBox = new ComboBox(caption:label, immediate: true)
+            def comboBox = new ComboBox(caption:caption, immediate: true)
             State.findAll().each {
                 comboBox.addItem it
             }
 
             comboBox
         } else if (propertyId.equals('power')) {
-            Slider slider = new Slider(caption:label,
+            Slider slider = new Slider(caption:caption,
                     min: 0.01, max: 0.99, resolution: 2, orientation: Slider.ORIENTATION_VERTICAL,
                     immediate: true)
 
@@ -185,7 +185,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
             slider
         } else {
-            def textField = new TextField(label)
+            def textField = new TextField(caption)
             textField.setNullRepresentation('')
 
             if ('description'.equals(propertyId)) {
