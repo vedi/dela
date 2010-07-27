@@ -6,7 +6,6 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutListener
 import com.vaadin.terminal.FileResource
-import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -108,6 +107,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
         toolBarLayout = new HorizontalLayout();
         initToolBar(toolBarLayout)
+        initSearchBar(toolBarLayout)
         this.addComponent toolBarLayout
 
         initTable()
@@ -117,11 +117,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
     }
 
     def void initSearchBar(toolBar) {
+
         def searchText = new TextField()
-
-        toolBar.addComponent(searchText)
-        toolBar.setComponentAlignment(searchText, Alignment.TOP_RIGHT)
-
 
         def searchButton = new Button('find')
         searchButton.addListener(
@@ -132,11 +129,8 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
                 })
         toolBar.addComponent(searchButton)
-        toolBar.setComponentAlignment(searchButton, Alignment.TOP_RIGHT)
-    }
 
-    def void  findEntities(Object searchText) {
-
+        toolBar.addComponent(searchText)
     }
 
     protected void initToolBar(toolBar) {
@@ -167,6 +161,34 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
         toolBar.addComponent refreshButton
+    }
+
+    def void findEntities(String searchText) {
+        def currentItemId = this.table.nextItemId(this.table.value?:this.table.firstItemId())
+        def currentItem = currentItemId ? this.table.getItem(currentItemId) : null
+        while (currentItem != null && !itemContains(currentItem, searchText)) {
+            currentItemId = this.table.nextItemId(currentItemId)
+            currentItem = currentItemId ? this.table.getItem(currentItemId) : null
+        }
+
+        if (currentItem != null) {
+            this.table.select currentItemId
+            this.table.setCurrentPageFirstItemId currentItemId
+        } else {
+            application.mainWindow.showNotification "Nothing found" // TODO: i18n
+        }
+    }
+
+    boolean itemContains(Object item, String searchStr) {
+        if (item != null) {
+            def properties = item.getItemPropertyIds()
+            return properties.find {
+                def itemPropertyValue = String.valueOf(item.getItemProperty(it))
+                return itemPropertyValue && itemPropertyValue.contains(searchStr)
+            }
+        } else {
+            return false
+        }
     }
 
     def setContainerDataSource(containerDataSource) {
