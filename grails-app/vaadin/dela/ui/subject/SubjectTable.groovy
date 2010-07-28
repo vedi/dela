@@ -5,6 +5,7 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.CheckBox
 import com.vaadin.ui.Component
+import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TextField
@@ -83,14 +84,14 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
     class SubjectForm extends EntityForm {
 
-        protected void initButtons() {
-            super.initButtons();
+        protected void initButtons(ComponentContainer componentContainer) {
+            super.initButtons(componentContainer);
 
             if (editable) {
                 normalizeButton = new Button()
                 normalizeButton.caption = i18n('button.normalize.label', 'normalize')
                 normalizeButton.addListener(this as Button.ClickListener)
-                getFooter().addComponent(normalizeButton)
+                componentContainer.addComponent(normalizeButton)
             }
         }
 

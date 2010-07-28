@@ -2,7 +2,11 @@ package dela.ui.account
 
 import com.vaadin.data.Item
 import com.vaadin.data.util.BeanItem
+import com.vaadin.ui.Button
+import com.vaadin.ui.Button.ClickEvent
+import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.Component
+import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TextField
@@ -15,7 +19,7 @@ import dela.ui.common.EntityForm
  * date 20.07.2010
  * time 8:34:32
  */
-class LoginWindow extends Window implements FormFieldFactory {
+class LoginWindow extends Window implements FormFieldFactory, ClickListener {
 
     def form
     Account account
@@ -23,17 +27,29 @@ class LoginWindow extends Window implements FormFieldFactory {
     TextField loginField
 
     def loginCallback
+    def forgetPasswordCallback
 
     def login = {item ->
         loginCallback(account.login, account.password)
     }
 
-    def LoginWindow(loginCallback) {
+    def LoginWindow(loginCallback, forgetPasswordCallback) {
 
         this.loginCallback = loginCallback
+        this.forgetPasswordCallback = forgetPasswordCallback
         this.caption = i18n("window.login.caption", "login")
 
-        form = new EntityForm()
+        form = new EntityForm() {
+
+            protected void initButtons(ComponentContainer componentContainer) {
+                super.initButtons(componentContainer)
+
+                Button button = new Button()
+                button.caption = i18n("window.login.forgetPassword", "forgetPassword")
+                button.addListener(this as ClickListener)
+                componentContainer.addComponent button
+            }
+        }
 
         account = new Account()
 
@@ -71,5 +87,9 @@ class LoginWindow extends Window implements FormFieldFactory {
         } else {
             return null
         }
+    }
+
+    void buttonClick(ClickEvent event) {
+        forgetPasswordCallback()
     }
 }

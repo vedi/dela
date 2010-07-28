@@ -184,7 +184,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             def properties = item.getItemPropertyIds()
             return properties.find {
                 def itemPropertyValue = String.valueOf(item.getItemProperty(it))
-                return itemPropertyValue && itemPropertyValue.contains(searchStr)
+                return itemPropertyValue && itemPropertyValue.toUpperCase().contains(searchStr.toUpperCase())
             }
         } else {
             return false

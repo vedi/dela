@@ -5,6 +5,7 @@ import com.vaadin.event.ShortcutAction.ModifierKey
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
+import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.Form
 
 /**
@@ -27,26 +28,26 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     def void attach() {
-
-        initButtons()
+        
+        initButtons(footer)
 
         super.attach();
     }
 
-    protected void initButtons() {
+    protected void initButtons(ComponentContainer componentContainer) {
         if (editable) {
             okButton = new Button()
             okButton.caption = i18n('button.ok.label', 'ok')
             okButton.addListener(this as ClickListener)
             okButton.setClickShortcut(KeyCode.ENTER, ModifierKey.CTRL)
-            footer.addComponent(okButton)
+            componentContainer.addComponent(okButton)
         }
 
         cancelButton = new Button()
         cancelButton.caption = editable ? i18n('button.cancel.label', 'cancel') : i18n('button.close.label', 'close')
         cancelButton.addListener(this as ClickListener)
         cancelButton.setClickShortcut(KeyCode.ESCAPE)
-        footer.addComponent(cancelButton)
+        componentContainer.addComponent(cancelButton)
     }
 
 

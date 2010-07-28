@@ -30,7 +30,9 @@ import dela.Subject
 import dela.Task
 import dela.YesNoDialog
 import dela.meta.MetaProvider
+import dela.ui.SetupWindow
 import dela.ui.common.EntityTable
+import dela.ui.subject.SubjectListWindow
 
 /**
  * @author vedi
@@ -41,8 +43,10 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     StoreService storeService
     DataService dataService
-    Button completeButton
 
+    Button completeButton
+    Button subjectButton
+    Button setupButton
 
     def selector = {startIndex, count, sortProperty, ascendingState ->
         if (sortProperty) {
@@ -59,8 +63,8 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
             Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects) : 0
     }
-
     def gridVisibleColumns = ['subject', 'name']
+
     def editVisibleColumns = ['subject', 'name', 'description', 'state', 'power']
 
     def formFieldFactory = this
@@ -119,8 +123,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     }
 
-
-
     protected void initToolBar(toolBar) {
         super.initToolBar(toolBar)
 
@@ -129,6 +131,16 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
         toolBar.addComponent(completeButton)
+
+        subjectButton = new Button();
+        subjectButton.caption = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
+        subjectButton.addListener(this as ClickListener)
+        toolBar.addComponent(subjectButton)
+
+        setupButton = new Button();
+        setupButton.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
+        setupButton.addListener(this as ClickListener)
+        toolBar.addComponent(setupButton)
     }
 
     def void buttonClick(ClickEvent clickEvent) {
@@ -155,6 +167,10 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
                 }
             }
 
+        } else if (clickEvent.button == subjectButton) {
+            this.window.application.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
+        } else if (clickEvent.button == setupButton) {
+            this.window.application.mainWindow.addWindow(new SetupWindow())
         } else {
             super.buttonClick(clickEvent);
         }

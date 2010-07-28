@@ -5,20 +5,16 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.ComponentContainer
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.DataService
-import dela.Setup
 import dela.StoreService
-import dela.Subject
 import dela.meta.MetaProvider
 import dela.ui.account.ConfirmRegistrationWindow
 import dela.ui.account.LoginWindow
 import dela.ui.account.RegisterWindow
-import dela.ui.subject.SubjectListWindow
 import dela.ui.task.TaskTable
 
 public class DelaApplication extends Application {
@@ -43,6 +39,7 @@ public class DelaApplication extends Application {
 
         VerticalLayout verticalLayout = new VerticalLayout()
         verticalLayout.setSizeFull()
+        verticalLayout.setMargin true
         mainWindow.setContent(verticalLayout)
 
         initTopPanel(verticalLayout)
@@ -51,8 +48,6 @@ public class DelaApplication extends Application {
         horizontalLayout.setSizeFull()
         verticalLayout.addComponent(horizontalLayout)
         verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
-
-        initButtons(horizontalLayout)
 
         storeService = getBean(StoreService.class)
         dataService = getBean(DataService.class)
@@ -75,7 +70,6 @@ public class DelaApplication extends Application {
 
         topLayout = new HorizontalLayout()
         topLayout.setWidth "100%"
-        topLayout.setMargin true
 
         layout.addComponent(topLayout)
 
@@ -90,43 +84,6 @@ public class DelaApplication extends Application {
         }
     }
 
-    void initButtons(ComponentContainer componentContainer) {
-        VerticalLayout verticalLayout = new VerticalLayout()
-        verticalLayout.setMargin true
-        verticalLayout.setWidth "120px"
-
-        Button button
-
-        button = createButton(verticalLayout)
-        button.caption = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
-        button.addListener(
-                new ClickListener() {
-                    void buttonClick(ClickEvent clickEvent) {
-                        DelaApplication.this.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
-                    }
-                })
-
-        button = createButton(verticalLayout)
-        button.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
-        button.addListener(
-                new ClickListener() {
-                    void buttonClick(ClickEvent clickEvent) {
-                        DelaApplication.this.mainWindow.addWindow(new SetupWindow())
-                    }
-                })
-
-        componentContainer.addComponent(verticalLayout)
-    }
-
-    private Button createButton(layout) {
-        def button = new Button()
-        button.setWidth "100%"
-
-        layout.addComponent(button);
-
-        button
-    }
-
     def loginCallback = {login, password ->
         def foundAccount = this.storeService.auth(login, password)
         if (foundAccount) {
@@ -134,6 +91,11 @@ public class DelaApplication extends Application {
         } else {
             this.mainWindow.showNotification i18n('auth.failed.message', "auth failed") //TODO: i18n
         }
+    }
+
+    // Show forgot password window
+    def forgetPasswordCallback = {
+        this.mainWindow.addWindow(new RegisterWindow(registerCallback))
     }
 
     def registerCallback = {account ->
@@ -152,7 +114,7 @@ public class DelaApplication extends Application {
         Button loginButton = new Button(i18n('button.login.label', 'login'))
         loginButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
-                DelaApplication.this.mainWindow.addWindow(new LoginWindow(loginCallback))
+                DelaApplication.this.mainWindow.addWindow(new LoginWindow(loginCallback, forgetPasswordCallback))
             }
         })
         anonymousLayout.addComponent(loginButton)
