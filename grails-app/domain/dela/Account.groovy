@@ -15,8 +15,7 @@ class Account {
 
     String login
     String email
-    String password
-    String uuid
+    String password // Before account confirmation the field used for store uuid
     byte role
     byte state
 

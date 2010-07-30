@@ -13,6 +13,7 @@ import dela.DataService
 import dela.StoreService
 import dela.meta.MetaProvider
 import dela.ui.account.ConfirmRegistrationWindow
+import dela.ui.account.ForgetPasswordWindow
 import dela.ui.account.LoginWindow
 import dela.ui.account.RegisterWindow
 import dela.ui.task.TaskTable
@@ -93,14 +94,23 @@ public class DelaApplication extends Application {
         }
     }
 
-    // Show forgot password window
+    // Show forget password window
     def forgetPasswordCallback = {
-        this.mainWindow.addWindow(new RegisterWindow(registerCallback))
+        this.mainWindow.addWindow(new ForgetPasswordWindow(this.resetPasswordCallback))
+    }
+
+    def resetPasswordCallback = {email ->
+        if (this.storeService.resetPassword(email)) {
+            this.mainWindow.showNotification i18n('forgetPassword.success.message', "forgetPassword completed wait a mail") //TODO: i18n
+        } else {
+            this.mainWindow.showNotification i18n('forgetPassword.failed.message', "forgetPassword failed") //TODO: i18n
+        }
     }
 
     def registerCallback = {account ->
         if (this.storeService.register(account)) {
             this.mainWindow.showNotification i18n('registration.success.message', "registration completed wait a mail") //TODO: i18n
+            println("http://localhost:8080/dela-grails/confirmRegistration?uuid=${account.password}")
         } else {
             this.mainWindow.showNotification i18n('registration.failed.message', "registration failed") //TODO: i18n
         }

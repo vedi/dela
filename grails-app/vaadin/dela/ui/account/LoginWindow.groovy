@@ -46,7 +46,7 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
 
                 Button button = new Button()
                 button.caption = i18n("window.login.forgetPassword", "forgetPassword")
-                button.addListener(this as ClickListener)
+                button.addListener(LoginWindow.this as ClickListener)
                 componentContainer.addComponent button
             }
         }
@@ -90,6 +90,8 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
     }
 
     void buttonClick(ClickEvent event) {
-        forgetPasswordCallback()
+        forgetPasswordCallback()                       
+
+        window.application.mainWindow.removeWindow this
     }
 }

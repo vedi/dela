@@ -69,10 +69,22 @@ class StoreService {
         assert !account.id
         account.state = Account.STATE_CREATING
         account.role = Account.ROLE_USER
-        account.uuid = UUID.randomUUID().toString()
+        account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
         
-        sendRegistrationMail(account.email, account.uuid) //OPT: send in queue
+        sendRegistrationMail(account.email, account.password) //OPT: send in queue
+
+        return true
+    }
+
+    boolean resetPassword(email) {
+        Account account = Account.findByEmail(email)
+        assert account
+        account.state = Account.STATE_CREATING
+        account.password = UUID.randomUUID().toString()
+        assert account.save(), account.errors
+
+//        sendRegistrationMail(account.email, account.password) //OPT: send in queue
 
         return true
     }
@@ -85,12 +97,13 @@ class StoreService {
         }
     }
 
-    boolean confirmRegistration(String uuid) {
+    boolean confirmRegistration(String uuid, String password) {
         assert uuid
-        Account account = Account.findByUuid(uuid)
+        Account account = Account.findByPassword(uuid)
         if (account && account.state == Account.STATE_CREATING) {
             origAccount = account
             account.state = Account.STATE_ACTIVE
+            account.password = password
             assert account.save(), account.errors
 
             return true

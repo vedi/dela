@@ -15,7 +15,7 @@ import dela.ui.common.EntityForm
  * date 20.07.2010
  * time 19:21:06
  */
-class RegisterWindow  extends Window implements FormFieldFactory {
+class RegisterWindow extends Window implements FormFieldFactory {
 
     def form
     Account account
@@ -40,7 +40,7 @@ class RegisterWindow  extends Window implements FormFieldFactory {
         form.editable = true
         form.formFieldFactory = this
         form.itemDataSource = new BeanItem(account)
-        form.visibleItemProperties = ['login', 'email', 'password']
+        form.visibleItemProperties = ['login', 'email']
 
         form.saveHandler = register
 
@@ -65,11 +65,6 @@ class RegisterWindow  extends Window implements FormFieldFactory {
             return loginField
         } else if (propertyId == 'email') {
             TextField textField = new TextField(label)
-            textField.setNullRepresentation('')
-            return textField
-        } else if (propertyId == 'password') {
-            TextField textField = new TextField(label)
-            textField.secret = true
             textField.setNullRepresentation('')
             return textField
         } else {
