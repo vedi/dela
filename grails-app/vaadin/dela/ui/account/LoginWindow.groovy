@@ -45,7 +45,7 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
                 super.initButtons(componentContainer)
 
                 Button button = new Button()
-                button.caption = i18n("window.login.forgetPassword", "forgetPassword")
+                button.caption = i18n("window.login.forgetPassword.label", "forgetPassword")
                 button.addListener(LoginWindow.this as ClickListener)
                 componentContainer.addComponent button
             }
