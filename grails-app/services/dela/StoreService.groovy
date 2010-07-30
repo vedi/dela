@@ -29,7 +29,6 @@ class StoreService {
     }
 
     def setSetup(Setup setup) {
-        //TODO: There is a bug
         if (origAccount) {
             if (!setup.account) {
                 setup.account = origAccount

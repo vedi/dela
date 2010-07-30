@@ -175,7 +175,7 @@ public class EntityTable extends VerticalLayout implements ClickListener {
             this.table.select currentItemId
             this.table.setCurrentPageFirstItemId currentItemId
         } else {
-            application.mainWindow.showNotification "Nothing found" // TODO: i18n
+            application.mainWindow.showNotification i18n('search.nothingFound.message', 'search.nothingFound.message') 
         }
     }
 

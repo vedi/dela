@@ -90,7 +90,7 @@ public class DelaApplication extends Application {
         if (foundAccount) {
             showLoggedInPanel()
         } else {
-            this.mainWindow.showNotification i18n('auth.failed.message', "auth failed") //TODO: i18n
+            this.mainWindow.showNotification i18n('auth.failed.message', "auth failed")
         }
     }
 
@@ -101,18 +101,17 @@ public class DelaApplication extends Application {
 
     def resetPasswordCallback = {email ->
         if (this.storeService.resetPassword(email)) {
-            this.mainWindow.showNotification i18n('forgetPassword.success.message', "forgetPassword completed wait a mail") //TODO: i18n
+            this.mainWindow.showNotification i18n('forgetPassword.success.message', "forgetPassword completed wait a mail")
         } else {
-            this.mainWindow.showNotification i18n('forgetPassword.failed.message', "forgetPassword failed") //TODO: i18n
+            this.mainWindow.showNotification i18n('forgetPassword.failed.message', "forgetPassword failed")
         }
     }
 
     def registerCallback = {account ->
         if (this.storeService.register(account)) {
-            this.mainWindow.showNotification i18n('registration.success.message', "registration completed wait a mail") //TODO: i18n
-            println("http://localhost:8080/dela-grails/confirmRegistration?uuid=${account.password}")
+            this.mainWindow.showNotification i18n('registration.success.message', "registration completed wait a mail")
         } else {
-            this.mainWindow.showNotification i18n('registration.failed.message', "registration failed") //TODO: i18n
+            this.mainWindow.showNotification i18n('registration.failed.message', "registration failed")
         }
     }
 
