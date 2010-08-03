@@ -89,6 +89,7 @@ public class DelaApplication extends Application {
         def foundAccount = this.storeService.auth(login, password)
         if (foundAccount) {
             showLoggedInPanel()
+            this.table.refresh()
         } else {
             this.mainWindow.showNotification i18n('auth.failed.message', "auth failed")
         }
@@ -155,6 +156,7 @@ public class DelaApplication extends Application {
             void buttonClick(ClickEvent clickEvent) {
                 DelaApplication.this.storeService.logout()
                 DelaApplication.this.showAnonymousPanel()
+                DelaApplication.this.table.refresh()
             }
         })
         loggedInLayout.addComponent(logoutButton)

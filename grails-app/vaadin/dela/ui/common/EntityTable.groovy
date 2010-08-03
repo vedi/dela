@@ -13,7 +13,6 @@ import com.vaadin.ui.Form
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Table
-import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.YesNoDialog
@@ -107,30 +106,12 @@ public class EntityTable extends VerticalLayout implements ClickListener {
 
         toolBarLayout = new HorizontalLayout();
         initToolBar(toolBarLayout)
-        initSearchBar(toolBarLayout)
         this.addComponent toolBarLayout
 
         initTable()
 
         super.attach()
 
-    }
-
-    def void initSearchBar(toolBar) {
-
-        def searchText = new TextField()
-
-        def searchButton = new Button('find')
-        searchButton.addListener(
-                new ClickListener() {
-                    void buttonClick(ClickEvent event) {
-                        EntityTable.this.findEntities(searchText.value)
-                    }
-
-                })
-        toolBar.addComponent(searchButton)
-
-        toolBar.addComponent(searchText)
     }
 
     protected void initToolBar(toolBar) {
@@ -161,34 +142,6 @@ public class EntityTable extends VerticalLayout implements ClickListener {
         refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
         toolBar.addComponent refreshButton
-    }
-
-    def void findEntities(String searchText) {
-        def currentItemId = this.table.nextItemId(this.table.value?:this.table.firstItemId())
-        def currentItem = currentItemId ? this.table.getItem(currentItemId) : null
-        while (currentItem != null && !itemContains(currentItem, searchText)) {
-            currentItemId = this.table.nextItemId(currentItemId)
-            currentItem = currentItemId ? this.table.getItem(currentItemId) : null
-        }
-
-        if (currentItem != null) {
-            this.table.select currentItemId
-            this.table.setCurrentPageFirstItemId currentItemId
-        } else {
-            application.mainWindow.showNotification i18n('search.nothingFound.message', 'search.nothingFound.message') 
-        }
-    }
-
-    boolean itemContains(Object item, String searchStr) {
-        if (item != null) {
-            def properties = item.getItemPropertyIds()
-            return properties.find {
-                def itemPropertyValue = String.valueOf(item.getItemProperty(it))
-                return itemPropertyValue && itemPropertyValue.toUpperCase().contains(searchStr.toUpperCase())
-            }
-        } else {
-            return false
-        }
     }
 
     def setContainerDataSource(containerDataSource) {

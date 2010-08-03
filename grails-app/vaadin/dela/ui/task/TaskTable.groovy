@@ -32,6 +32,7 @@ import dela.YesNoDialog
 import dela.meta.MetaProvider
 import dela.ui.SetupWindow
 import dela.ui.common.EntityTable
+import dela.ui.common.Searcher
 import dela.ui.subject.SubjectListWindow
 
 /**
@@ -94,7 +95,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
     }
 
     def initGrid() {
-        this.table.setColumnWidth 'subject', 80
+        this.table.setColumnWidth 'subject', 120
         this.table.setDragMode(TableDragMode.ROW)
     }
 
@@ -141,6 +142,9 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         setupButton.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
         setupButton.addListener(this as ClickListener)
         toolBar.addComponent(setupButton)
+        
+        Searcher searcher = new Searcher(entityTable:this);
+        searcher.addTo(toolBar)
     }
 
     def void buttonClick(ClickEvent clickEvent) {
