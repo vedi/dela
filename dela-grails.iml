@@ -41,7 +41,6 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
           <root url="jar://$MODULE_DIR$/../../../.ivy2/cache/com.vaadin/vaadin/jars/vaadin-6.3.4.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../../.ivy2/cache/org.vaadin.addons/lazyquerycontainer/jars/lazyquerycontainer-1.0.1.jar!/" />
           <root url="jar://$MODULE_DIR$/../../../.ivy2/cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.6.jar!/" />
         </CLASSES>
         <JAVADOC />

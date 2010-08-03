@@ -9,7 +9,8 @@ grails.project.dependency.resolution = {
         // excludes 'ehcache'
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
-    repositories {        
+    repositories {
+
         grailsPlugins()
         grailsHome()
         grailsCentral()
@@ -27,7 +28,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
 //        build 'org.vaadin.addons:hbncontainer:1.0.1'
-        build 'org.vaadin.addons:lazyquerycontainer:1.0.1'
+//        build 'org.vaadin.addons:lazyquerycontainer:1.0.1'
         runtime 'mysql:mysql-connector-java:5.1.6'
     }
 
