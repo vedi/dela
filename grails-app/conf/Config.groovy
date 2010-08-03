@@ -54,11 +54,12 @@ grails {
 //                "mail.smtp.socketFactory.port":"465",
 //                "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
 //                "mail.smtp.socketFactory.fallback":"false"]
-        defaut {
-            from = "dela@smartrus.org"
-        }
     }
 }
+
+grails.mail.default.from="dela@smartrus.org"
+
+
 
 // set per-environment serverURL stem for creating absolute links
 environments {

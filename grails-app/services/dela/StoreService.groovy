@@ -83,7 +83,7 @@ class StoreService {
         account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
 
-//        sendRegistrationMail(account.email, account.password) //OPT: send in queue
+        sendRegistrationMail(account.email, account.password) //OPT: send in queue
 
         return true
     }
@@ -92,7 +92,7 @@ class StoreService {
         mailService.sendMail {
             to email
             subject "Registration on dela-app" //TODO: i18n
-            html "<a href='http://localhost:8080/dela-grails/confirmRegistration?uuid=$uuid'>confirm registration</a>"  //TODO: i18n
+            html "<a href='http://smartrus.org:8080/dela-0.1/confirmRegistration?uuid=$uuid'>confirm registration</a>"  //TODO: i18n, remove hard URL
         }
     }
 
