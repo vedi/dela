@@ -18,14 +18,14 @@ class Searcher implements ClickListener {
 
     def addTo(toolBar) {
 
-         searchText = new TextField()
+        searchText = new TextField()
 
-         def searchButton = new Button('find')
-         searchButton.addListener(this as ClickListener)
-         toolBar.addComponent(searchButton)
+        def searchButton = new Button(entityTable.i18n('button.find.label', 'button.find.label') as String)
+        searchButton.addListener(this as ClickListener)
+        toolBar.addComponent(searchButton)
 
-         toolBar.addComponent(searchText)
-     }
+        toolBar.addComponent(searchText)
+    }
 
     def void findEntities(String searchText) {
         def table = entityTable.table

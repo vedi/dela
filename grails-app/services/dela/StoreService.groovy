@@ -1,17 +1,24 @@
 package dela
 
+import com.vaadin.Application
+
 class StoreService {
 
     static transactional = true
     static scope = "session"
 
+    final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
+
+    def messageSource
     def dataService
     def mailService
 
     private Setup setup
 
     def origAccount
-    
+
+    Application application
+
     def Account getAccount() {
         origAccount ?: dataService.anonymous
     }
@@ -71,7 +78,7 @@ class StoreService {
         account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
         
-        sendRegistrationMail(account.email, account.password) //OPT: send in queue
+        sendRegistrationMail(account.email, account.password)
 
         return true
     }
@@ -83,17 +90,39 @@ class StoreService {
         account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
 
-        sendRegistrationMail(account.email, account.password) //OPT: send in queue
+        sendResetPasswordMail(account.email, account.password)
 
         return true
     }
 
     def sendRegistrationMail(String email, uuid) {
+
+        String subject = application.i18n('mail.confirmRegistration.title', 'Confirm Registration on Dela')
+        String body = application.i18n('mail.confirmRegistration.body',
+                'mail.confirmRegistration.body',
+                [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
+
         mailService.sendMail {
             to email
-            subject "Registration on dela-app" //TODO: i18n
-            html "<a href='http://smartrus.org:8080/dela-0.1/confirmRegistration?uuid=$uuid'>confirm registration</a>"  //TODO: i18n, remove hard URL
+            subject subject
+            html body
         }
+
+    }
+
+    def sendResetPasswordMail(String email, uuid) {
+
+        String subject = application.i18n('mail.resetPassword.title', 'Reset Password on Dela')
+        String body = application.i18n('mail.resetPassword.body',
+                'mail.resetPassword.body',
+                [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
+
+        mailService.sendMail {
+            to email
+            subject subject
+            html body
+        }
+
     }
 
     boolean confirmRegistration(String uuid, String password) {

@@ -51,6 +51,8 @@ public class DelaApplication extends Application {
         verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
 
         storeService = getBean(StoreService.class)
+        storeService.application = this
+
         dataService = getBean(DataService.class)
 
         metaProvider = new MetaProvider(storeService:storeService)
@@ -166,7 +168,7 @@ public class DelaApplication extends Application {
     }
 
     def Window getWindow(String name) {
-        if ('confirmRegistration'.equals(name)) {
+        if (storeService.CONFIRM_REGISTRATION_NAME.equals(name)) {
             if (!confirmRegistrationWindow) {
                 confirmRegistrationWindow = new ConfirmRegistrationWindow()
                 confirmRegistrationWindow.name = name

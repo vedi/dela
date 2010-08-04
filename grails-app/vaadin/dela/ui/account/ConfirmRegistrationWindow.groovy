@@ -61,9 +61,9 @@ class ConfirmRegistrationWindow extends Window implements ClickListener {
         if (storeService.confirmRegistration(uuid, password.value.toString())) {
             application.refreshTopPanelContent()
             open(new ExternalResource(application.mainWindow.URL))
-            application.mainWindow.showNotification(i18n('registration.complete.message'))
+            application.mainWindow.showNotification(i18n('confirmation.complete.message'))
         } else {
-            showNotification(i18n('registration.failed.message'))
+            showNotification(i18n('confirmation.failed.message'))
         }
     }
 }
