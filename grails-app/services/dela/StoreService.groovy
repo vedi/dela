@@ -104,7 +104,7 @@ class StoreService {
 
         mailService.sendMail {
             to email
-            subject subject
+            subject: subject
             html body
         }
 
@@ -119,7 +119,7 @@ class StoreService {
 
         mailService.sendMail {
             to email
-            subject subject
+            subject: subject
             html body
         }
 
