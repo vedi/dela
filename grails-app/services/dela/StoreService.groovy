@@ -97,14 +97,14 @@ class StoreService {
 
     def sendRegistrationMail(String email, uuid) {
 
-        String subject = application.i18n('mail.confirmRegistration.title', 'Confirm Registration on Dela')
+        String title = application.i18n('mail.confirmRegistration.title', 'Confirm Registration on Dela')
         String body = application.i18n('mail.confirmRegistration.body',
                 'mail.confirmRegistration.body',
                 [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
 
         mailService.sendMail {
             to email
-            subject: subject
+            subject title
             html body
         }
 
@@ -112,14 +112,14 @@ class StoreService {
 
     def sendResetPasswordMail(String email, uuid) {
 
-        String subject = application.i18n('mail.resetPassword.title', 'Reset Password on Dela')
+        String title = application.i18n('mail.resetPassword.title', 'Reset Password on Dela')
         String body = application.i18n('mail.resetPassword.body',
                 'mail.resetPassword.body',
                 [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
 
         mailService.sendMail {
             to email
-            subject: subject
+            subject title
             html body
         }
 
