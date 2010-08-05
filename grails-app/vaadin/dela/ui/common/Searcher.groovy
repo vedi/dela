@@ -1,5 +1,7 @@
 package dela.ui.common
 
+import com.vaadin.Application
+import com.vaadin.terminal.FileResource
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
@@ -13,18 +15,20 @@ import com.vaadin.ui.TextField
 class Searcher implements ClickListener {
 
     def EntityTable entityTable 
+    Application application
 
     private TextField searchText
 
     def addTo(toolBar) {
 
         searchText = new TextField()
+        toolBar.addComponent(searchText)
 
-        def searchButton = new Button(entityTable.i18n('button.find.label', 'button.find.label') as String)
+        def searchButton = new Button()
+        searchButton.description = entityTable.i18n('button.find.label', 'button.find.label')
+        searchButton.setIcon(new FileResource(new File('web-app/images/skin/search.png'), application))
         searchButton.addListener(this as ClickListener)
         toolBar.addComponent(searchButton)
-
-        toolBar.addComponent(searchText)
     }
 
     def void findEntities(String searchText) {

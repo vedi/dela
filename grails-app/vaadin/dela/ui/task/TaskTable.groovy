@@ -134,16 +134,18 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         toolBar.addComponent(completeButton)
 
         subjectButton = new Button();
-        subjectButton.caption = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
+        subjectButton.description = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
+        subjectButton.setIcon(new FileResource(new File('web-app/images/skin/category.png'), this.window.application))
         subjectButton.addListener(this as ClickListener)
         toolBar.addComponent(subjectButton)
 
         setupButton = new Button();
-        setupButton.caption = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
+        setupButton.description = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
+        setupButton.setIcon(new FileResource(new File('web-app/images/skin/blue_config.png'), this.window.application))
         setupButton.addListener(this as ClickListener)
         toolBar.addComponent(setupButton)
         
-        Searcher searcher = new Searcher(entityTable:this);
+        Searcher searcher = new Searcher(entityTable:this, application: this.window.application);
         searcher.addTo(toolBar)
     }
 
