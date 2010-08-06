@@ -150,7 +150,7 @@ public class DelaApplication extends Application {
         loggedInLayout.spacing = true
 
         Label label = new Label();
-        label.setValue "You are logged in as ${storeService.account}"
+        label.setValue i18n('loggedUser.info.message', 'loggedUser.info.message', [storeService.account])
         loggedInLayout.addComponent(label)
 
         Button logoutButton = new Button(i18n('button.logout.label', 'logout'))

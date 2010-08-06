@@ -25,14 +25,17 @@ class StoreService {
 
     def Setup getSetup() {
         if (origAccount) {
-            origAccount.setup ?: createSetup()
+            origAccount.setup ?: createSetup(origAccount)
         } else {
-            setup ?: dataService.anonymous.setup ?: createSetup()
+            setup ?: dataService.anonymous.setup ?: createSetup(dataService.anonymous)
         }
     }
 
-    def Setup createSetup() {
-        return new Setup(filterSubjects: [], filterStates: [])
+    def Setup createSetup(account) {
+        def activeStates = [State.get(1), State.get(2)]
+        def ownSubjects = Subject.findAllByOwner(account)
+
+        return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
     }
 
     def setSetup(Setup setup) {
