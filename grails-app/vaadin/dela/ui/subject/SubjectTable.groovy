@@ -10,8 +10,10 @@ import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TextField
 import dela.DataService
+import dela.Setup
 import dela.StoreService
 import dela.Subject
+import dela.YesNoDialog
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 
@@ -29,6 +31,37 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     def formFieldFactory = this
     def normalizeButton
 
+    def oldSaveHandler
+    def newSaveHandler = {item ->
+        def id = item.getItemProperty("id")?.value as Long
+        boolean isNew = id == null
+
+        oldSaveHandler(item)
+
+        if (isNew) {
+            id = item.getItemProperty("id")?.value as Long
+
+            Subject subject = Subject.get(id)
+            Setup setup = storeService.setup
+            setup.addToFilterSubjects(subject)
+
+            this.window.application.mainWindow.addWindow(new YesNoDialog(
+                    i18n('setSubjectActive.confirm.caption', 'setSubjectActive.confirm.caption'),
+                    i18n('setSubjectActive.confirm.message', 'setSubjectActive.confirm.message'),
+                    i18n('button.yes.label', 'yes'),
+                    i18n('button.no.label', 'no'),
+                    new YesNoDialog.Callback() {
+                        public void onDialogResult(boolean yes) {
+                            if (yes) {
+                                setup.setActiveSubject(subject)
+                                SubjectTable.this.storeService.setup = setup
+                            }
+                        }
+
+                    }))
+        }
+    }
+
     def selector = {startIndex, count, sortProperty, ascendingState ->
         Subject.findAllByOwnerOrIsPublic(storeService.account, true, [offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
     }
@@ -38,6 +71,8 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     }
 
     def SubjectTable() {
+        oldSaveHandler = saveHandler
+        saveHandler = newSaveHandler
         this.dataService = getBean(DataService.class)
         this.storeService = getBean(StoreService.class)
     }

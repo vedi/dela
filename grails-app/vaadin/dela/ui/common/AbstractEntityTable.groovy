@@ -17,6 +17,7 @@ import com.vaadin.ui.Table
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.YesNoDialog
+import dela.common.ItemUtils
 import dela.meta.MetaDomain
 
 /**
@@ -57,16 +58,14 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
                 domain = metaDomain.domainClass.get(id)
                 assert domain
             }
-            item.getItemPropertyIds().each {
-                if (!'id'.equals(it)) {
-                    domain[it] = item.getItemProperty(it).value;
-                }
-            }
+
+            ItemUtils.itemToDomain(item, domain)
 
             assert domain.save(), domain.errors
 
             this.refresh()
             if (isNew) {
+                item.getItemProperty("id").value = domain.id
                 this.select(domain.id)
             }
         }
