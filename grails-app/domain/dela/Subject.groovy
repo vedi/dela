@@ -30,12 +30,13 @@ class Subject {
 
     def beforeUpdate() {
         assert storeService.account.isAdmin() ||
-                (storeService.account.isNotAnonymous() && storeService.account.equals(this.owner) &&
+                (storeService.account.isNotAnonymous() && storeService.account.equals(getPersistentValue('owner')) &&
                         getPersistentValue('isPublic') != isPublic)
     }
 
     def beforeDelete() {
-        beforeUpdate()
+        assert storeService.account.isAdmin() ||
+                (storeService.account.isNotAnonymous() && storeService.account.equals(getPersistentValue('owner')))
     }
 
     static mapping = {

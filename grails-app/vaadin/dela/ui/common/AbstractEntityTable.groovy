@@ -219,14 +219,14 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
                         if (yes) {
                             Long id = item.getItemProperty("id")?.value as Long
                             assert id
-                            doRemove(id)
+                            AbstractEntityTable.this.doRemove(id)
                         }
                     }
 
                 }))
     }
 
-    private def doRemove(long id) {
+    protected void doRemove(long id) {
         metaDomain.domainClass.withTransaction {
             def domain = metaDomain.domainClass.get(id)
             assert domain

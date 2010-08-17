@@ -7,7 +7,7 @@ import com.vaadin.ui.Window
  * date 02.07.2010
  * time 23:57:43
  */
-class SubjectListWindow extends Window {
+class SubjectListWindow extends Window implements Serializable {
 
     def metaDomain
 

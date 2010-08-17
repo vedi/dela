@@ -22,7 +22,7 @@ import dela.ui.common.EntityTable
  * date 08.07.2010
  * time 22:33:52
  */
-class SubjectTable extends EntityTable implements FormFieldFactory {
+class SubjectTable extends EntityTable implements FormFieldFactory, Serializable {
 
     DataService dataService
     StoreService storeService
@@ -112,6 +112,23 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     def canDelete(item) {
         return canEdit(item)
     }
+
+    protected void doRemove(long id) {
+        Subject.withTransaction {
+            Subject subject = Subject.get(id)
+            assert subject
+
+            def owner = subject.owner
+
+            subject.delete()
+
+            owner.removeFromSubjects(subject)
+
+            refresh()
+        }
+    }
+
+
 
     protected EntityForm createForm() {
         return new SubjectForm()
