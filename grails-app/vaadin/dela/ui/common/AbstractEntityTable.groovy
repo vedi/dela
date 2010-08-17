@@ -25,11 +25,6 @@ import dela.meta.MetaDomain
  * date 28.06.2010
  * time 18:11:29
  */
-/**
- * @author vedi
- *         date 03.08.2010
- *         time 19:40:16
- */
 public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
 
     def MetaDomain metaDomain

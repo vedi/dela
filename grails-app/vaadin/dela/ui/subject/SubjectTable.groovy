@@ -22,7 +22,7 @@ import dela.ui.common.EntityTable
  * date 08.07.2010
  * time 22:33:52
  */
-class SubjectTable extends EntityTable implements FormFieldFactory, Serializable {
+class SubjectTable extends EntityTable implements FormFieldFactory {
 
     DataService dataService
     StoreService storeService
