@@ -24,7 +24,8 @@ class BootStrap {
     void initAnonymous() {
         Account account = Account.findByRole(Account.ROLE_ANONYMOUS)
         if (!account) {
-            account = new Account(login:'anonymous', email:'none', role:Account.ROLE_ANONYMOUS)
+            account = new Account(login:'anonymous', password: 'dummy', email:'none@mail.ml', role:Account.ROLE_ANONYMOUS)
+            println account
             account.save()
         }
 
