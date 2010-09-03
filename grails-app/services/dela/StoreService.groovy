@@ -137,9 +137,19 @@ class StoreService {
             account.password = password
             assert account.save(), account.errors
 
+            createDefaultSubject(account)
+
             return true
         } else {
             return false
         }
+    }
+    
+    private void createDefaultSubject(account) {
+        def subject = new Subject(owner: account,
+                name: application.i18n('default.subject.name', 'My subject'),
+                description: application.i18n('default.subject.description', 'My subject'),
+                isPublic: false)
+        subject.save()
     }
 }

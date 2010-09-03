@@ -122,13 +122,17 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
             subject.delete()
 
+            //TODO: Удаляется только из настроек сессии!
             owner.removeFromSubjects(subject)
+            storeService.setup.removeFromFilterSubjects(subject)
+            if (subject.equals(storeService.setup.activeSubject)) {
+                storeService.setup.activeSubject = null
+            }
+            storeService.setup.merge()
 
             refresh()
         }
     }
-
-
 
     protected EntityForm createForm() {
         return new SubjectForm()

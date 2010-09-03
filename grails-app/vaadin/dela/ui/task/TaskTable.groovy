@@ -22,7 +22,6 @@ import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
-import dela.Account
 import dela.DataService
 import dela.Setup
 import dela.State
@@ -73,29 +72,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     def MetaProvider metaProvider
 
-    def oldSaveHandler
-    def newSaveHandler = {item ->
-        def id = item.getItemProperty("id")?.value as Long
-        boolean isNew = id == null
-
-        oldSaveHandler(item)
-
-        if (isNew) {
-            id = item.getItemProperty("id")?.value as Long
-
-            Account account = Account.get(id)
-            def subject = new Subject(owner: account,
-                    name: 'My subject',
-                    description: 'Default subject',
-                    isPublic: false)
-            subject.save()
-        }
-    }
-
     def TaskTable() {
-        oldSaveHandler = saveHandler
-        saveHandler = newSaveHandler
-
         this.storeService = getBean(StoreService.class)
         this.dataService = getBean(DataService.class)
         this.dropHandler = this
