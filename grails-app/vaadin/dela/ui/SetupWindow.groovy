@@ -59,9 +59,7 @@ class SetupWindow extends Window implements FormFieldFactory {
     }
 
     def saveSetup = {item ->
-        Setup.withTransaction {
-            storeService.setup = setup
-        }
+        storeService.setup = setup
     }
 
     Field createField(Item item, Object propertyId, Component component) {

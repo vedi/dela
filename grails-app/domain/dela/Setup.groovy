@@ -2,10 +2,9 @@ package dela
 
 class Setup {
 
-    Account account 
-
     Subject activeSubject
 
+    static belongsTo = [account : Account] 
     static hasMany = [filterSubjects: Subject, filterStates: State]
 
     static mapping = {
@@ -18,4 +17,6 @@ class Setup {
     static constraints = {
         activeSubject(nullable:true)
     }
+
+
 }

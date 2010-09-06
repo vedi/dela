@@ -12,6 +12,9 @@ class SetupTests extends GrailsUnitTestCase {
     }
 
     void testSomething() {
-
+        def anotherSetup = new Setup()
+        mockDomain(Setup.class, [anotherSetup])
+        anotherSetup = Setup.get(1)
+        anotherSetup.merge()
     }
 }

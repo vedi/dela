@@ -9,7 +9,6 @@ class StoreService {
 
     final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
 
-    def messageSource
     def dataService
     def mailService
 
@@ -23,6 +22,9 @@ class StoreService {
         origAccount ?: dataService.anonymous
     }
 
+    /**
+     * @return setup from current session
+     */
     def Setup getSetup() {
         if (origAccount) {
             origAccount.setup ?: createSetup(origAccount)
@@ -31,25 +33,30 @@ class StoreService {
         }
     }
 
-    def Setup createSetup(account) {
+    def setSetup(Setup setup) {
+        if (origAccount) {
+            Setup.withTransaction {
+                if (!setup.account) {
+                    setup.account = origAccount
+                }
+                assert (setup = setup.merge()), setup.errors
+
+                origAccount.setup = setup
+                def mergedAccount = origAccount.merge()
+                assert mergedAccount, origAccount.errors
+                
+                origAccount = mergedAccount
+            }
+        } else {
+            this.setup = setup
+        }
+    }
+
+    private Setup createSetup(account) {
         def activeStates = [State.get(1), State.get(2)]
         def ownSubjects = Subject.findAllByOwner(account)
 
         return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
-    }
-
-    def setSetup(Setup setup) {
-        if (origAccount) {
-            if (!setup.account) {
-                setup.account = origAccount
-            }
-            assert (setup = setup.merge()), setup.errors
-            
-            origAccount.setup = setup
-            origAccount.merge()
-        } else {
-            this.setup = setup
-        }
     }
 
     def auth(login, password) {
