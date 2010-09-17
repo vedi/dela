@@ -1,7 +1,6 @@
 package dela.ui.common
 
 import com.vaadin.data.Container
-import com.vaadin.data.Item
 import com.vaadin.data.util.BeanItem
 import com.vaadin.event.ItemClickEvent
 import com.vaadin.event.ShortcutAction
@@ -17,8 +16,10 @@ import com.vaadin.ui.Table
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.YesNoDialog
-import dela.common.ItemUtils
-import dela.meta.MetaDomain
+import dela.VaadinService
+import dela.IDataService
+import dela.CommonDataService
+import dela.context.DataContext
 
 /**
  * @author vedi
@@ -27,7 +28,10 @@ import dela.meta.MetaDomain
  */
 public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
 
-    def MetaDomain metaDomain
+    VaadinService vaadinService
+    IDataService dataService
+
+    def dataContext
 
     Table table
 
@@ -43,31 +47,13 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     def formFieldFactory
 
     def saveHandler = {item ->
-        metaDomain.domainClass.withTransaction {
-            Long id = item.getItemProperty("id")?.value as Long
-            boolean isNew = id == null
-            def domain
-            if (isNew) {
-                domain = metaDomain.domainClass.newInstance()
-            } else {
-                domain = metaDomain.domainClass.get(id)
-                assert domain
-            }
-
-            ItemUtils.itemToDomain(item, domain)
-
-            assert domain.save(), domain.errors
-
-            this.refresh()
-            if (isNew) {
-                item.getItemProperty("id").value = domain.id
-                this.select(domain.id)
-            }
-        }
+        this.saveItem(item)
     }
 
     def AbstractEntityTable() {
-        table = new Table()
+        this.dataService = initDataService()
+        this.vaadinService = getBean(VaadinService.class)
+        this.table = new Table()
     }
 
     def setDropHandler(dropHandler) {
@@ -77,7 +63,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     @Override
     public void attach() {
 
-        assert metaDomain
+        assert dataContext
 
         table.addShortcutListener(new ShortcutListener("down", ShortcutAction.KeyCode.ARROW_DOWN, new int[0]) {
             void handleAction(Object o, Object o1) {
@@ -92,12 +78,17 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         toolBarLayout = new HorizontalLayout();
         initToolBar(toolBarLayout)
+
         this.addComponent toolBarLayout
 
         initTable()
 
         super.attach()
 
+    }
+
+    protected IDataService initDataService() {
+        getBean(CommonDataService.class)
     }
 
     protected void initToolBar(toolBar) {
@@ -130,30 +121,23 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         toolBar.addComponent refreshButton
     }
 
-    // TODO: What's this?
-    def setContainerDataSource(containerDataSource) {
-        table.containerDataSource = containerDataSource
-    }
-
     protected void initTable() {
 
         this.table.immediate = true
         this.table.selectable = true
         this.table.nullSelectionAllowed = false
 
-        String entityName = metaDomain.domainClass.simpleName
-
-        this.caption = i18n("entity.${entityName.toLowerCase()}.many.caption", "${entityName} list")
+        this.caption = vaadinService.getMetaListCaption(dataContext)
 
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
             public void itemClick(ItemClickEvent event) {
                 if (event.doubleClick) {
-                    showForm(event.item, canEdit(event.item))
+                    showForm(event.item, canEdit(getDomain(event.item)))
                 }
             }
         })
 
-        container = createContainer(this.metaDomain)
+        container = createContainer(dataContext)
 
         this.table.setContainerDataSource(this.container)
 
@@ -168,7 +152,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         this.setExpandRatio(this.table, 1.0f)
     }
 
-    abstract protected Container createContainer(metaDomain)
+    abstract protected Container createContainer(DataContext dataContext)
 
     abstract protected void refreshContainer()
 
@@ -188,14 +172,17 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
             if (table.value != null) {
                 def item = container.getItem(table.value)
                 if (item) {
-                    showForm(item, canEdit(item))
+                    showForm(item, canEdit(getDomain(item)))
                 }
             }
         } else if (clickEvent.button == deleteButton) {
             if (table.value != null) {
                 def item = container.getItem(table.value)
-                if (item && canDelete(item)) {
-                    remove(item)
+                if (item) {
+                    def domain = getDomain(item)
+                    if (canDelete(domain)) {
+                        remove(domain)
+                    }
                 }
             }
         } else if (clickEvent.button == refreshButton) {
@@ -203,7 +190,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         }
     }
 
-    void remove(Item item) {
+    void remove(domain) {
         this.window.application.mainWindow.addWindow(new YesNoDialog(
                 i18n('button.delete.confirm.caption', 'confirm delete'),
                 i18n('button.delete.confirm.message', 'are you sure?'),
@@ -212,27 +199,20 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
                 new YesNoDialog.Callback() {
                     public void onDialogResult(boolean yes) {
                         if (yes) {
-                            Long id = item.getItemProperty("id")?.value as Long
-                            assert id
-                            AbstractEntityTable.this.doRemove(id)
+                            AbstractEntityTable.this.doRemove(domain)
                         }
                     }
 
                 }))
     }
 
-    protected void doRemove(long id) {
-        metaDomain.domainClass.withTransaction {
-            def domain = metaDomain.domainClass.get(id)
-            assert domain
-
-            domain.delete()
-            refresh()
-        }
+    protected void doRemove(domain) {
+        dataService.delete(dataContext, domain)
+        refresh()
     }
+
     void showForm(selectedItem, editable = true) {
-        String entityName = metaDomain.domainClass.simpleName
-        Window window = new Window(i18n("entity.${entityName.toLowerCase()}.caption", "${entityName}"))
+        Window window = new Window(vaadinService.getMetaCaption(dataContext))
 
         Form form = createForm()
         form.editable = editable
@@ -241,10 +221,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
             form.formFieldFactory = getFormFieldFactory() as FormFieldFactory
         }
 
-        metaDomain.domainClass.withTransaction {
-            form.itemDataSource =  selectedItem
-        }
-        form.visibleItemProperties = getEditVisibleColumns()
+        form.setItemDataSource(selectedItem, getEditVisibleColumns())
         form.saveHandler = saveHandler
 
         window.addComponent(form)
@@ -256,11 +233,11 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected List<String> getGridVisibleColumns() {
-        return metaDomain.columns.collect {it.field}
+        return vaadinService.getGridVisibleColumns(dataContext)
     }
 
     protected List<String> getEditVisibleColumns() {
-        metaDomain.columns.collect {it.field}
+        return vaadinService.getEditVisibleColumns(dataContext)
     }
 
     protected Form createForm() {
@@ -268,7 +245,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected createDomain() {
-        return metaDomain.domainClass.newInstance()
+        return dataService.create(dataContext)
     }
 
     protected String[] getColumnHeaders() {
@@ -286,20 +263,48 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def getColumnLabel(columnName) {
-        i18n("entity.${metaDomain.domainClass.simpleName.toLowerCase()}.field.${columnName}.label", columnName)
-    }
-
-    def canDelete(item) {
-        return true
+        vaadinService.getColumnCaption(dataContext, columnName)
     }
 
     def canInsert() {
-        return true
+        return dataService.canInsert(dataContext)
     }
 
-    def canEdit(item) {
-        return true
+    def canEdit(domain) {
+        return dataService.canEdit(dataContext, domain)
     }
 
+    def canDelete(domain) {
+        return dataService.canDelete(dataContext, domain)
+    }
 
+    def afterInsert(item) {
+    }
+
+    def afterEdit(item) {
+    }
+
+    /**
+     * Save item to db.
+     * @param item item to save
+     * @return result domain
+     */
+    private def saveItem(item) {
+        def domain = getDomain(item)
+
+        boolean isNew = domain.id == null
+
+        domain = dataService.save(dataContext, domain)
+
+        this.refresh()
+        if (isNew) {
+            this.select(getDomain(item).id)
+        }
+
+        domain
+    }
+
+    final protected def getDomain(item) {
+        (item as BeanItem).bean
+    }
 }

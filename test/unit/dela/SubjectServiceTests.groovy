@@ -1,8 +1,9 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
-class SetupTests extends GrailsUnitTestCase {
+class SubjectServiceTests extends GrailsUnitTestCase {
+
     protected void setUp() {
         super.setUp()
     }
@@ -12,6 +13,6 @@ class SetupTests extends GrailsUnitTestCase {
     }
 
     void testSomething() {
-        //TODO: Something
+
     }
 }

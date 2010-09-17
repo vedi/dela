@@ -11,7 +11,7 @@ import com.vaadin.ui.OptionGroup
 import com.vaadin.ui.Window
 import dela.Setup
 import dela.State
-import dela.StoreService
+
 import dela.Subject
 import dela.ui.common.EntityForm
 
@@ -22,20 +22,20 @@ import dela.ui.common.EntityForm
  */
 class SetupWindow extends Window implements FormFieldFactory {
 
-    StoreService storeService
     Setup setup
+    def sessionContext
 
     private Form form
 
-    def SetupWindow() {
+    def void attach() {
 
-        storeService = getBean(StoreService.class)
-
+        super.attach();
+        
         this.caption = i18n("entity.setup.caption", "setup")
 
         form = new EntityForm(editable:true)
 
-        setup = storeService.setup
+        setup = sessionContext.setup
 
         Setup.withTransaction {
             def setupItem = new BeanItem(setup)
@@ -50,16 +50,12 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         this.layout.setSizeUndefined()
         this.center()
-    }
 
-    def void attach() {
-        super.attach();
-        
         form.layout.components[0].focus()
     }
 
     def saveSetup = {item ->
-        storeService.setup = setup
+        sessionContext.setup = setup
     }
 
     Field createField(Item item, Object propertyId, Component component) {
@@ -68,7 +64,7 @@ class SetupWindow extends Window implements FormFieldFactory {
         if ('activeSubject'.equals(propertyId)) {
             def comboBox = new ComboBox(caption: caption, immediate: true)
             Subject.withTransaction {
-                Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
+                Subject.findAllByOwnerOrIsPublic(sessionContext.account, true).each {
                     comboBox.addItem it
                 }
             }
@@ -77,7 +73,7 @@ class SetupWindow extends Window implements FormFieldFactory {
         } else if ('filterSubjects'.equals(propertyId)) {
             def select = new OptionGroup(caption: caption, immediate: true, multiSelect:true)
             Subject.withTransaction {
-                Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
+                Subject.findAllByOwnerOrIsPublic(sessionContext.account, true).each {
                     select.addItem it
                 }
             }

@@ -2,8 +2,6 @@ package dela
 
 class Subject {
 
-    def storeService
-
     static belongsTo = [owner : Account]
     static hasMany = [versions : Version]
 
@@ -14,29 +12,7 @@ class Subject {
     boolean isPublic
 
     static constraints = {
-        owner(validator: {val, obj ->
-            obj.validateOwner(val)
-        })
         description(nullable:true)
-    }
-
-    def validateOwner(owner) {
-        return storeService.account.isAdmin() || owner.equals(storeService.account)
-    }
-
-    def beforeInsert() {
-        assert storeService.account.isNotAnonymous() && (storeService.account.isAdmin() || !isPublic)
-    }
-
-    def beforeUpdate() {
-        assert storeService.account.isAdmin() ||
-                (storeService.account.isNotAnonymous() && storeService.account.equals(getPersistentValue('owner')) &&
-                        getPersistentValue('isPublic') != isPublic)
-    }
-
-    def beforeDelete() {
-        assert storeService.account.isAdmin() ||
-                (storeService.account.isNotAnonymous() && storeService.account.equals(getPersistentValue('owner')))
     }
 
     static mapping = {
@@ -45,7 +21,7 @@ class Subject {
     }
 
     def String toString() {
-        return "$name($id)"
+        return name
     }
 
     boolean equals(o) {

@@ -43,18 +43,11 @@ class TaskForm extends EntityForm {
 
 
     protected void attachField(Object propertyId, Field field) {
-        if (propertyId == null || field == null) {
-            return;
+        if (propertyId.equals("power")) {
+            rightLayout.addComponent(field)
+        } else {
+            leftLayout.addComponent(field)
         }
-
-        if (visibleItemProperties) { // TODO: It's a wrong thing
-            if (propertyId.equals("power")) {
-                rightLayout.addComponent(field)
-            } else {
-                leftLayout.addComponent(field)
-            }
-        }
-
     }
 
 

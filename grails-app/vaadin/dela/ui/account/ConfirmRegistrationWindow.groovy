@@ -56,7 +56,7 @@ class ConfirmRegistrationWindow extends Window implements ClickListener {
     void buttonClick(ClickEvent event) {
         assert confirmPassword.value.equals(password.value)
 
-        StoreService storeService = getBean(StoreService.class)
+        StoreService storeService = getDomain(StoreService.class)
 
         if (storeService.confirmRegistration(uuid, password.value.toString())) {
             application.refreshTopPanelContent()

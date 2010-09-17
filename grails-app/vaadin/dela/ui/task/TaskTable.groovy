@@ -22,18 +22,20 @@ import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
-import dela.DataService
 import dela.Setup
 import dela.State
 import dela.StoreService
 import dela.Subject
 import dela.Task
+import dela.VaadinService
 import dela.YesNoDialog
-import dela.meta.MetaProvider
 import dela.ui.SetupWindow
 import dela.ui.common.EntityTable
 import dela.ui.common.Searcher
 import dela.ui.subject.SubjectListWindow
+import dela.IDataService
+import dela.TaskService
+import dela.context.DataContext
 
 /**
  * @author vedi
@@ -42,39 +44,20 @@ import dela.ui.subject.SubjectListWindow
  */
 public class TaskTable extends EntityTable implements FormFieldFactory, DropHandler  {
 
-    StoreService storeService
-    DataService dataService
+    VaadinService vaadinService
 
     Button completeButton
     Button subjectButton
     Button setupButton
 
-    def selector = {startIndex, count, sortProperty, ascendingState ->
-        if (sortProperty) {
-            throw new UnsupportedOperationException()
-        }
-
-        Setup setup = storeService.setup
-        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
-            Task.findAllByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects, [offset:startIndex,  max:count, sort:'power', order:'desc']) : []
-    }
-
-    def counter = {
-        Setup setup = storeService.setup
-        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
-            Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects) : 0
-    }
     def gridVisibleColumns = ['subject', 'name']
 
     def editVisibleColumns = ['subject', 'name', 'description', 'state', 'power']
 
     def formFieldFactory = this
 
-    def MetaProvider metaProvider
-
     def TaskTable() {
-        this.storeService = getBean(StoreService.class)
-        this.dataService = getBean(DataService.class)
+        this.vaadinService = getBean(VaadinService.class)
         this.dropHandler = this
     }
 
@@ -82,15 +65,23 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         return new TaskForm()
     }
 
-    def Object createDomain() {
-        Task task = new Task()
-        task.author = storeService.account
-        task.subject = storeService.setup.activeSubject
-        task.state = State.findAll()[0]  // FIXME: Жёсткая привязка к id состояния
+    protected Container createContainer(DataContext dataContext) {
+        return vaadinService.createTaskDefaultContainer(dataContext)
+    }
 
-        def firstItemId = container.firstItemId();
-        double firstPower = firstItemId != null ? container.getItem(firstItemId)?.getItemProperty('power')?.value?:0.0 as double : 0.0;
-        task.power = (1.0 + firstPower) / 2;
+    protected IDataService initDataService() {
+        return getBean(TaskService.class)
+    }
+
+    protected createDomain() {
+
+        Task task = super.createDomain() as Task
+
+        // Помещаем вверх текущей выборки
+        def firstItemId = container.firstItemId()
+        double firstPower = firstItemId != null ? container.getItem(firstItemId)?.getItemProperty('power')?.value?:0.0 as double : 0.0
+        task.power = (1.0 + firstPower) / 2
+
         return task
     }
 
@@ -162,8 +153,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
                             new YesNoDialog.Callback() {
                                 public void onDialogResult(boolean yes) {
                                     if (yes) {
-                                        Long id = item.getItemProperty('id').value as Long
-                                        if (dataService.tryCompleteTask(id)) {
+                                        if (dataService.tryCompleteTask(getDomain(item))) {
                                             this.refresh()
                                         }
                                     }
@@ -174,9 +164,10 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             }
 
         } else if (clickEvent.button == subjectButton) {
-            this.window.application.mainWindow.addWindow(new SubjectListWindow(metaDomain: metaProvider.subjectMeta))
+            this.window.application.mainWindow.addWindow(
+                    new SubjectListWindow(sessionContext: dataContext.sessionContext))
         } else if (clickEvent.button == setupButton) {
-            this.window.application.mainWindow.addWindow(new SetupWindow())
+            this.window.application.mainWindow.addWindow(new SetupWindow(sessionContext: dataContext.sessionContext))
         } else {
             super.buttonClick(clickEvent);
         }
@@ -186,7 +177,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         String caption = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
             def comboBox = new ComboBox(caption:caption, immediate: true)
-            Subject.findAllByOwnerOrIsPublic(storeService.account, true).each {
+            Subject.findAllByOwnerOrIsPublic(dataContext.account, true).each {
                 comboBox.addItem it
             }
 
@@ -221,21 +212,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         }
     }
 
-    def Boolean canDelete(item) {
-        return canEdit(item)
-    }
-
-    def Boolean canEdit(item) {
-        def author = item.getItemProperty('author').value
-        def subject = item.getItemProperty('subject').value
-        return storeService.account.isAdmin() || (author.equals(storeService.account) &&
-                (subject.isPublic || subject.owner.equals(author)))
-    }
-
-    def Boolean canInsert() {
-        return storeService.account.isNotAnonymous()
-    }
-
     void drop(DragAndDropEvent dragAndDropEvent) {
         def transferable = dragAndDropEvent.transferable
         Container.Ordered container = transferable.sourceContainer
@@ -268,9 +244,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         double anotherPower = anotherItemId ? (container.getItem(anotherItemId)?.getItemProperty('power')?.value ?: defaultPowerValue) : defaultPowerValue as double
         double newPower = Math.abs(targetPower + anotherPower) / 2.0
 
-        def id = container.getItem(sourceItemId).getItemProperty('id').value as Long
-
-        dataService.changeTaskPower(id, newPower)
+        dataService.changeTaskPower(getDomain(item), newPower)
 
         this.refresh()
     }

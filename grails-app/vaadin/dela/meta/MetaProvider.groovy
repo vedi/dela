@@ -12,8 +12,6 @@ import dela.Version
  */
 class MetaProvider {
 
-    def storeService
-
     public final MetaDomain taskMeta = new MetaDomain(
             domainClass: Task.class,
             columns: [

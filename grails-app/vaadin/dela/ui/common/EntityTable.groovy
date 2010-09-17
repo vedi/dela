@@ -1,6 +1,7 @@
 package dela.ui.common
 
-import dela.container.DomainLazyContainer
+import com.vaadin.data.Container
+import dela.context.DataContext
 
 /**
  * @author vedi
@@ -9,23 +10,12 @@ import dela.container.DomainLazyContainer
  */
 public class EntityTable extends AbstractEntityTable {
 
-    def counter = {
-        metaDomain.domainClass.count()
-    }
-
-    def selector = {startIndex, count, sortProperty, ascendingState ->
-        if (sortProperty) {
-            metaDomain.domainClass.list(offset:startIndex,  max:count, sort:sortProperty, order:ascendingState)
-        } else {
-            metaDomain.domainClass.list(offset:startIndex,  max:count)
-        }
-    }
-
-    protected DomainLazyContainer createContainer(metaDomain) {
-        return new DomainLazyContainer(metaDomain.domainClass, getSelector(), getCounter(), metaDomain.columns)
+    protected Container createContainer(DataContext dataContext) {
+        return vaadinService.createDefaultLazyContainer(dataContext)
     }
 
     protected void refreshContainer() {
-        ((DomainLazyContainer)container).refresh()
+        // TODO: Supports DomainLazyContainer only
+        container.refresh()
     }
 }

@@ -1,69 +1,64 @@
 package dela
 
 import com.vaadin.Application
+import dela.context.SessionContext
+import dela.meta.MetaProvider
+import org.springframework.beans.factory.InitializingBean
 
-class StoreService {
+class StoreService implements InitializingBean {
 
     static transactional = true
-    static scope = "session"
+    static scope = "prototype"
 
-    final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
+    static final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
 
-    def dataService
+    def sessionContext
+
+    def commonDataService
     def mailService
-
-    private Setup setup
-
-    def origAccount
 
     Application application
 
+    void afterPropertiesSet() {
+        initSessionContext()
+    }
+
     def Account getAccount() {
-        origAccount ?: dataService.anonymous
+        sessionContext.account // TODO: Remove
     }
 
     /**
      * @return setup from current session
      */
     def Setup getSetup() {
-        if (origAccount) {
-            origAccount.setup ?: createSetup(origAccount)
-        } else {
-            setup ?: dataService.anonymous.setup ?: createSetup(dataService.anonymous)
-        }
+        sessionContext.setup //TODO: Remove
     }
 
     def setSetup(Setup setup) {
-        if (origAccount) {
+        if (isLoggedIn()) {
             Setup.withTransaction {
                 if (!setup.account) {
-                    setup.account = origAccount
+                    setup.account = sessionContext.account
                 }
                 assert (setup = setup.merge()), setup.errors
 
-                origAccount.setup = setup
-                def mergedAccount = origAccount.merge()
-                assert mergedAccount, origAccount.errors
+                sessionContext.account.setup = setup
+                def mergedAccount = sessionContext.account.merge()
+                assert mergedAccount, sessionContext.account.errors
                 
-                origAccount = mergedAccount
+                sessionContext.account = mergedAccount
             }
         } else {
-            this.setup = setup
+            this.sessionContext.setup = setup
         }
     }
 
-    private Setup createSetup(account) {
-        def activeStates = [State.get(1), State.get(2)]
-        def ownSubjects = Subject.findAllByOwner(account)
-
-        return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
-    }
-
     def auth(login, password) {
-        assert !origAccount
+        assert !isLoggedIn()
         def foundAccount = Account.findByLoginAndPassword(login, password)
         if (foundAccount && foundAccount.state == Account.STATE_ACTIVE) {
-            origAccount = foundAccount
+            sessionContext.account = foundAccount
+            sessionContext.setup = fillSetup()
             return foundAccount
         } else {
             return null
@@ -72,15 +67,16 @@ class StoreService {
     }
     
     def logout() {
-        assert origAccount
-        origAccount = null
+        assert isLoggedIn()
+        sessionContext.account = commonDataService.anonymous
+        sessionContext.setup = fillSetup()
     }
     
     def isLoggedIn() {
-        origAccount != null
+        sessionContext.account != commonDataService.anonymous
     }
 
-    boolean register(Account account) {
+    boolean register(Account account, urlStr) {
         assert account
         assert !account.id
         account.state = Account.STATE_CREATING
@@ -88,29 +84,28 @@ class StoreService {
         account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
         
-        sendRegistrationMail(account.email, account.password)
+        sendRegistrationMail(account.email, account.password, urlStr)
 
         return true
     }
 
-    boolean resetPassword(email) {
+    boolean resetPassword(email, urlStr) {
         Account account = Account.findByEmail(email)
         assert account
         account.state = Account.STATE_CREATING
         account.password = UUID.randomUUID().toString()
         assert account.save(), account.errors
 
-        sendResetPasswordMail(account.email, account.password)
+        sendResetPasswordMail(account.email, account.password, urlStr)
 
         return true
     }
 
-    def sendRegistrationMail(String email, uuid) {
+    def sendRegistrationMail(String email, uuid, urlStr) {
 
         String title = application.i18n('mail.confirmRegistration.title', 'Confirm Registration on Dela')
-        String body = application.i18n('mail.confirmRegistration.body',
-                'mail.confirmRegistration.body',
-                [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
+        String body = application.i18n('mail.confirmRegistration.body', 'mail.confirmRegistration.body',
+                [urlStr, uuid.toString()])
 
         mailService.sendMail {
             to email
@@ -120,12 +115,10 @@ class StoreService {
 
     }
 
-    def sendResetPasswordMail(String email, uuid) {
+    def sendResetPasswordMail(String email, uuid, urlStr) {
 
         String title = application.i18n('mail.resetPassword.title', 'Reset Password on Dela')
-        String body = application.i18n('mail.resetPassword.body',
-                'mail.resetPassword.body',
-                [application.getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString(), uuid.toString()])
+        String body = application.i18n('mail.resetPassword.body', 'mail.resetPassword.body', [urlStr, uuid.toString()])
 
         mailService.sendMail {
             to email
@@ -136,10 +129,14 @@ class StoreService {
     }
 
     boolean confirmRegistration(String uuid, String password) {
+
         assert uuid
+        assert password
+
         Account account = Account.findByPassword(uuid)
         if (account && account.state == Account.STATE_CREATING) {
-            origAccount = account
+            sessionContext.account = account
+            sessionContext.setup = fillSetup()
             account.state = Account.STATE_ACTIVE
             account.password = password
             assert account.save(), account.errors
@@ -152,11 +149,30 @@ class StoreService {
         }
     }
     
+    private def initSessionContext() {
+        sessionContext = new SessionContext(metaProvider: new MetaProvider())
+        sessionContext.account = commonDataService.anonymous
+        sessionContext.setup = fillSetup()
+    }
+
+    private Setup fillSetup() {
+        if (!sessionContext.account.setup) {
+
+            def activeStates = [State.get(1), State.get(2)]
+            def ownSubjects = Subject.findAllByOwner(sessionContext.account)
+
+            return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
+        } else {
+            return sessionContext.account.setup
+        }
+    }
+
     private void createDefaultSubject(account) {
         def subject = new Subject(owner: account,
                 name: application.i18n('default.subject.name', 'My subject'),
                 description: application.i18n('default.subject.description', 'My subject'),
                 isPublic: false)
+        account.addToSubjects(subject)
         subject.save()
     }
 }

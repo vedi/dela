@@ -47,7 +47,9 @@
           <root url="jar://$MODULE_DIR$/../../../.ivy2/cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.6.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../soft/vaadin/WebContent/vaadin-6.3.0.jar!/" />
+        </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>

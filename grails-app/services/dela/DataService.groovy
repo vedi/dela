@@ -1,59 +1,73 @@
 package dela
 
-class DataService {
+import dela.context.DataContext
 
-    static transactional = true
+/**
+ * canInsert, canEdit - is action available in current context, runs twice or more times in UI and in logic
+ * canSave - can the domain be persisted, for edit action ititial state gives
+ * domain's validate - last validation 
+ */
+class DataService<T> implements IDataService<T> {
 
     def anonymous
-
-    def public changeTaskPower(id, double newPower) {
-        Task.withTransaction {
-            Task task = Task.get(id)
-            task.power = newPower;
-            def result = task.save()
-            assert result, task.errors
-        }
+    
+    def create(DataContext dataContext) {
+        return dataContext.metaDomain.domainClass.newInstance()
     }
 
-    boolean tryCompleteTask(long id) {
-        Task.withTransaction {
-            State state = State.get(2) // FIXME: Hardcoded state id
-            assert state
+    def save(DataContext dataContext, T domain) {
 
-            Task task = Task.get(id)
-            assert task
-            if (!state.equals(task.state)) {
-                task.state = state
-                def result = task.merge()
-                assert result, task.errors
-                return true
-            } else {
-                return false
-            }
+        boolean isNew = domain.id == null
+
+        def gainedDomain = isNew?null:gainDomain(dataContext, domain)
+
+        if (isNew) {
+            assert canInsert(dataContext)
+        } else {
+            assert canEdit(dataContext, gainedDomain)
         }
+
+        assert canSave(dataContext, gainedDomain, domain)
+
+        domain = domain.merge()
+
+        if (isNew) {
+            afterInsert(domain)
+        } else {
+            afterEdit(domain)
+        }
+
+        return domain
     }
 
-    def normalizeSubject(long id) {
-        Task.withTransaction {
+    def delete(DataContext dataContext, T domain) {
+        assert canDelete(dataContext, gainDomain(dataContext, domain))
+        domain.delete()
+    }
 
-            Subject subject = Subject.get(id)
-            assert subject
+    def afterInsert(T domain) {
+    }
 
-            State state = State.get(1) // TODO: Отвязать от id состояния
-            assert state
+    def afterEdit(T domain) {
+    }
 
-            def count = Task.countBySubjectAndState(subject, state)
-            if (count) {
-                double step = 1.0 / (count + 1)
-                double currentPower = step
-                def tasks = Task.findAllBySubjectAndState(subject, state, [sort:'power', order:'asc'])
-                tasks.each {task ->
-                    task.power = currentPower
-                    currentPower += step
-                    def result = task.merge()
-                    assert result, task.errors
-                }
-            }
-        }
+    def Boolean canInsert(DataContext dataContext) {
+        return true
+    }
+
+    def Boolean canEdit(DataContext dataContext, T domain) {
+        return true
+    }
+
+    def Boolean canDelete(DataContext dataContext, T domain) {
+        return canEdit(dataContext, domain)
+    }
+
+    def Boolean canSave(DataContext dataContext, T oldDomain, T newDomain) {
+        return true
+    }
+
+    protected T gainDomain(DataContext dataContext, T domain) {
+        dataContext.metaDomain.domainClass.get(domain.id) //TODO: Test the same
     }
 }

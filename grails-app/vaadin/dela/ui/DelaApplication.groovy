@@ -9,9 +9,9 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
-import dela.DataService
+import dela.MessageService
 import dela.StoreService
-import dela.meta.MetaProvider
+import dela.context.DataContext
 import dela.ui.account.ConfirmRegistrationWindow
 import dela.ui.account.ForgetPasswordWindow
 import dela.ui.account.LoginWindow
@@ -20,14 +20,14 @@ import dela.ui.task.TaskTable
 
 public class DelaApplication extends Application {
 
-    private Window mainWindow
-    private MetaProvider metaProvider
+    final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
 
-    def metaDomain
+    def sessionContext
+
     def table
 
     StoreService storeService
-    DataService dataService
+    MessageService messageService
 
     HorizontalLayout topLayout
 
@@ -36,6 +36,11 @@ public class DelaApplication extends Application {
     @Override
 	public void init() {
 
+        messageService = getBean(MessageService.class)
+        storeService = getBean(StoreService.class)
+        sessionContext = storeService.sessionContext
+    
+        Window mainWindow
 		mainWindow = new Window("Dela");
 
         VerticalLayout verticalLayout = new VerticalLayout()
@@ -44,22 +49,16 @@ public class DelaApplication extends Application {
         mainWindow.setContent(verticalLayout)
 
         initTopPanel(verticalLayout)
-            
+
         HorizontalLayout horizontalLayout = new HorizontalLayout()
         horizontalLayout.setSizeFull()
         verticalLayout.addComponent(horizontalLayout)
         verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
 
-        storeService = getBean(StoreService.class)
-        storeService.application = this
+        storeService.application = this // TODO: Remove
 
-        dataService = getBean(DataService.class)
-
-        metaProvider = new MetaProvider(storeService:storeService)
-
-        metaDomain = metaProvider.taskMeta
-
-        table = new TaskTable(metaDomain: metaDomain, metaProvider: metaProvider)
+        def taskDataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.taskMeta)
+        table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
 
 		horizontalLayout.addComponent(table)
@@ -93,28 +92,27 @@ public class DelaApplication extends Application {
             showLoggedInPanel()
             this.table.refresh()
         } else {
-            this.mainWindow.showNotification i18n('auth.failed.message', "auth failed")
+            this.mainWindow.showNotification(this.messageService.getAuthFailedMsg())
         }
     }
 
-    // Show forget password window
     def forgetPasswordCallback = {
         this.mainWindow.addWindow(new ForgetPasswordWindow(this.resetPasswordCallback))
     }
 
     def resetPasswordCallback = {email ->
-        if (this.storeService.resetPassword(email)) {
-            this.mainWindow.showNotification i18n('forgetPassword.success.message', "forgetPassword completed wait a mail")
+        if (this.storeService.resetPassword(email, getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString())) {
+            this.mainWindow.showNotification(this.messageService.getForgetPasswordSuccessMsg())
         } else {
-            this.mainWindow.showNotification i18n('forgetPassword.failed.message', "forgetPassword failed")
+            this.mainWindow.showNotification(this.messageService.getForgetPasswordFailedMsg())
         }
     }
 
     def registerCallback = {account ->
-        if (this.storeService.register(account)) {
-            this.mainWindow.showNotification i18n('registration.success.message', "registration completed wait a mail")
+        if (this.storeService.register(account, getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString())) {
+            this.mainWindow.showNotification(this.messageService.getRegistrationSuccessMsg())
         } else {
-            this.mainWindow.showNotification i18n('registration.failed.message', "registration failed")
+            this.mainWindow.showNotification(this.messageService.getRegistrationFailedMsg())
         }
     }
 
@@ -123,7 +121,7 @@ public class DelaApplication extends Application {
 
         HorizontalLayout anonymousLayout = new HorizontalLayout()
 
-        Button loginButton = new Button(i18n('button.login.label', 'login'))
+        Button loginButton = new Button(this.messageService.getLoginButtonLabel())
         loginButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
                 DelaApplication.this.mainWindow.addWindow(new LoginWindow(loginCallback, forgetPasswordCallback))
@@ -131,7 +129,7 @@ public class DelaApplication extends Application {
         })
         anonymousLayout.addComponent(loginButton)
 
-        Button registerButton = new Button(i18n('button.register.label', 'register'))
+        Button registerButton = new Button(this.messageService.getRegisterButtonLabel())
         registerButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
                 DelaApplication.this.mainWindow.addWindow(new RegisterWindow(registerCallback))
@@ -150,10 +148,10 @@ public class DelaApplication extends Application {
         loggedInLayout.spacing = true
 
         Label label = new Label();
-        label.setValue i18n('loggedUser.info.message', 'loggedUser.info.message', [storeService.account])
+        label.setValue(messageService.getLoggedInfoMsg(sessionContext.account))
         loggedInLayout.addComponent(label)
 
-        Button logoutButton = new Button(i18n('button.logout.label', 'logout'))
+        Button logoutButton = new Button(messageService.getLogoutButtonLabel())
         logoutButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
                 DelaApplication.this.storeService.logout()
@@ -168,7 +166,7 @@ public class DelaApplication extends Application {
     }
 
     def Window getWindow(String name) {
-        if (storeService.CONFIRM_REGISTRATION_NAME.equals(name)) {
+        if (CONFIRM_REGISTRATION_NAME.equals(name)) {
             if (!confirmRegistrationWindow) {
                 confirmRegistrationWindow = new ConfirmRegistrationWindow()
                 confirmRegistrationWindow.name = name

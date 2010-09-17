@@ -13,6 +13,10 @@ public class MetaDomain {
 
     private Map<String, MetaColumn> innerColumns = [:]
 
+    def save = {domain ->
+        assert domain.save(), domain.errors
+    } 
+
     def getColumns() {
         innerColumns.collect {it.value}
     }
