@@ -29,12 +29,12 @@ class DataService<T> implements IDataService<T> {
 
         assert canSave(dataContext, gainedDomain, domain)
 
-        domain = domain.merge()
-
         if (isNew) {
-            afterInsert(domain)
+            domain.save()
+            afterInsert(dataContext, domain)
         } else {
-            afterEdit(domain)
+            domain = domain.merge()
+            afterEdit(dataContext, domain)
         }
 
         return domain
@@ -42,13 +42,17 @@ class DataService<T> implements IDataService<T> {
 
     def delete(DataContext dataContext, T domain) {
         assert canDelete(dataContext, gainDomain(dataContext, domain))
-        domain.delete()
+        domain.merge().delete()
+        afterDelete(dataContext, domain)
     }
 
-    def afterInsert(T domain) {
+    def afterInsert(DataContext dataContext, T domain) {
     }
 
-    def afterEdit(T domain) {
+    def afterEdit(DataContext dataContext, T domain) {
+    }
+
+    def afterDelete(DataContext dataContext, T domain) {
     }
 
     def Boolean canInsert(DataContext dataContext) {

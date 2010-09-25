@@ -153,8 +153,8 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
                             new YesNoDialog.Callback() {
                                 public void onDialogResult(boolean yes) {
                                     if (yes) {
-                                        if (dataService.tryCompleteTask(getDomain(item))) {
-                                            this.refresh()
+                                        if (TaskTable.this.dataService.tryCompleteTask(getDomain(item))) {
+                                            TaskTable.this.refresh()
                                         }
                                     }
                                 }
@@ -173,6 +173,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         }
     }
 
+    // TODO: Move to form
     Field createField(Item item, Object propertyId, Component component) {
         String caption = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
@@ -244,7 +245,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         double anotherPower = anotherItemId ? (container.getItem(anotherItemId)?.getItemProperty('power')?.value ?: defaultPowerValue) : defaultPowerValue as double
         double newPower = Math.abs(targetPower + anotherPower) / 2.0
 
-        dataService.changeTaskPower(getDomain(item), newPower)
+        dataService.changeTaskPower(getDomain(container.getItem(sourceItemId)), newPower)
 
         this.refresh()
     }

@@ -27,11 +27,10 @@ class TaskService extends DataService<Task> {
                 (subject.isPublic || subject.owner.equals(domain.author)))
     }
 
-    def public changeTaskPower(id, double newPower) {
+    def public changeTaskPower(Task task, double newPower) {
         Task.withTransaction {
-            Task task = Task.get(id)
             task.power = newPower;
-            def result = task.save()
+            def result = task.merge()
             assert result, task.errors
         }
     }

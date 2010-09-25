@@ -15,9 +15,11 @@ public interface IDataService<T> {
 
     def delete(DataContext dataContext, T domain)
 
-    def afterInsert(T domain)
+    def afterInsert(DataContext dataContext, T domain)
 
-    def afterEdit(T domain)
+    def afterEdit(DataContext dataContext, T domain)
+
+    def afterDelete(DataContext dataContext, T domain)
 
     def Boolean canInsert(DataContext dataContext)
 
