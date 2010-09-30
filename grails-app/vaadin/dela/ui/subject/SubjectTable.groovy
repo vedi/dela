@@ -33,6 +33,7 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     VaadinService vaadinService
     StoreService storeService
     TaskService taskService
+    def accountService
 
     def gridVisibleColumns = ['name']
     def formFieldFactory = this
@@ -85,9 +86,9 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
                     public void onDialogResult(boolean yes) {
                         if (yes) {
                             def subject = Subject.get(item.getItemPorperty('id').value)
-                            def setup = SubjectTable.this.storeService.setup
+                            def setup = SubjectTable.this.dataContext.setup
                             setup.setActiveSubject(subject)
-                            SubjectTable.this.storeService.setup = setup
+                            SubjectTable.this.accountService.saveSetup(dataContext, setup)
                         }
                     }
 

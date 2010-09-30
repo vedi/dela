@@ -1,7 +1,6 @@
 package dela
 
 import grails.test.GrailsUnitTestCase
-import com.vaadin.Application
 
 class StoreServiceTests extends GrailsUnitTestCase {
 
@@ -24,7 +23,7 @@ class StoreServiceTests extends GrailsUnitTestCase {
     }
 
     void testGetSessionContext() {
-        def storeService = new StoreService(commonDataService: commonDataService)
+        def storeService = new StoreService(accountService: commonDataService)
         storeService.afterPropertiesSet()
 
         def sessionContext = storeService.getSessionContext()
@@ -51,15 +50,18 @@ class StoreServiceTests extends GrailsUnitTestCase {
 
         mockDomain(Account.class, [anonymousAccount, anotherAccount])
 
+        // TODO: Change to accountService.anonymous
         def dataControl = mockFor(CommonDataService.class)
         dataControl.demand.getAnonymous(1..1000) {-> return anonymousAccount}
 
-        def storeService = new StoreService(commonDataService:dataControl.createMock())
+        def storeService = new StoreService(accountService:dataControl.createMock())
         storeService.afterPropertiesSet()
 
         assert !storeService.isLoggedIn()
 
         def setup
+        
+        //TODO: storeService.setup replace with dataContext.setup
 
         // Anonymous setup
         setup = storeService.setup
@@ -81,7 +83,7 @@ class StoreServiceTests extends GrailsUnitTestCase {
     }
 
     void testSetSetup() {
-        def storeService = new StoreService(commonDataService:commonDataService)
+        def storeService = new StoreService(accountService:commonDataService)
         storeService.afterPropertiesSet()
 
         assert !storeService.isLoggedIn()
@@ -111,10 +113,9 @@ class StoreServiceTests extends GrailsUnitTestCase {
     }
 
     void testConfirmRegistration() {
-        def application = [i18n:{String s1, String s2 ->}]
-//        application.metaClass.invokeMethod = {name, args -> }
+        def messageService = new MessageService() // TODO: Inject messageService dependencies
 
-        def storeService = new StoreService(application:application as Application, commonDataService: this.commonDataService)
+        def storeService = new StoreService(messageService:messageService, accountService: this.commonDataService)
         storeService.afterPropertiesSet()
 
         def final RIGHT_UUID = 'rightUuid'

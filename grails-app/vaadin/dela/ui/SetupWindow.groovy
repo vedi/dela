@@ -24,6 +24,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
     Setup setup
     def sessionContext
+    def accountService
 
     private Form form
 
@@ -55,7 +56,7 @@ class SetupWindow extends Window implements FormFieldFactory {
     }
 
     def saveSetup = {item ->
-        sessionContext.setup = setup
+        accountService.saveSetup(sessionContext, setup)
     }
 
     Field createField(Item item, Object propertyId, Component component) {

@@ -1,6 +1,5 @@
 package dela
 
-import com.vaadin.Application
 import dela.context.SessionContext
 import dela.meta.MetaProvider
 import org.springframework.beans.factory.InitializingBean
@@ -10,14 +9,12 @@ class StoreService implements InitializingBean {
     static transactional = true
     static scope = "prototype"
 
-    static final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
-
     def sessionContext
 
-    def commonDataService
+    def accountService
+    def subjectService
     def mailService
-
-    Application application
+    def messageService
 
     void afterPropertiesSet() {
         initSessionContext()
@@ -25,13 +22,6 @@ class StoreService implements InitializingBean {
 
     def Account getAccount() {
         sessionContext.account // TODO: Remove
-    }
-
-    /**
-     * @return setup from current session
-     */
-    def Setup getSetup() {
-        sessionContext.setup //TODO: Remove
     }
 
     def setSetup(Setup setup) {
@@ -68,12 +58,12 @@ class StoreService implements InitializingBean {
     
     def logout() {
         assert isLoggedIn()
-        sessionContext.account = commonDataService.anonymous
+        sessionContext.account = accountService.anonymous
         sessionContext.setup = fillSetup()
     }
     
     def isLoggedIn() {
-        sessionContext.account != commonDataService.anonymous
+        accountService.isLoggedIn(sessionContext)
     }
 
     boolean register(Account account, urlStr) {
@@ -103,9 +93,8 @@ class StoreService implements InitializingBean {
 
     def sendRegistrationMail(String email, uuid, urlStr) {
 
-        String title = application.i18n('mail.confirmRegistration.title', 'Confirm Registration on Dela')
-        String body = application.i18n('mail.confirmRegistration.body', 'mail.confirmRegistration.body',
-                [urlStr, uuid.toString()])
+        String title = messageService.getConfirmRegistrationMailTitle()
+        String body = messageService.getConfirmRegistrationMailBody([urlStr, uuid.toString()])
 
         mailService.sendMail {
             to email
@@ -117,8 +106,8 @@ class StoreService implements InitializingBean {
 
     def sendResetPasswordMail(String email, uuid, urlStr) {
 
-        String title = application.i18n('mail.resetPassword.title', 'Reset Password on Dela')
-        String body = application.i18n('mail.resetPassword.body', 'mail.resetPassword.body', [urlStr, uuid.toString()])
+        String title = messageService.getResetPasswordMailTitle()
+        String body = messageService.getResetPasswordMailBody([urlStr, uuid.toString()])
 
         mailService.sendMail {
             to email
@@ -135,13 +124,15 @@ class StoreService implements InitializingBean {
 
         Account account = Account.findByPassword(uuid)
         if (account && account.state == Account.STATE_CREATING) {
-            sessionContext.account = account
-            sessionContext.setup = fillSetup()
             account.state = Account.STATE_ACTIVE
             account.password = password
-            assert account.save(), account.errors
 
-            createDefaultSubject(account)
+            subjectService.createDefault(account)
+
+            assert account.save(), account.errors // TODO: Test save of the subject
+
+            sessionContext.account = account
+            sessionContext.setup = fillSetup()
 
             return true
         } else {
@@ -151,7 +142,7 @@ class StoreService implements InitializingBean {
     
     private def initSessionContext() {
         sessionContext = new SessionContext(metaProvider: new MetaProvider())
-        sessionContext.account = commonDataService.anonymous
+        sessionContext.account = accountService.anonymous
         sessionContext.setup = fillSetup()
     }
 
@@ -165,14 +156,5 @@ class StoreService implements InitializingBean {
         } else {
             return sessionContext.account.setup
         }
-    }
-
-    private void createDefaultSubject(account) {
-        def subject = new Subject(owner: account,
-                name: application.i18n('default.subject.name', 'My subject'),
-                description: application.i18n('default.subject.description', 'My subject'),
-                isPublic: false)
-        account.addToSubjects(subject)
-        subject.save()
     }
 }

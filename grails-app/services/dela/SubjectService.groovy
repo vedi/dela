@@ -6,10 +6,11 @@ class SubjectService extends DataService<Subject> {
 
     static transactional = true
 
-    def Subject create(DataContext dataContext) {
-        return new Subject(owner: dataContext.account as Account) 
-    }
+    def messageService
 
+    def Subject create(DataContext dataContext) {
+        return new Subject(owner: dataContext.account as Account)
+    }
 
     def Subject save(DataContext dataContext, Subject subject) {
 
@@ -59,5 +60,13 @@ class SubjectService extends DataService<Subject> {
 
     }
 
+    def createDefault(Account account) {
+        def subject = new Subject(owner: account,
+                name: messageService.getMessage('default.subject.name'),
+                description: messageService.getMessage('default.subject.description'),
+                isPublic: false)
+
+        account.addToSubjects(subject) // TODO: Remove?!
+    }
 
 }

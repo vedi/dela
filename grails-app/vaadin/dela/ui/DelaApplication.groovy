@@ -55,8 +55,6 @@ public class DelaApplication extends Application {
         verticalLayout.addComponent(horizontalLayout)
         verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
 
-        storeService.application = this // TODO: Remove
-
         def taskDataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.taskMeta)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()

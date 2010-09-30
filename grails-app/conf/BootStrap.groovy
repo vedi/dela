@@ -5,7 +5,7 @@ import dela.State
 
 class BootStrap {
 
-    def commonDataService
+    def accountService
 
 
     def init = { servletContext ->
@@ -28,7 +28,7 @@ class BootStrap {
             account.save()
         }
 
-        commonDataService.anonymous = account
+        accountService.anonymous = account
     }
 
     def destroy = {

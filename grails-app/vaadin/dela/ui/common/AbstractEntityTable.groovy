@@ -88,7 +88,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected IDataService initDataService() {
-        getBean(CommonDataService.class)
+        return getBean(CommonDataService.class)
     }
 
     protected void initToolBar(toolBar) {

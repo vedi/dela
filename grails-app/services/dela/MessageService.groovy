@@ -57,11 +57,27 @@ class MessageService {
         getMessage('loggedUser.info.message', [user])
     }
 
-    private String getMessage(String key, Object[] params) {
+    public String getConfirmRegistrationMailTitle() {
+        getMessage('mail.confirmRegistration.body')
+    }
+
+    public String getConfirmRegistrationMailBody(params) {
+        getMessage('mail.confirmRegistration.title', params)
+    }
+
+    public String getResetPasswordMailTitle() {
+        getMessage('mail.resetPassword.title')
+    }
+
+    public String getResetPasswordMailBody(params) {
+        getMessage('mail.resetPassword.body', params)
+    }
+
+    public String getMessage(String key, Object[] params) {
         messageSource.getMessage(key, params, LocaleContextHolder.getLocale())
     }
 
-    private String getMessage(String key) {
+    public String getMessage(String key) {
         getMessage(key, [] as Object[])
     }
 }

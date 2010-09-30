@@ -9,8 +9,6 @@ import dela.context.DataContext
  */
 class DataService<T> implements IDataService<T> {
 
-    def anonymous
-    
     def create(DataContext dataContext) {
         return dataContext.metaDomain.domainClass.newInstance()
     }
