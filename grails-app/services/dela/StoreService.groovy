@@ -23,8 +23,10 @@ class StoreService implements InitializingBean {
     def saveSetup(setup) {
         if (isLoggedIn()) {
             sessionContext.account = accountService.saveSetup(sessionContext.account, setup)
+            sessionContext.setup = sessionContext.account.setup 
+        } else {
+            sessionContext.setup = setup
         }
-        sessionContext.setup = setup
     }
 
     def auth(login, password) {
@@ -72,32 +74,6 @@ class StoreService implements InitializingBean {
         }
     }
 
-    def sendRegistrationMail(String email, uuid, urlStr) {
-
-        String title = messageService.getConfirmRegistrationMailTitle()
-        String body = messageService.getConfirmRegistrationMailBody([urlStr, uuid.toString()])
-
-        mailService.sendMail {
-            to email
-            subject title
-            html body
-        }
-
-    }
-
-    def sendResetPasswordMail(String email, uuid, urlStr) {
-
-        String title = messageService.getResetPasswordMailTitle()
-        String body = messageService.getResetPasswordMailBody([urlStr, uuid.toString()])
-
-        mailService.sendMail {
-            to email
-            subject title
-            html body
-        }
-
-    }
-
     boolean confirmRegistration(String uuid, String password) {
 
         Account account = accountService.confirmRegistration(uuid, password)
@@ -114,7 +90,41 @@ class StoreService implements InitializingBean {
             return false
         }
     }
-    
+
+    def getSubjects() {
+        Subject.findAllByOwnerOrIsPublic(sessionContext.account, true)
+    }
+
+    def getStates() {
+        State.findAll()
+    }
+
+    private def sendRegistrationMail(String email, uuid, urlStr) {
+
+        String title = messageService.getConfirmRegistrationMailTitle()
+        String body = messageService.getConfirmRegistrationMailBody([urlStr, uuid.toString()])
+
+        mailService.sendMail {
+            to email
+            subject title
+            html body
+        }
+
+    }
+
+    private def sendResetPasswordMail(String email, uuid, urlStr) {
+
+        String title = messageService.getResetPasswordMailTitle()
+        String body = messageService.getResetPasswordMailBody([urlStr, uuid.toString()])
+
+        mailService.sendMail {
+            to email
+            subject title
+            html body
+        }
+
+    }
+
     private def initSessionContext() {
         sessionContext = new SessionContext(metaProvider: new MetaProvider(), storeService: this)
         sessionContext.account = accountService.anonymous

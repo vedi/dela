@@ -34,4 +34,7 @@ class DataContext {
         sessionContext.metaProvider = metaProvider
     }
 
+    def getStoreService() {
+        sessionContext.storeService
+    }
 }

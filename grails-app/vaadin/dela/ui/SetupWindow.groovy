@@ -62,30 +62,30 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         if ('activeSubject'.equals(propertyId)) {
             def comboBox = new ComboBox(caption: caption, immediate: true)
-            Subject.withTransaction {
-                Subject.findAllByOwnerOrIsPublic(sessionContext.account, true).each {
-                    comboBox.addItem it
-                }
+            sessionContext.storeService.getSubjects().each {
+                comboBox.addItem it
             }
 
             comboBox
+
         } else if ('filterSubjects'.equals(propertyId)) {
             def select = new OptionGroup(caption: caption, immediate: true, multiSelect:true)
-            Subject.withTransaction {
-                Subject.findAllByOwnerOrIsPublic(sessionContext.account, true).each {
-                    select.addItem it
-                }
+            sessionContext.storeService.getSubjects().each {
+                select.addItem it
             }
 
             select
+
         } else if ('filterStates'.equals(propertyId)) {
             def select = new OptionGroup(caption: caption, immediate: true, multiSelect:true)
-            State.withTransaction {
-                State.findAll().each {
-                    select.addItem it
-                }
+            sessionContext.storeService.getStates().each {
+                select.addItem it
             }
+
             select
+
+        } else {
+            null
         }
     }
 }

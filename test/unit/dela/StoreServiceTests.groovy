@@ -5,14 +5,14 @@ import grails.test.GrailsUnitTestCase
 class StoreServiceTests extends GrailsUnitTestCase {
 
     def anonymous
-    def commonDataService
-    
+    def accountService
+
     protected void setUp() {
 
         super.setUp()
 
-        anonymous = new Account()
-        commonDataService = [getAnonymous: {anonymous}] as DataService
+        anonymous = new Account(id: 0)
+        accountService = [getAnonymous: {anonymous}] as AccountService
 
         mockDomain(State.class, [new State(name:"s1"), new State(name:"s2"), new State(name:"s3")])
         mockDomain(Subject.class)
@@ -23,7 +23,7 @@ class StoreServiceTests extends GrailsUnitTestCase {
     }
 
     void testGetSessionContext() {
-        def storeService = new StoreService(accountService: commonDataService)
+        def storeService = new StoreService(accountService: accountService)
         storeService.afterPropertiesSet()
 
         def sessionContext = storeService.getSessionContext()
@@ -33,57 +33,20 @@ class StoreServiceTests extends GrailsUnitTestCase {
         assertNotNull(sessionContext.setup)
     }
 
-    void testGetSetup() {
+    void testSaveSetup() {
+        def lastSavedSetup = null
+        def accountService = [
+                saveSetup: {account, setup ->
+                    lastSavedSetup = setup
+                    account.setup = setup
+                    account
+                },
+                getAnonymous: {
+                    this.anonymous
+                }
+        ] as AccountService
 
-        def anonymousSetup
-        def anonymousAccount
-        def anotherAccount
-        def anotherSetup
-
-        mockDomain(State.class)
-        mockDomain(Subject.class)
-
-        anonymousSetup = new Setup()
-
-        anonymousAccount = new Account(login:'anonymousAccount', password: 'dummy', email:'none@mail.ml', role:Account.ROLE_ANONYMOUS, setup:anonymousSetup)
-        anotherAccount = new Account(login:'anotherAccount', password: 'NOTdummy', email:'another@mail.ml', role:Account.ROLE_USER)
-
-        mockDomain(Account.class, [anonymousAccount, anotherAccount])
-
-        // TODO: Change to accountService.anonymous
-        def dataControl = mockFor(CommonDataService.class)
-        dataControl.demand.getAnonymous(1..1000) {-> return anonymousAccount}
-
-        def storeService = new StoreService(accountService:dataControl.createMock())
-        storeService.afterPropertiesSet()
-
-        assert !storeService.isLoggedIn()
-
-        def setup
-        
-        //TODO: storeService.setup replace with dataContext.setup
-
-        // Anonymous setup
-        setup = storeService.setup
-        assertSame(anonymousAccount.setup, setup)
-
-        // Setupless account setup
-        auth(anotherAccount, storeService)
-        setup = storeService.setup
-        assertNotSame(anonymousAccount.setup, setup)
-
-        // And more one
-        assertSame(setup, storeService.setup)
-
-        // And save it now
-        setup = storeService.setup
-        anotherAccount.setup = setup
-        anotherAccount.save()
-        assertSame(setup, storeService.setup)
-    }
-
-    void testSetSetup() {
-        def storeService = new StoreService(accountService:commonDataService)
+        def storeService = new StoreService(accountService:accountService)
         storeService.afterPropertiesSet()
 
         assert !storeService.isLoggedIn()
@@ -91,31 +54,75 @@ class StoreServiceTests extends GrailsUnitTestCase {
         def anotherSetup = new Setup()
 
         // For anonymous
-        storeService.setup = anotherSetup
-        assertNotNull(!storeService.sessionContext.setup)
-
-        storeService.sessionContext.setup = null
-        assert !storeService.sessionContext.setup
+        storeService.saveSetup(anotherSetup)
+        assertSame(anotherSetup, storeService.sessionContext.setup)
+        assertNotSame(anotherSetup, storeService.sessionContext.account.setup)
+        assertNull(lastSavedSetup)
 
         // First save
         def anotherAccount = new Account(login:'anotherAccount', password: 'NOTdummy', email:'another@mail.ml', role:Account.ROLE_USER)
         auth(anotherAccount, storeService)
-        assert !anotherSetup.account
+        assert storeService.isLoggedIn()
 
-        mockDomain(Setup.class, [anotherSetup])
-        mockDomain(State.class)
-        mockDomain(Subject.class)
-        mockDomain(Account.class, [anotherAccount])
-
-        storeService.setup = anotherSetup
-        assertEquals(anotherAccount, anotherSetup.account)
+        storeService.saveSetup(anotherSetup)
         assertEquals(anotherSetup, anotherAccount.setup)
+        assertSame(anotherSetup, storeService.sessionContext.account.setup)
     }
+
+    void testAuth() {
+        def final GOOD_LOGIN = 'goodLogin'
+        def final GOOD_PASSWORD = 'goodPassword'
+        def final BAD_PASSWORD = 'badPassword'
+        def goodAccount = new Account(login: GOOD_LOGIN, password: GOOD_PASSWORD)
+        def accountService = [
+                auth: {login, password ->
+                    (login == GOOD_LOGIN && password == GOOD_PASSWORD)?goodAccount:null
+                },
+                getAnonymous: {
+                    this.anonymous
+                }] as AccountService
+
+        def storeService = new StoreService(accountService:accountService)
+        storeService.afterPropertiesSet()
+        assert anonymous.is(storeService.sessionContext.account)
+
+        storeService.auth(GOOD_LOGIN, BAD_PASSWORD)
+        assertSame(anonymous, storeService.sessionContext.account)
+
+        storeService.auth(GOOD_LOGIN, GOOD_PASSWORD)
+        assertSame(goodAccount, storeService.sessionContext.account)
+    }
+
+    void testLogout() {
+        def storeService = new StoreService(accountService:accountService)
+        storeService.afterPropertiesSet()
+
+        shouldFail {
+            storeService.logout()
+        }
+
+        auth(new Account(), storeService)
+        assert storeService.isLoggedIn()
+
+        storeService.logout()
+        assertFalse(storeService.isLoggedIn())
+
+    }
+
+    void testIsLoggedIn() {
+        def storeService = new StoreService(accountService:accountService)
+        storeService.afterPropertiesSet()
+        assertFalse(storeService.isLoggedIn())
+        auth(new Account(), storeService)
+        assertTrue(storeService.isLoggedIn())
+    }
+
+    // TODO: Check VVVVVVVV
 
     void testConfirmRegistration() {
         def messageService = new MessageService() // TODO: Inject messageService dependencies
 
-        def storeService = new StoreService(messageService:messageService, accountService: this.commonDataService)
+        def storeService = new StoreService(messageService:messageService, accountService: this.accountService)
         storeService.afterPropertiesSet()
 
         def final RIGHT_UUID = 'rightUuid'

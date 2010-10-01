@@ -24,9 +24,7 @@ class AccountService {
             if (!setup.account) {
                 setup.account = account
             }
-            assert (setup = setup.merge()), setup.errors
-
-            account.setup = setup
+            account.setup = setup.merge()
             def mergedAccount = account.merge()
             assert mergedAccount, account.errors
 
