@@ -17,6 +17,7 @@ import dela.ui.account.ForgetPasswordWindow
 import dela.ui.account.LoginWindow
 import dela.ui.account.RegisterWindow
 import dela.ui.task.TaskTable
+import dela.AccountService
 
 public class DelaApplication extends Application {
 
@@ -26,6 +27,7 @@ public class DelaApplication extends Application {
 
     def table
 
+    AccountService accountService
     StoreService storeService
     MessageService messageService
 
@@ -36,6 +38,7 @@ public class DelaApplication extends Application {
     @Override
 	public void init() {
 
+        accountService = getBean(AccountService.class)
         messageService = getBean(MessageService.class)
         storeService = getBean(StoreService.class)
         sessionContext = storeService.sessionContext

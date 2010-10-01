@@ -20,33 +20,17 @@ class StoreService implements InitializingBean {
         initSessionContext()
     }
 
-    def Account getAccount() {
-        sessionContext.account // TODO: Remove
-    }
-
-    def setSetup(Setup setup) {
+    def saveSetup(setup) {
         if (isLoggedIn()) {
-            Setup.withTransaction {
-                if (!setup.account) {
-                    setup.account = sessionContext.account
-                }
-                assert (setup = setup.merge()), setup.errors
-
-                sessionContext.account.setup = setup
-                def mergedAccount = sessionContext.account.merge()
-                assert mergedAccount, sessionContext.account.errors
-                
-                sessionContext.account = mergedAccount
-            }
-        } else {
-            this.sessionContext.setup = setup
+            sessionContext.account = accountService.saveSetup(sessionContext.account, setup)
         }
+        sessionContext.setup = setup
     }
 
     def auth(login, password) {
         assert !isLoggedIn()
-        def foundAccount = Account.findByLoginAndPassword(login, password)
-        if (foundAccount && foundAccount.state == Account.STATE_ACTIVE) {
+        def foundAccount = accountService.auth(login, password)
+        if (foundAccount) {
             sessionContext.account = foundAccount
             sessionContext.setup = fillSetup()
             return foundAccount
@@ -61,34 +45,31 @@ class StoreService implements InitializingBean {
         sessionContext.account = accountService.anonymous
         sessionContext.setup = fillSetup()
     }
-    
+
     def isLoggedIn() {
-        accountService.isLoggedIn(sessionContext)
+        sessionContext.account != accountService.anonymous
     }
 
     boolean register(Account account, urlStr) {
-        assert account
-        assert !account.id
-        account.state = Account.STATE_CREATING
-        account.role = Account.ROLE_USER
-        account.password = UUID.randomUUID().toString()
-        assert account.save(), account.errors
-        
-        sendRegistrationMail(account.email, account.password, urlStr)
+        account = accountService.register(account)
 
-        return true
+        if (account) {
+            sendRegistrationMail(account.email, account.password, urlStr)
+            return true
+        } else {
+            return false
+        }
     }
 
     boolean resetPassword(email, urlStr) {
-        Account account = Account.findByEmail(email)
-        assert account
-        account.state = Account.STATE_CREATING
-        account.password = UUID.randomUUID().toString()
-        assert account.save(), account.errors
+        def account = accountService.resetPassword(email, urlStr)
 
-        sendResetPasswordMail(account.email, account.password, urlStr)
-
-        return true
+        if (account) {
+            sendResetPasswordMail(account.email, account.password, urlStr)
+            return true
+        } else {
+            return false
+        }
     }
 
     def sendRegistrationMail(String email, uuid, urlStr) {
@@ -119,17 +100,11 @@ class StoreService implements InitializingBean {
 
     boolean confirmRegistration(String uuid, String password) {
 
-        assert uuid
-        assert password
+        Account account = accountService.confirmRegistration(uuid, password)
+        if (account) {
 
-        Account account = Account.findByPassword(uuid)
-        if (account && account.state == Account.STATE_CREATING) {
-            account.state = Account.STATE_ACTIVE
-            account.password = password
-
-            subjectService.createDefault(account)
-
-            assert account.save(), account.errors // TODO: Test save of the subject
+            def subject = subjectService.createDefault(account)
+            assert subject.save(), subject.errors
 
             sessionContext.account = account
             sessionContext.setup = fillSetup()
@@ -141,18 +116,14 @@ class StoreService implements InitializingBean {
     }
     
     private def initSessionContext() {
-        sessionContext = new SessionContext(metaProvider: new MetaProvider())
+        sessionContext = new SessionContext(metaProvider: new MetaProvider(), storeService: this)
         sessionContext.account = accountService.anonymous
         sessionContext.setup = fillSetup()
     }
 
     private Setup fillSetup() {
         if (!sessionContext.account.setup) {
-
-            def activeStates = [State.get(1), State.get(2)]
-            def ownSubjects = Subject.findAllByOwner(sessionContext.account)
-
-            return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
+            return accountService.createDefaultSetup(sessionContext.account)
         } else {
             return sessionContext.account.setup
         }

@@ -24,7 +24,6 @@ import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
 import dela.Setup
 import dela.State
-import dela.StoreService
 import dela.Subject
 import dela.Task
 import dela.VaadinService

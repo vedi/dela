@@ -24,27 +24,25 @@ class SetupWindow extends Window implements FormFieldFactory {
 
     Setup setup
     def sessionContext
-    def accountService
 
     private Form form
 
     def void attach() {
 
         super.attach();
-        
+
         this.caption = i18n("entity.setup.caption", "setup")
 
         form = new EntityForm(editable:true)
 
         setup = sessionContext.setup
 
-        Setup.withTransaction {
-            def setupItem = new BeanItem(setup)
+        def setupItem = new BeanItem(setup)
 
-            form.formFieldFactory = this
-            form.itemDataSource = setupItem
-            form.visibleItemProperties = ['activeSubject', 'filterStates', 'filterSubjects']
-        }
+        form.formFieldFactory = this
+        form.itemDataSource = setupItem
+        form.visibleItemProperties = ['activeSubject', 'filterStates', 'filterSubjects']
+
         form.saveHandler = saveSetup
 
         this.addComponent(form)
@@ -56,7 +54,7 @@ class SetupWindow extends Window implements FormFieldFactory {
     }
 
     def saveSetup = {item ->
-        accountService.saveSetup(sessionContext, setup)
+        sessionContext.storeService.saveSetup(setup)
     }
 
     Field createField(Item item, Object propertyId, Component component) {

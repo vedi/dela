@@ -60,6 +60,10 @@ class SubjectService extends DataService<Subject> {
 
     }
 
+    /**
+     * @param account owner of a created subject
+     * @return new subject
+     */
     def createDefault(Account account) {
         def subject = new Subject(owner: account,
                 name: messageService.getMessage('default.subject.name'),
@@ -67,6 +71,8 @@ class SubjectService extends DataService<Subject> {
                 isPublic: false)
 
         account.addToSubjects(subject) // TODO: Remove?!
+
+        subject
     }
 
 }
