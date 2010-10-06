@@ -50,11 +50,12 @@ class SubjectService extends DataService<Subject> {
 
         //TODO: Удаляется только из настроек сессии!
         owner.removeFromSubjects(subject)
-        dataContext.setup.removeFromFilterSubjects(subject)
-        if (subject.equals(dataContext.setup.activeSubject)) {
-            dataContext.setup.activeSubject = null
+        def setup = dataContext.setup
+        setup.removeFromFilterSubjects(subject)
+        if (subject == setup.activeSubject) {
+            setup.activeSubject = null
         }
-        dataContext.setup = dataContext.setup.merge()
+        dataContext.storeService.saveSetup(setup)
 
         result
 

@@ -78,7 +78,7 @@ class StoreService implements InitializingBean {
 
         Account account = accountService.confirmRegistration(uuid, password)
         if (account) {
-
+            // TODO: Не происходит автоматический вход
             def subject = subjectService.createDefault(account)
             assert subject.save(), subject.errors
 

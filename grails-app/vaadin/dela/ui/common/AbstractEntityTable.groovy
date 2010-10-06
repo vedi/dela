@@ -279,6 +279,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def afterInsert(item) {
+        this.select(getDomain(item).id)
     }
 
     def afterEdit(item) {
@@ -298,7 +299,9 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         this.refresh()
         if (isNew) {
-            this.select(getDomain(item).id)
+            afterInsert(item)
+        } else {
+            afterEdit(item)
         }
 
         domain

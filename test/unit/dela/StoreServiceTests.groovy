@@ -115,7 +115,7 @@ class StoreServiceTests extends GrailsUnitTestCase {
         assertFalse(storeService.isLoggedIn())
         auth(new Account(), storeService)
         assertTrue(storeService.isLoggedIn())
-    }
+    }                           
 
     // TODO: Check VVVVVVVV
 

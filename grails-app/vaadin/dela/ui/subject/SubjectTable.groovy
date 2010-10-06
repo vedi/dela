@@ -22,6 +22,7 @@ import dela.SubjectService
 import dela.IDataService
 import dela.context.DataContext
 import dela.TaskService
+import dela.MessageService
 
 /**
  * @author vedi
@@ -31,8 +32,8 @@ import dela.TaskService
 class SubjectTable extends EntityTable implements FormFieldFactory {
 
     VaadinService vaadinService
-    StoreService storeService
     TaskService taskService
+    MessageService messageService
     def accountService
 
     def gridVisibleColumns = ['name']
@@ -41,8 +42,8 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
     def SubjectTable() {
         this.vaadinService = getBean(VaadinService.class)
-        this.storeService = getBean(StoreService.class)
         this.taskService = getBean(TaskService.class)
+        this.messageService = getBean(MessageService.class)
     }
 
     protected IDataService initDataService() {
@@ -75,20 +76,23 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     }
 
     def afterInsert(item) {
+
         super.afterInsert(item)
 
         this.window.application.mainWindow.addWindow(new YesNoDialog(
-                i18n('setSubjectActive.confirm.caption', 'setSubjectActive.confirm.caption'),
-                i18n('setSubjectActive.confirm.message', 'setSubjectActive.confirm.message'),
-                i18n('button.yes.label', 'yes'),
-                i18n('button.no.label', 'no'),
+                this.messageService.getSetSubjectActiveConfirmCaption(),
+                this.messageService.getSetSubjectActiveConfirmMsg(),
+                this.messageService.getYesButtonLabel(),
+                this.messageService.getNoButtonLabel(),
                 new YesNoDialog.Callback() {
                     public void onDialogResult(boolean yes) {
                         if (yes) {
-                            def subject = Subject.get(item.getItemPorperty('id').value)
-                            def setup = SubjectTable.this.dataContext.setup
+                            def dataContext = SubjectTable.this.dataContext
+                            def subject = getDomain(item)
+                            assert subject, getDomain(item).errors()
+                            def setup = dataContext.setup
                             setup.setActiveSubject(subject)
-                            SubjectTable.this.accountService.saveSetup(dataContext, setup)
+                            dataContext.storeService.saveSetup(setup)
                         }
                     }
 
@@ -106,7 +110,7 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
             if (editable) {
                 normalizeButton = new Button()
-                normalizeButton.caption = i18n('button.normalize.label', 'normalize')
+                normalizeButton.caption = messageService.getNormalizeButtonLabel()
                 normalizeButton.addListener(this as Button.ClickListener)
                 componentContainer.addComponent(normalizeButton)
             }
@@ -114,10 +118,8 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
         def void buttonClick(ClickEvent clickEvent) {
             if (clickEvent.button == normalizeButton) {
-
                 taskService.normalizeSubjectTasks(getDomain(getItemDataSource()))
-
-                window.application.mainWindow.showNotification("Normalize is completed") // TODO: i18n
+                window.application.mainWindow.showNotification(messageService.getNormalizeIsCompletedMsg())
             } else {
                 super.buttonClick(clickEvent)
             }

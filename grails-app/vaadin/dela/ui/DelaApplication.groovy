@@ -102,7 +102,7 @@ public class DelaApplication extends Application {
     }
 
     def resetPasswordCallback = {email ->
-        if (this.storeService.resetPassword(email, getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString())) {
+        if (this.storeService.resetPassword(email, getWindow(this.CONFIRM_REGISTRATION_NAME).getURL().toString())) {
             this.mainWindow.showNotification(this.messageService.getForgetPasswordSuccessMsg())
         } else {
             this.mainWindow.showNotification(this.messageService.getForgetPasswordFailedMsg())
@@ -110,7 +110,7 @@ public class DelaApplication extends Application {
     }
 
     def registerCallback = {account ->
-        if (this.storeService.register(account, getWindow(CONFIRM_REGISTRATION_NAME).getURL().toString())) {
+        if (this.storeService.register(account, getWindow(this.CONFIRM_REGISTRATION_NAME).getURL().toString())) {
             this.mainWindow.showNotification(this.messageService.getRegistrationSuccessMsg())
         } else {
             this.mainWindow.showNotification(this.messageService.getRegistrationFailedMsg())

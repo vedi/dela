@@ -58,11 +58,11 @@ class MessageService {
     }
 
     public String getConfirmRegistrationMailTitle() {
-        getMessage('mail.confirmRegistration.body')
+        getMessage('mail.confirmRegistration.title')
     }
 
     public String getConfirmRegistrationMailBody(params) {
-        getMessage('mail.confirmRegistration.title', params)
+        getMessage('mail.confirmRegistration.body', params)
     }
 
     public String getResetPasswordMailTitle() {
@@ -71,6 +71,30 @@ class MessageService {
 
     public String getResetPasswordMailBody(params) {
         getMessage('mail.resetPassword.body', params)
+    }
+
+    public String getSetSubjectActiveConfirmCaption() {
+        getMessage('setSubjectActive.confirm.caption')
+    }
+
+    public String getSetSubjectActiveConfirmMsg() {
+        getMessage('setSubjectActive.confirm.message')
+    }
+
+    public String getYesButtonLabel() {
+        getMessage('button.yes.label')
+    }
+
+    public String getNoButtonLabel() {
+        getMessage('button.no.label')
+    }
+
+    public String getNormalizeButtonLabel() {
+        getMessage('button.normalize.label')
+    }
+
+    public String getNormalizeIsCompletedMsg() {
+        getMessage('normalize.complete.message')
     }
 
     public String getMessage(String key, Object[] params) {
