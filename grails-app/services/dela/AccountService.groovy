@@ -71,7 +71,7 @@ class AccountService {
     }
 
     Setup createDefaultSetup(Account account) {
-        def activeStates = [State.get(1), State.get(2)]
+        def activeStates = [State.get(1)]
         def ownSubjects = Subject.findAllByOwner(account)
 
         return new Setup(filterSubjects: ownSubjects, filterStates: activeStates, activeSubject: ownSubjects[0])
