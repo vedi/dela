@@ -23,7 +23,7 @@ import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
 import dela.Setup
-import dela.State
+
 import dela.Subject
 import dela.Task
 import dela.VaadinService
@@ -35,6 +35,7 @@ import dela.ui.subject.SubjectListWindow
 import dela.IDataService
 import dela.TaskService
 import dela.context.DataContext
+import dela.MessageService
 
 /**
  * @author vedi
@@ -44,6 +45,7 @@ import dela.context.DataContext
 public class TaskTable extends EntityTable implements FormFieldFactory, DropHandler  {
 
     VaadinService vaadinService
+    MessageService messageService 
 
     Button completeButton
     Button subjectButton
@@ -57,6 +59,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     def TaskTable() {
         this.vaadinService = getBean(VaadinService.class)
+        this.messageService = getBean(MessageService.class)
         this.dropHandler = this
     }
 
@@ -118,19 +121,19 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         super.initToolBar(toolBar)
 
         completeButton = new Button();
-        completeButton.setDescription(i18n('button.complete.label', 'complete'))
+        completeButton.setDescription(messageService.getCompleteButtonLabel())
         completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
         toolBar.addComponent(completeButton)
 
         subjectButton = new Button();
-        subjectButton.description = i18n("entity.${Subject.simpleName.toLowerCase()}.many.caption", "${Subject.simpleName} list")
+        subjectButton.description = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
         subjectButton.setIcon(new FileResource(new File('web-app/images/skin/category.png'), this.window.application))
         subjectButton.addListener(this as ClickListener)
         toolBar.addComponent(subjectButton)
 
         setupButton = new Button();
-        setupButton.description = i18n("entity.${Setup.simpleName.toLowerCase()}.many.caption", "${Setup.simpleName} list")
+        setupButton.description = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
         setupButton.setIcon(new FileResource(new File('web-app/images/skin/blue_config.png'), this.window.application))
         setupButton.addListener(this as ClickListener)
         toolBar.addComponent(setupButton)
@@ -145,10 +148,10 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
                 def item = container.getItem(table.value)
                 if (item) {
                     this.window.application.mainWindow.addWindow(new YesNoDialog(
-                            i18n('button.complete.confirm.caption', 'confirm complete'),
-                            i18n('button.complete.confirm.message', 'are you sure?'),
-                            i18n('button.yes.label', 'yes'),
-                            i18n('button.no.label', 'no'),
+                            messageService.getCompleteConfirmCaption(),
+                            messageService.getCompleteConfirmMsg(),
+                            messageService.getYesButtonLabel(),
+                            messageService.getNoButtonLabel(),
                             new YesNoDialog.Callback() {
                                 public void onDialogResult(boolean yes) {
                                     if (yes) {

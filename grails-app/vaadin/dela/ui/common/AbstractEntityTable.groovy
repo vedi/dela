@@ -192,8 +192,8 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     void remove(domain) {
         this.window.application.mainWindow.addWindow(new YesNoDialog(
-                i18n('button.delete.confirm.caption', 'confirm delete'),
-                i18n('button.delete.confirm.message', 'are you sure?'),
+                i18n('delete.confirm.caption', 'confirm delete'),
+                i18n('delete.confirm.message', 'are you sure?'),
                 i18n('button.yes.label', 'yes'),
                 i18n('button.no.label', 'no'),
                 new YesNoDialog.Callback() {

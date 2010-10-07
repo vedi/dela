@@ -93,6 +93,18 @@ class MessageService {
         getMessage('button.normalize.label')
     }
 
+    public String getCompleteButtonLabel() {
+        getMessage('button.complete.label')
+    }
+
+    public String getCompleteConfirmCaption() {
+        getMessage('complete.confirm.caption')
+    }
+
+    public String getCompleteConfirmMsg() {
+        getMessage('complete.confirm.message')
+    }
+
     public String getNormalizeIsCompletedMsg() {
         getMessage('normalize.complete.message')
     }
@@ -104,4 +116,5 @@ class MessageService {
     public String getMessage(String key) {
         getMessage(key, [] as Object[])
     }
+
 }
