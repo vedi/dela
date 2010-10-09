@@ -2,6 +2,7 @@ package dela;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
@@ -13,50 +14,54 @@ import com.vaadin.ui.Window;
  */
 public class YesNoDialog extends Window implements Button.ClickListener {
 
-  Callback callback;
-  Button yes;
-  Button no;
+    Callback callback;
+    Button yes;
+    Button no;
 
-  public YesNoDialog(String caption, String question, String yesLabel, String noLabel, Callback callback) {
-    super(caption);
+    public YesNoDialog(String caption, String question, String yesLabel, String noLabel, Callback callback) {
+        super(caption);
 
-    yes = new Button(yesLabel, this);
-    yes.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        yes = new Button(yesLabel, this);
+        yes.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        yes.setWidth("50px");
 
-    no = new Button(noLabel, this);
-    no.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+        no = new Button(noLabel, this);
+        no.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+        no.setWidth("50px");
 
 
-    setModal(true);
+        setModal(true);
 
-    this.callback = callback;
+        this.callback = callback;
 
-    if (question != null) {
-      addComponent(new Label(question));
+        if (question != null) {
+            addComponent(new Label(question));
+        }
+
+        GridLayout gridLayout = new GridLayout(3, 1);
+        gridLayout.addComponent(yes, 1, 0);
+        gridLayout.addComponent(no, 2, 0);
+        gridLayout.setColumnExpandRatio(0, 1);
+        gridLayout.setWidth("100%");
+        addComponent(gridLayout);
     }
 
-    HorizontalLayout hl = new HorizontalLayout();
-    hl.addComponent(yes);
-    hl.addComponent(no);
-    addComponent(hl);
-  }
-
-  @Override
-  public void attach() {
-    super.attach();
-    no.focus();
-  }
-
-  public void buttonClick(Button.ClickEvent event) {
-    if (getParent() != null) {
-      ((Window) getParent()).removeWindow(this);
+    @Override
+    public void attach() {
+        super.attach();
+        no.focus();
     }
-    callback.onDialogResult(event.getSource() == yes);
-  }
 
-  public interface Callback {
+    public void buttonClick(Button.ClickEvent event) {
+        if (getParent() != null) {
+            ((Window) getParent()).removeWindow(this);
+        }
+        callback.onDialogResult(event.getSource() == yes);
+    }
 
-    public void onDialogResult(boolean resultIsYes);
-  }
+    public interface Callback {
+
+        public void onDialogResult(boolean resultIsYes);
+    }
 
 }
