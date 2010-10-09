@@ -109,12 +109,12 @@ class MessageService {
         getMessage('normalize.complete.message')
     }
 
-    public String getMessage(String key, Object[] params) {
-        messageSource.getMessage(key, params, LocaleContextHolder.getLocale())
+    public String getMessage(String key, params) {
+        messageSource.getMessage(key, params as Object[], LocaleContextHolder.getLocale())
     }
 
     public String getMessage(String key) {
-        getMessage(key, [] as Object[])
+        getMessage(key, [])
     }
 
 }
