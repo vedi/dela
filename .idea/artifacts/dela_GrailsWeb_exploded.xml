@@ -1,0 +1,7 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="dela:GrailsWeb exploded">
+    <root id="root">
+      <element id="javaee-facet-resources" facet="dela/web/GrailsWeb" />
+    </root>
+  </artifact>
+</component>
