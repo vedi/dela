@@ -1,6 +1,8 @@
 package dela
 
 import dela.container.DomainLazyContainer
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.vaadin.terminal.FileResource
 
 class VaadinService {
 
@@ -74,5 +76,9 @@ class VaadinService {
 
     def List<String> getEditVisibleColumns(dataContext) {
         dataContext.metaDomain.columns.collect {it.field}
+    }
+
+    def getFile(fileName) {
+        return ApplicationHolder.application.parentContext.getResource(fileName).file
     }
 }

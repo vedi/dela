@@ -45,7 +45,7 @@ import dela.MessageService
 public class TaskTable extends EntityTable implements FormFieldFactory, DropHandler  {
 
     VaadinService vaadinService
-    MessageService messageService 
+    MessageService messageService
 
     Button completeButton
     Button subjectButton
@@ -79,7 +79,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
         Task task = super.createDomain() as Task
 
-        // Помещаем вверх текущей выборки
+        // Add to the top of the current selection
         def firstItemId = container.firstItemId()
         double firstPower = firstItemId != null ? container.getItem(firstItemId)?.getItemProperty('power')?.value?:0.0 as double : 0.0
         task.power = (1.0 + firstPower) / 2
@@ -122,22 +122,22 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
         completeButton = new Button();
         completeButton.setDescription(messageService.getCompleteButtonLabel())
-        completeButton.setIcon(new FileResource(new File('web-app/images/skin/task_done.png'), this.window.application))
+        completeButton.setIcon(new FileResource(vaadinService.getFile('images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
         toolBar.addComponent(completeButton)
 
         subjectButton = new Button();
         subjectButton.description = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
-        subjectButton.setIcon(new FileResource(new File('web-app/images/skin/category.png'), this.window.application))
+        subjectButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this.window.application))
         subjectButton.addListener(this as ClickListener)
         toolBar.addComponent(subjectButton)
 
         setupButton = new Button();
         setupButton.description = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
-        setupButton.setIcon(new FileResource(new File('web-app/images/skin/blue_config.png'), this.window.application))
+        setupButton.setIcon(new FileResource(vaadinService.getFile('web-app/images/skin/blue_config.png'), this.window.application))
         setupButton.addListener(this as ClickListener)
         toolBar.addComponent(setupButton)
-        
+
         Searcher searcher = new Searcher(entityTable:this, application: this.window.application);
         searcher.addTo(toolBar)
     }

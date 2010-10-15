@@ -96,27 +96,27 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         addButton = new Button();
         addButton.setDescription(i18n('button.create.label', 'create'))
         addButton.setClickShortcut(ShortcutAction.KeyCode.INSERT)
-        addButton.setIcon(new FileResource(new File('web-app/images/skin/database_add.png'), this.window.application))
+        addButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_add.png'), this.window.application))
         addButton.addListener(this as ClickListener)
         toolBar.addComponent addButton
 
         editButton = new Button();
         editButton.setDescription(i18n('button.edit.label', 'edit'))
         editButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
-        editButton.setIcon(new FileResource(new File('web-app/images/skin/database_edit.png'), this.window.application))
+        editButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_edit.png'), this.window.application))
         editButton.addListener(this as ClickListener)
         toolBar.addComponent editButton
 
         deleteButton = new Button();
         deleteButton.setDescription(i18n('button.delete.label', 'delete'))
         deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE)
-        deleteButton.setIcon(new FileResource(new File('web-app/images/skin/database_delete.png'), this.window.application))
+        deleteButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_delete.png'), this.window.application))
         deleteButton.addListener(this as ClickListener)
         toolBar.addComponent deleteButton
 
         refreshButton = new Button();
         refreshButton.setDescription(i18n('button.refresh.label', 'refresh'))
-        refreshButton.setIcon(new FileResource(new File('web-app/images/skin/database_refresh.png'), this.window.application))
+        refreshButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
         toolBar.addComponent refreshButton
     }
