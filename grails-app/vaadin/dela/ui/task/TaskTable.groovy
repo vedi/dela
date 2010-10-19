@@ -134,7 +134,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
         setupButton = new Button();
         setupButton.description = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
-        setupButton.setIcon(new FileResource(vaadinService.getFile('web-app/images/skin/blue_config.png'), this.window.application))
+        setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this.window.application))
         setupButton.addListener(this as ClickListener)
         toolBar.addComponent(setupButton)
 
