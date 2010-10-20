@@ -47,13 +47,6 @@ grails.spring.bean.packages = []
 grails {
     mail {
         host = "localhost"
-//        port = 465
-//        username = 'shubin.fedor@gmail.com'
-//        password = "Vertical_Wall"
-//        props = ["mail.smtp.auth":"true",
-//                "mail.smtp.socketFactory.port":"465",
-//                "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
-//                "mail.smtp.socketFactory.fallback":"false"]
     }
 }
 
@@ -64,7 +57,7 @@ grails.mail.default.from="dela@smartrus.org"
 // set per-environment serverURL stem for creating absolute links
 environments {
     production {
-        grails.serverURL = "http://www.smartrus.org"
+        grails.serverURL = "http://dela.smartrus.org"
     }
     development {
         grails.serverURL = "http://localhost:8080/${appName}"
