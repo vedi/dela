@@ -20,6 +20,8 @@ import dela.VaadinService
 import dela.IDataService
 import dela.CommonDataService
 import dela.context.DataContext
+import com.vaadin.ui.Window.CloseListener
+import com.vaadin.ui.Window.CloseEvent
 
 /**
  * @author vedi
@@ -228,6 +230,13 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         window.layout.setSizeUndefined()
         window.center()
+
+        window.addListener(new CloseListener() {
+            @Override
+            void windowClose(CloseEvent closeEvent) {
+                AbstractEntityTable.this.addButton.focus()
+            }
+        })
 
         this.window.application.mainWindow.addWindow window
     }

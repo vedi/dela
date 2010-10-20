@@ -28,7 +28,7 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     def void attach() {
-        
+
         initButtons(footer)
 
         super.attach();
@@ -50,7 +50,6 @@ class EntityForm extends Form implements Button.ClickListener {
         componentContainer.addComponent(cancelButton)
     }
 
-
     void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == okButton) {
             commit()
@@ -59,11 +58,6 @@ class EntityForm extends Form implements Button.ClickListener {
             discard()
         }
 
-        def mainWindow = window.application.mainWindow
-        
-        // TODO: Remove dependency
-        mainWindow.removeWindow window
-        mainWindow.application.table.addButton.focus()
-        //\\
+        window.close()
     }
 }

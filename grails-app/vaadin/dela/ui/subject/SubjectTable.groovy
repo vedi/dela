@@ -10,8 +10,6 @@ import com.vaadin.ui.Field
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.TextField
 
-import dela.StoreService
-import dela.Subject
 import dela.YesNoDialog
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable

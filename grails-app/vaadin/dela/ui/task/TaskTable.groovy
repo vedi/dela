@@ -17,7 +17,7 @@ import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.Field
-import com.vaadin.ui.Form
+
 import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
@@ -36,6 +36,8 @@ import dela.IDataService
 import dela.TaskService
 import dela.context.DataContext
 import dela.MessageService
+import dela.ui.common.EntityForm
+import com.vaadin.ui.Form
 
 /**
  * @author vedi
