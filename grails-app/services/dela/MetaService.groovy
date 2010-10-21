@@ -18,6 +18,6 @@ class MetaService {
 
     def getColumnCaption(metaDomain, column) {
         String entityName = metaDomain.domainClass.simpleName
-        messageService.getColumnCaptionMsg(entityName.toLowerCase(), column)
+        messageService.getFieldLabelMsg(entityName.toLowerCase(), column)
     }
 }

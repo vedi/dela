@@ -13,6 +13,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.Window
 import dela.Account
 import dela.ui.common.EntityForm
+import dela.MessageService
 
 /**
  * @author vedi
@@ -20,6 +21,8 @@ import dela.ui.common.EntityForm
  * time 8:34:32
  */
 class LoginWindow extends Window implements FormFieldFactory, ClickListener {
+
+    MessageService messageService
 
     def form
     Account account
@@ -35,9 +38,11 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
 
     def LoginWindow(loginCallback, forgetPasswordCallback) {
 
+        messageService = getBean(MessageService.class)
+
         this.loginCallback = loginCallback
         this.forgetPasswordCallback = forgetPasswordCallback
-        this.caption = i18n("window.login.caption", "login")
+        this.caption = messageService.getLoginWindowCaptionMsg()
 
         form = new EntityForm() {
 
@@ -45,7 +50,7 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
                 super.initButtons(componentContainer)
 
                 Button button = new Button()
-                button.caption = i18n("window.login.forgetPassword.label", "forgetPassword")
+                button.caption = messageService.getForgetPasswordButtonLabelMsg()
                 button.addListener(LoginWindow.this as ClickListener)
                 componentContainer.addComponent button
             }
@@ -74,7 +79,7 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
     }
 
     Field createField(Item item, Object propertyId, Component uiContext) {
-        String label = i18n("entity.account.field.${propertyId}.label", propertyId)
+        String label = messageService.getFieldLabelMsg('account', propertyId.toString()) // TODO: ?Use getColumnLabel of EntityTable?
         if (propertyId == 'login') {
             loginField = new TextField(label)
             loginField.setNullRepresentation('')

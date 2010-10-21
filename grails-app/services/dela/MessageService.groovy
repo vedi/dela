@@ -17,7 +17,7 @@ class MessageService {
         getMessage("entity.${entityName}.caption")
     }
 
-    public String getColumnCaptionMsg(String entityName, String columnName) {
+    public String getFieldLabelMsg(String entityName, String columnName) {
         getMessage("entity.${entityName}.field.${columnName}.label")
     }
 
@@ -107,6 +107,14 @@ class MessageService {
 
     public String getNormalizeIsCompletedMsg() {
         getMessage('normalize.complete.message')
+    }
+
+    public String getLoginWindowCaptionMsg() {
+        getMessage('window.login.caption')
+    }
+
+    public String getForgetPasswordButtonLabelMsg() {
+        getMessage('button.forgetPassword.label')
     }
 
     public String getMessage(String key, params) {
