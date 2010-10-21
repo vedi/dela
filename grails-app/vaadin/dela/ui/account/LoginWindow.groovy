@@ -92,6 +92,6 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
     void buttonClick(ClickEvent event) {
         forgetPasswordCallback()                       
 
-        window.application.mainWindow.removeWindow this
+        this.close()
     }
 }

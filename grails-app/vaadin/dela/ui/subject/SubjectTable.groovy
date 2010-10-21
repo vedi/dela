@@ -77,7 +77,7 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
 
         super.afterInsert(item)
 
-        this.window.application.mainWindow.addWindow(new YesNoDialog(
+        addWindow(new YesNoDialog(
                 this.messageService.getSetSubjectActiveConfirmCaption(),
                 this.messageService.getSetSubjectActiveConfirmMsg(),
                 this.messageService.getYesButtonLabel(),

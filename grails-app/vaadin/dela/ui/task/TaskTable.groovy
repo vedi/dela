@@ -149,7 +149,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             if (table.value != null) {
                 def item = container.getItem(table.value)
                 if (item) {
-                    this.window.application.mainWindow.addWindow(new YesNoDialog(
+                    addWindow(new YesNoDialog(
                             messageService.getCompleteConfirmCaption(),
                             messageService.getCompleteConfirmMsg(),
                             messageService.getYesButtonLabel(),

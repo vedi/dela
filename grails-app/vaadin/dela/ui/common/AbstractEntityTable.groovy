@@ -193,7 +193,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     void remove(domain) {
-        this.window.application.mainWindow.addWindow(new YesNoDialog(
+        addWindow(new YesNoDialog(
                 i18n('delete.confirm.caption', 'confirm delete'),
                 i18n('delete.confirm.message', 'are you sure?'),
                 i18n('button.yes.label', 'yes'),
@@ -238,7 +238,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
             }
         })
 
-        this.window.application.mainWindow.addWindow window
+        addWindow(window)
     }
 
     protected List<String> getGridVisibleColumns() {
@@ -318,5 +318,9 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     final protected def getDomain(item) {
         (item as BeanItem).bean
+    }
+
+    final protected addWindow(Window window) {
+        this.window.application.mainWindow(window)
     }
 }
