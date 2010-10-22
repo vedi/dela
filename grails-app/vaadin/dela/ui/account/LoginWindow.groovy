@@ -79,12 +79,13 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
     }
 
     Field createField(Item item, Object propertyId, Component uiContext) {
-        String label = messageService.getFieldLabelMsg('account', propertyId.toString()) // TODO: ?Use getColumnLabel of EntityTable?
         if (propertyId == 'login') {
+            String label = messageService.getFieldLabelMsg('account', propertyId.toString()) // TODO: ?Use getColumnLabel of EntityTable?
             loginField = new TextField(label)
             loginField.setNullRepresentation('')
             return loginField
         } else if (propertyId == 'password') {
+            String label = messageService.getFieldLabelMsg('account', propertyId.toString()) // TODO: ?Use getColumnLabel of EntityTable?
             TextField textField = new TextField(label)
             textField.secret = true
             textField.setNullRepresentation('')

@@ -321,6 +321,6 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     final protected addWindow(Window window) {
-        this.window.application.mainWindow(window)
+        this.window.application.mainWindow.addWindow(window)
     }
 }
