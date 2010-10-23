@@ -11,7 +11,7 @@ class DomainLazyContainer extends LazyQueryContainer {
 
     def DomainLazyContainer(domainClass, selector, counter, columns) {
 
-        super(new DomainQueryFactory(domainClass: domainClass, selector: selector, counter: counter));
+        super(new DomainQueryFactory(domainClass: domainClass, selector: selector, counter: counter), 500); // TODO: Remove hard code
 
         columns.each {
             addContainerProperty(it.field, it.type as Class, it.defaultValue, it.readOnly, it.sortable)

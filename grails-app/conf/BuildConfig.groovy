@@ -23,12 +23,13 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo 'http://maven.vaadin.com/vaadin-addons'
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
 //        build 'org.vaadin.addons:hbncontainer:1.0.1'
-//        build 'org.vaadin.addons:lazyquerycontainer:1.0.1'
+        build 'org.vaadin.addons:lazy-query-container:1.1.8'
         runtime 'mysql:mysql-connector-java:5.1.6'
     }
 

@@ -31,8 +31,10 @@ public class DomainQuery implements Query {
         this.ascendingState = ascendingStates.size() > 0 ? (ascendingStates[0] ? 'asc' : 'desc') : null
 	}
 
+
+
     @Override
-	public List<Item> getItems(int startIndex, int count) {
+	public List<Item> loadItems(int startIndex, int count) {
         domainClass.withTransaction {
             def list = selector(startIndex, count, sortProperty, ascendingState)
 
@@ -47,4 +49,18 @@ public class DomainQuery implements Query {
         return counter()
 	}
 
+    @Override
+    void saveItems(List<Item> items, List<Item> items1, List<Item> items2) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    boolean deleteAllItems() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    Item constructItem() {
+        throw new UnsupportedOperationException();
+    }
 }

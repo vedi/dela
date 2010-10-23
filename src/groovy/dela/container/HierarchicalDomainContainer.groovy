@@ -9,6 +9,10 @@ import com.vaadin.data.Container
  */
 class HierarchicalDomainContainer extends DomainLazyContainer implements Container.Hierarchical {
 
+    def HierarchicalDomainContainer(domainClass, selector, counter, columns) {
+        super(domainClass, selector, counter, columns)
+    }
+
     boolean areChildrenAllowed(Object itemId) {
         return true
     }

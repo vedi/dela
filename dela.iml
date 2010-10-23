@@ -42,9 +42,10 @@
     <orderEntry type="module-library">
       <library name="Grails User Library">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/lib" />
           <root url="jar://$USER_HOME$/.ivy2/cache/mysql/mysql-connector-java/jars/mysql-connector-java-5.1.6.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/com.vaadin/vaadin/jars/vaadin-6.3.4.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.vaadin.addons/lazy-query-container/jars/lazy-query-container-1.1.8.jar!/" />
+          <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
         <JAVADOC>
           <root url="jar://$USER_HOME$/.ivy2/cache/com.vaadin/vaadin/javadocs/vaadin-6.3.4-javadoc.jar!/" />
