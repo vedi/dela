@@ -168,10 +168,9 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             }
 
         } else if (clickEvent.button == subjectButton) {
-            this.window.application.mainWindow.addWindow(
-                    new SubjectListWindow(sessionContext: dataContext.sessionContext))
+            addWindow(new SubjectListWindow(sessionContext: dataContext.sessionContext))
         } else if (clickEvent.button == setupButton) {
-            this.window.application.mainWindow.addWindow(new SetupWindow(sessionContext: dataContext.sessionContext))
+            addWindow(new SetupWindow(sessionContext: dataContext.sessionContext))
         } else {
             super.buttonClick(clickEvent);
         }
