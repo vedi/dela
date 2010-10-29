@@ -2,6 +2,7 @@ package dela
 
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
+import org.springframework.context.NoSuchMessageException
 
 class MessageService {
 
@@ -118,7 +119,12 @@ class MessageService {
     }
 
     public String getMessage(String key, params) {
-        messageSource.getMessage(key, params as Object[], LocaleContextHolder.getLocale())
+        try {
+            return messageSource.getMessage(key, params as Object[], LocaleContextHolder.getLocale())
+        } catch (NoSuchMessageException e) {
+            log.warn("", e)
+            return "$key"
+        }
     }
 
     public String getMessage(String key) {
