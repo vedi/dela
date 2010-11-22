@@ -2,13 +2,13 @@ package dela
 
 class Account {
 
-    public static ROLE_ANONYMOUS    = 0
-    public static ROLE_USER         = 50
-    public static ROLE_ADMIN        = 100
+    public static byte ROLE_ANONYMOUS    = 0
+    public static byte ROLE_USER         = 50
+    public static byte ROLE_ADMIN        = 100
 
-    public static STATE_BLOCKED     = 0
-    public static STATE_CREATING    = 10
-    public static STATE_ACTIVE      = 100
+    public static byte STATE_BLOCKED     = 0
+    public static byte STATE_CREATING    = 10
+    public static byte STATE_ACTIVE      = 100
 
     static hasOne = [setup : Setup]
     static hasMany = [subjects : Subject]
@@ -24,6 +24,8 @@ class Account {
         password(minSize: 5)
         email(email:true)
         setup(nullable:true)
+        role(inList: [ROLE_ANONYMOUS, ROLE_USER, ROLE_ADMIN])
+        state(inList: [STATE_BLOCKED, STATE_CREATING, STATE_ACTIVE])
     }
 
     static mapping = {
