@@ -11,7 +11,7 @@ class TaskService extends DataService<Task> {
         Task task = new Task()
         task.author = dataContext.account as Account
         task.subject = dataContext.setup.activeSubject
-        task.state = State.findAll()[0]  // FIXME: Жёсткая привязка к id состояния
+        task.state = State.findAll()[0]  // FIXME: Р–С‘СЃС‚РєР°СЏ РїСЂРёРІСЏР·РєР° Рє id СЃРѕСЃС‚РѕСЏРЅРёСЏ
 
         return task
     }
@@ -55,7 +55,7 @@ class TaskService extends DataService<Task> {
         Task.withTransaction {
             assert subject
 
-            State state = State.get(1) // TODO: Отвязать от id состояния
+            State state = State.get(1) // TODO: РћС‚РІСЏР·Р°С‚СЊ РѕС‚ id СЃРѕСЃС‚РѕСЏРЅРёСЏ
             assert state
 
             def count = Task.countBySubjectAndState(subject, state)
