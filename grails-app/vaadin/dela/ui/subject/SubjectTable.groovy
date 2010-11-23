@@ -30,7 +30,7 @@ import dela.MessageService
 class SubjectTable extends EntityTable implements FormFieldFactory {
 
     VaadinService vaadinService
-    TaskService taskService
+    def taskService
     MessageService messageService
     def accountService
 

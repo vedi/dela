@@ -14,7 +14,7 @@ import com.vaadin.ui.TextField
  */
 class Searcher implements ClickListener {
 
-    def EntityTable entityTable 
+    def entityTable
     Application application
 
     private TextField searchText

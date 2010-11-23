@@ -18,6 +18,7 @@ import dela.ui.account.LoginWindow
 import dela.ui.account.RegisterWindow
 import dela.ui.task.TaskTable
 import dela.AccountService
+import com.vaadin.ui.Accordion
 
 public class DelaApplication extends Application {
 
@@ -58,6 +59,8 @@ public class DelaApplication extends Application {
         verticalLayout.addComponent(horizontalLayout)
         verticalLayout.setExpandRatio(horizontalLayout, 1.0f)
 
+        initAppBar(horizontalLayout)
+
         def taskDataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.taskMeta)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
@@ -68,6 +71,23 @@ public class DelaApplication extends Application {
 		setMainWindow(mainWindow)
 
 	}
+
+    private def initAppBar(HorizontalLayout horizontalLayout) {
+        VerticalLayout appBar = new VerticalLayout()
+        appBar.setHeight(null)
+        appBar.setWidth("120px")
+        def accordion = new Accordion()
+        accordion.setSizeFull()
+        accordion.addTab(new Label("the label"), "Действия", null)
+
+        appBar.addComponent(accordion)
+        horizontalLayout.addComponent(appBar)
+
+        VerticalLayout spacer = new VerticalLayout()
+        spacer.setWidth("10px")
+        horizontalLayout.addComponent(spacer)
+
+    }
 
     void initTopPanel(layout) {
 
