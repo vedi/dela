@@ -11,6 +11,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.MessageService
 import dela.StoreService
+import dela.VaadinService
 import dela.context.DataContext
 import dela.ui.account.ConfirmRegistrationWindow
 import dela.ui.account.ForgetPasswordWindow
@@ -19,8 +20,12 @@ import dela.ui.account.RegisterWindow
 import dela.ui.task.TaskTable
 import dela.AccountService
 import com.vaadin.ui.Accordion
+import com.vaadin.terminal.FileResource
+import dela.ui.subject.SubjectListWindow
+import dela.Setup
+import dela.Subject
 
-public class DelaApplication extends Application {
+public class DelaApplication extends Application implements ClickListener {
 
     final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
 
@@ -31,6 +36,10 @@ public class DelaApplication extends Application {
     AccountService accountService
     StoreService storeService
     MessageService messageService
+    def vaadinService
+
+    def subjectButton
+    def setupButton
 
     HorizontalLayout topLayout
 
@@ -38,10 +47,12 @@ public class DelaApplication extends Application {
 
     @Override
 	public void init() {
+        setTheme('dela')
 
         accountService = getBean(AccountService.class)
         messageService = getBean(MessageService.class)
         storeService = getBean(StoreService.class)
+        vaadinService = getBean(VaadinService.class)
         sessionContext = storeService.sessionContext
     
         Window mainWindow
@@ -74,11 +85,29 @@ public class DelaApplication extends Application {
 
     private def initAppBar(HorizontalLayout horizontalLayout) {
         VerticalLayout appBar = new VerticalLayout()
-        appBar.setHeight(null)
-        appBar.setWidth("120px")
+        appBar.setHeight('100%')
+        appBar.setWidth('120px')
         def accordion = new Accordion()
-        accordion.setSizeFull()
-        accordion.addTab(new Label("the label"), "Действия", null)
+        accordion.setHeight('100%')
+        VerticalLayout tabLayout = new VerticalLayout();
+        tabLayout.addStyleName("margintablayout");
+        tabLayout.setMargin(false, true, false, true)
+        tabLayout.setHeight(null)
+        accordion.addTab(tabLayout, "Действия", null)
+
+        subjectButton = new Button();
+        subjectButton.caption = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
+        subjectButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this))
+        subjectButton.setWidth('100%')
+        subjectButton.addListener(this as ClickListener)
+        tabLayout.addComponent(subjectButton)
+
+        setupButton = new Button();
+        setupButton.caption = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
+        setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this))
+        setupButton.setWidth('100%')
+        setupButton.addListener(this as ClickListener)
+        tabLayout.addComponent(setupButton)
 
         appBar.addComponent(accordion)
         horizontalLayout.addComponent(appBar)
@@ -106,6 +135,17 @@ public class DelaApplication extends Application {
             showLoggedInPanel()
         }
     }
+
+    def void buttonClick(ClickEvent clickEvent) {
+        if (clickEvent.button == subjectButton) {
+            addWindow(new SubjectListWindow(sessionContext: sessionContext))
+        } else if (clickEvent.button == setupButton) {
+            addWindow(new SetupWindow(sessionContext: sessionContext))
+        } else {
+            throw new IllegalArgumentException()
+        }
+    }
+
 
     def loginCallback = {login, password ->
         def foundAccount = this.storeService.auth(login, password)
