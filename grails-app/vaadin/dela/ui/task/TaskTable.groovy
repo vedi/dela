@@ -50,8 +50,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
     MessageService messageService
 
     Button completeButton
-    Button subjectButton
-    Button setupButton
 
     def gridVisibleColumns = ['subject', 'name']
 
@@ -128,18 +126,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
         completeButton.addListener(this as ClickListener)
         toolBar.addComponent(completeButton)
 
-        subjectButton = new Button();
-        subjectButton.description = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
-        subjectButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this.window.application))
-        subjectButton.addListener(this as ClickListener)
-        toolBar.addComponent(subjectButton)
-
-        setupButton = new Button();
-        setupButton.description = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
-        setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this.window.application))
-        setupButton.addListener(this as ClickListener)
-        toolBar.addComponent(setupButton)
-
         Searcher searcher = new Searcher(entityTable:this, application: this.window.application);
         searcher.addTo(toolBar)
     }
@@ -166,11 +152,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
                             }))
                 }
             }
-
-        } else if (clickEvent.button == subjectButton) {
-            addWindow(new SubjectListWindow(sessionContext: dataContext.sessionContext))
-        } else if (clickEvent.button == setupButton) {
-            addWindow(new SetupWindow(sessionContext: dataContext.sessionContext))
         } else {
             super.buttonClick(clickEvent);
         }

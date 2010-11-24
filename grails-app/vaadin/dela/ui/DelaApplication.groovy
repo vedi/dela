@@ -93,12 +93,13 @@ public class DelaApplication extends Application implements ClickListener {
         tabLayout.addStyleName("margintablayout");
         tabLayout.setMargin(false, true, false, true)
         tabLayout.setHeight(null)
-        accordion.addTab(tabLayout, "Действия", null)
+        accordion.addTab(tabLayout, messageService.getMessage("actions.label"), null)
 
         subjectButton = new Button();
         subjectButton.caption = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
         subjectButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this))
         subjectButton.setWidth('100%')
+        subjectButton.addStyleName('actionButton')
         subjectButton.addListener(this as ClickListener)
         tabLayout.addComponent(subjectButton)
 
@@ -106,6 +107,7 @@ public class DelaApplication extends Application implements ClickListener {
         setupButton.caption = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
         setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this))
         setupButton.setWidth('100%')
+        subjectButton.addStyleName('actionButton')
         setupButton.addListener(this as ClickListener)
         tabLayout.addComponent(setupButton)
 
@@ -138,9 +140,9 @@ public class DelaApplication extends Application implements ClickListener {
 
     def void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == subjectButton) {
-            addWindow(new SubjectListWindow(sessionContext: sessionContext))
+            this.mainWindow.addWindow(new SubjectListWindow(sessionContext: sessionContext))
         } else if (clickEvent.button == setupButton) {
-            addWindow(new SetupWindow(sessionContext: sessionContext))
+            this.mainWindow.addWindow(new SetupWindow(sessionContext: sessionContext))
         } else {
             throw new IllegalArgumentException()
         }
