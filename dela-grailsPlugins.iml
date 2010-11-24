@@ -5,6 +5,8 @@
       <configuration>
         <webroots>
           <root url="file://$USER_HOME$/.grails/1.3.4/projects/dela/plugins/vaadin-1.2.2/web-app" relative="/" />
+          <root url="file://$USER_HOME$/.grails/1.3.4/projects/dela/plugins/mail-0.9/grails-app/views" relative="/" />
+          <root url="file://$USER_HOME$/.grails/1.3.4/projects/dela/plugins/vaadin-1.2.2/grails-app/views" relative="/" />
         </webroots>
         <sourceRoots />
       </configuration>
