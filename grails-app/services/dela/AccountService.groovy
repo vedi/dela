@@ -1,6 +1,6 @@
 package dela
 
-class AccountService {
+class AccountService extends DataService<Account> {
 
     static transactional = true
 

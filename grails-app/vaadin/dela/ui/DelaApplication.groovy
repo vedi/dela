@@ -24,6 +24,8 @@ import com.vaadin.terminal.FileResource
 import dela.ui.subject.SubjectListWindow
 import dela.Setup
 import dela.Subject
+import dela.Account
+import dela.ui.account.AccountListWindow
 
 public class DelaApplication extends Application implements ClickListener {
 
@@ -40,6 +42,7 @@ public class DelaApplication extends Application implements ClickListener {
 
     def subjectButton
     def setupButton
+    def accountButton
 
     HorizontalLayout topLayout
 
@@ -72,6 +75,7 @@ public class DelaApplication extends Application implements ClickListener {
 
         initAppBar(horizontalLayout)
 
+        // TODO: ?Hide metaProvider in TaskTable
         def taskDataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.taskMeta)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
@@ -89,11 +93,12 @@ public class DelaApplication extends Application implements ClickListener {
         appBar.setWidth('120px')
         def accordion = new Accordion()
         accordion.setHeight('100%')
-        VerticalLayout tabLayout = new VerticalLayout();
-        tabLayout.addStyleName("margintablayout");
-        tabLayout.setMargin(false, true, false, true)
-        tabLayout.setHeight(null)
-        accordion.addTab(tabLayout, messageService.getMessage("actions.label"), null)
+
+        VerticalLayout actionTabLayout = new VerticalLayout();
+        actionTabLayout.addStyleName("margintablayout");
+        actionTabLayout.setMargin(false, true, false, true)
+        actionTabLayout.setHeight(null)
+        accordion.addTab(actionTabLayout, messageService.getMessage("actions.label"), null)
 
         subjectButton = new Button();
         subjectButton.caption = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
@@ -101,15 +106,30 @@ public class DelaApplication extends Application implements ClickListener {
         subjectButton.setWidth('100%')
         subjectButton.addStyleName('actionButton')
         subjectButton.addListener(this as ClickListener)
-        tabLayout.addComponent(subjectButton)
+        actionTabLayout.addComponent(subjectButton)
 
         setupButton = new Button();
         setupButton.caption = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
         setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this))
         setupButton.setWidth('100%')
-        subjectButton.addStyleName('actionButton')
+        setupButton.addStyleName('actionButton')
         setupButton.addListener(this as ClickListener)
-        tabLayout.addComponent(setupButton)
+        actionTabLayout.addComponent(setupButton)
+
+
+        VerticalLayout adminTabLayout = new VerticalLayout();
+        adminTabLayout.addStyleName("margintablayout");
+        adminTabLayout.setMargin(false, true, false, true)
+        adminTabLayout.setHeight(null)
+        accordion.addTab(adminTabLayout, messageService.getMessage("admin.area.label"), null)
+
+        accountButton = new Button();
+        accountButton.caption = messageService.getEntityListCaptionMsg(Account.simpleName.toLowerCase())
+        accountButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this))
+        accountButton.setWidth('100%')
+        accountButton.addStyleName('actionButton')
+        accountButton.addListener(this as ClickListener)
+        adminTabLayout.addComponent(accountButton)
 
         appBar.addComponent(accordion)
         horizontalLayout.addComponent(appBar)
@@ -143,6 +163,8 @@ public class DelaApplication extends Application implements ClickListener {
             this.mainWindow.addWindow(new SubjectListWindow(sessionContext: sessionContext))
         } else if (clickEvent.button == setupButton) {
             this.mainWindow.addWindow(new SetupWindow(sessionContext: sessionContext))
+        } else if (clickEvent.button == accountButton) {
+            this.mainWindow.addWindow(new AccountListWindow(sessionContext: sessionContext))
         } else {
             throw new IllegalArgumentException()
         }
@@ -208,11 +230,14 @@ public class DelaApplication extends Application implements ClickListener {
         topLayout.removeAllComponents()
 
         HorizontalLayout loggedInLayout = new HorizontalLayout()
-        loggedInLayout.spacing = true
 
         Label label = new Label();
         label.setValue(messageService.getLoggedInfoMsg(sessionContext.account))
         loggedInLayout.addComponent(label)
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setWidth("10px")
+        loggedInLayout.addComponent(horizontalLayout)
 
         Button logoutButton = new Button(messageService.getLogoutButtonLabel())
         logoutButton.addListener(new ClickListener() {
@@ -223,6 +248,14 @@ public class DelaApplication extends Application implements ClickListener {
             }
         })
         loggedInLayout.addComponent(logoutButton)
+
+        Button profileButton = new Button(messageService.getProfileButtonLabel())
+        profileButton.addListener(new ClickListener() {
+            void buttonClick(ClickEvent clickEvent) {
+                //TODO: DelaApplication.this.mainWindow.addWindow(new ProfileWindow(registerCallback))
+            }
+        })
+        loggedInLayout.addComponent(profileButton)
 
         topLayout.addComponent loggedInLayout
         topLayout.setComponentAlignment(loggedInLayout, Alignment.TOP_RIGHT)

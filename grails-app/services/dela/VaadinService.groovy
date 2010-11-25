@@ -58,6 +58,18 @@ class VaadinService {
         return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
     }
 
+    def createAccountDefaultContainer(dataContext) {
+        def selector = {startIndex, count, sortProperty, ascendingState ->
+            Account.findAll([offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
+        }
+
+        def counter = {
+            Account.count()
+        }
+
+        return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
+    }
+
     def getMetaListCaption(dataContext) {
         metaService.getMetaListCaption(dataContext.metaDomain)
     }

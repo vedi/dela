@@ -4,6 +4,7 @@ import dela.State
 import dela.Subject
 import dela.Task
 import dela.Version
+import dela.Account
 
 /**
  * @author vedi
@@ -38,6 +39,16 @@ class MetaProvider {
                     new MetaColumn(field: 'name', readOnly: true, sortable: true),
                     new MetaColumn(field: 'description'),
                     new MetaColumn(field: 'isPublic'),
+            ],
+    )
+
+    public final MetaDomain accountMeta = new MetaDomain(
+            domainClass: Account.class,
+            columns: [
+                    new MetaColumn(field: 'login', readOnly: true, sortable: true),
+                    new MetaColumn(field: 'email', sortable: true),
+                    new MetaColumn(field: 'role'),
+                    new MetaColumn(field: 'state'),
             ],
     )
 }

@@ -46,6 +46,10 @@ class MessageService {
         getMessage('button.login.label')
     }
 
+    public String getProfileButtonLabel() {
+        getMessage('button.profile.label')
+    }
+
     public String getLogoutButtonLabel() {
         getMessage('button.logout.label')
     }

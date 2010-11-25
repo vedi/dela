@@ -29,10 +29,9 @@ import dela.MessageService
  */
 class SubjectTable extends EntityTable implements FormFieldFactory {
 
-    VaadinService vaadinService
+    def vaadinService
     def taskService
-    MessageService messageService
-    def accountService
+    def messageService
 
     def gridVisibleColumns = ['name']
     def formFieldFactory = this
