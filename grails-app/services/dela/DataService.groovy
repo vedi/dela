@@ -1,6 +1,7 @@
 package dela
 
 import dela.context.DataContext
+import com.vaadin.data.Validator.InvalidValueException
 
 /**
  * canInsert, canEdit - is action available in current context, runs twice or more times in UI and in logic
@@ -25,12 +26,14 @@ class DataService<T> implements IDataService<T> {
             assert canEdit(dataContext, gainedDomain)
         }
 
+        // TODO: Translate to VAADIN validation
         assert canSave(dataContext, gainedDomain, domain)
 
         if (isNew) {
-            domain.save()
+            assert domain.save()
             afterInsert(dataContext, domain)
         } else {
+            assert domain.validate()
             domain = domain.merge()
             afterEdit(dataContext, domain)
         }

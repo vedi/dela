@@ -12,6 +12,8 @@ import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import com.vaadin.ui.*
 import dela.Account
+import dela.DomainFieldValidator
+import com.vaadin.data.validator.RegexpValidator
 
 /**
  * @author vedi
@@ -42,33 +44,27 @@ class AccountTable extends EntityTable implements FormFieldFactory {
 
     Field createField(Item item, Object propertyId, Component component) {
         String caption = getColumnLabel(propertyId)
-        if ('isPublic'.equals(propertyId)) {
-            def checkBox = new CheckBox(caption)
-            checkBox.readOnly = !this.dataContext.account.isAdmin()
-            checkBox
-        } else if ('role'.equals(propertyId)) {
-            def select = new OptionGroup(caption: caption, immediate: true)
+        Field field = null
+        if ('role'.equals(propertyId)) {
+            def select = field = new OptionGroup(caption: caption, immediate: true)
             select.addItem(Account.ROLE_ANONYMOUS)
             select.addItem(Account.ROLE_USER)
             select.addItem(Account.ROLE_ADMIN)
-
-            select
-
         } else if ('state'.equals(propertyId)) {
-            def select = new OptionGroup(caption: caption, immediate: true)
+            def select = field = new OptionGroup(caption: caption, immediate: true)
             select.addItem(Account.STATE_ACTIVE)
             select.addItem(Account.STATE_CREATING)
             select.addItem(Account.STATE_BLOCKED)
-
-            select
-
         } else {
-            TextField textField = new TextField(caption)
+            TextField textField = field = new TextField(caption)
             textField.setNullRepresentation('')
-
-            textField
         }
 
+        if (field) {
+            field.addValidator(new DomainFieldValidator(domain:item.bean, propertyName:propertyId))
+        }
+
+        return field
     }
 
     protected EntityForm createForm() {
@@ -76,6 +72,10 @@ class AccountTable extends EntityTable implements FormFieldFactory {
     }
 
     class AccountForm extends EntityForm {
+
+        AccountForm() {
+            setImmediate true
+        }
 
         protected void initButtons(ComponentContainer componentContainer) {
             super.initButtons(componentContainer);
