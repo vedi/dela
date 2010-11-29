@@ -22,6 +22,8 @@ class EntityForm extends Form implements Button.ClickListener {
 
     boolean editable = false
 
+    def defaultComponent = null
+
     Button okButton
     Button cancelButton
 
@@ -35,6 +37,10 @@ class EntityForm extends Form implements Button.ClickListener {
         initButtons(footer)
 
         super.attach();
+
+        if (defaultComponent) {
+            defaultComponent.focus()
+        }
     }
 
     protected void initButtons(ComponentContainer componentContainer) {

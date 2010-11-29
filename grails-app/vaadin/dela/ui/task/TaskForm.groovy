@@ -34,14 +34,6 @@ class TaskForm extends EntityForm {
         this.layout = mainLayout
     }
 
-    def void attach() {
-        super.attach()
-
-        leftLayout.components[1].focus()
-    }
-
-
-
     protected void attachField(Object propertyId, Field field) {
         if (propertyId.equals("power")) {
             rightLayout.addComponent(field)
