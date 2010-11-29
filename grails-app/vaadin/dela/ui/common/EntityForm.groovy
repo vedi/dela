@@ -156,16 +156,10 @@ class EntityForm extends Form implements Button.ClickListener {
         throw new Validator.InvalidValueException(null, exceptions);
     }
 
-
-
     void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == okButton) {
-            try {
-                saveHandler(getItemDataSource())
-            } catch (Validator.InvalidValueException e) {
-
-            }
             commit()
+            saveHandler(getItemDataSource())
         } else {
             discard()
         }

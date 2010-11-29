@@ -12,8 +12,6 @@ import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import com.vaadin.ui.*
 import dela.Account
-import dela.DomainFieldValidator
-import com.vaadin.data.validator.RegexpValidator
 
 /**
  * @author vedi
@@ -60,9 +58,7 @@ class AccountTable extends EntityTable implements FormFieldFactory {
             textField.setNullRepresentation('')
         }
 
-        if (field) {
-            field.addValidator(new DomainFieldValidator(domain:item.bean, propertyName:propertyId))
-        }
+        addDomainValidator(field, item, propertyId)
 
         return field
     }

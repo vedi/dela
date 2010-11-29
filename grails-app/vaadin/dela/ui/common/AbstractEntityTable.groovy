@@ -22,6 +22,10 @@ import dela.CommonDataService
 import dela.context.DataContext
 import com.vaadin.ui.Window.CloseListener
 import com.vaadin.ui.Window.CloseEvent
+import dela.DomainFieldValidator
+import com.vaadin.data.Item
+import com.vaadin.ui.AbstractField
+import dela.ServiceValidator
 
 /**
  * @author vedi
@@ -294,6 +298,19 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     def afterEdit(item) {
     }
 
+    protected def addDomainValidator(AbstractField field, Item item, propertyId) {
+        if (field) {
+            field.addValidator(new DomainFieldValidator(domain: item.bean, propertyName: propertyId))
+        }
+    }
+
+    protected def addServiceValidator(AbstractField field, Item item) {
+        if (field) {
+            field.addValidator(
+                    new ServiceValidator(dataService: dataService, dataContext: dataContext, domain: item.bean))
+        }
+    }
+
     /**
      * Save item to db.
      * @param item item to save
@@ -323,4 +340,5 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     final protected addWindow(Window window) {
         this.window.application.mainWindow.addWindow(window)
     }
+
 }

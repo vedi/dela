@@ -22,21 +22,19 @@ import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
 import com.vaadin.ui.TextField
-import dela.Setup
 
-import dela.Subject
 import dela.Task
 import dela.VaadinService
 import dela.YesNoDialog
-import dela.ui.SetupWindow
+
 import dela.ui.common.EntityTable
 import dela.ui.common.Searcher
-import dela.ui.subject.SubjectListWindow
+
 import dela.IDataService
 import dela.TaskService
 import dela.context.DataContext
 import dela.MessageService
-import dela.ui.common.EntityForm
+
 import com.vaadin.ui.Form
 
 /**
