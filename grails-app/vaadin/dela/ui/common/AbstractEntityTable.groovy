@@ -50,6 +50,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     protected Container container
 
+    @Deprecated
     def formFieldFactory
 
     def saveHandler = {item ->

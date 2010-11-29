@@ -42,7 +42,7 @@ import com.vaadin.ui.Form
  * date 04.07.2010
  * time 20:29:22
  */
-public class TaskTable extends EntityTable implements FormFieldFactory, DropHandler  {
+public class TaskTable extends EntityTable implements DropHandler  {
 
     VaadinService vaadinService
     MessageService messageService
@@ -53,8 +53,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
 
     def editVisibleColumns = ['subject', 'name', 'description', 'state', 'power']
 
-    def formFieldFactory = this
-
     def TaskTable() {
         this.vaadinService = getBean(VaadinService.class)
         this.messageService = getBean(MessageService.class)
@@ -62,7 +60,7 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
     }
 
     protected Form createForm() {
-        return new TaskForm()
+        return new TaskForm(dataContext: dataContext)
     }
 
     protected Container createContainer(DataContext dataContext) {
@@ -152,46 +150,6 @@ public class TaskTable extends EntityTable implements FormFieldFactory, DropHand
             }
         } else {
             super.buttonClick(clickEvent);
-        }
-    }
-
-    // TODO: Move to form
-    Field createField(Item item, Object propertyId, Component component) {
-        String caption = getColumnLabel(propertyId)
-        if (propertyId.equals("subject")) {
-            def comboBox = new ComboBox(caption:caption, immediate: true)
-            dataContext.storeService.getSubjects().each {
-                comboBox.addItem it
-            }
-
-            comboBox
-        } else if (propertyId.equals('state')) {
-            def comboBox = new ComboBox(caption:caption, immediate: true)
-            dataContext.storeService.getStates().each {
-                comboBox.addItem it
-            }
-
-            comboBox
-        } else if (propertyId.equals('power')) {
-            Slider slider = new Slider(caption:caption,
-                    min: 0.01, max: 0.99, resolution: 2, orientation: Slider.ORIENTATION_VERTICAL,
-                    immediate: true)
-
-            slider.setHeight "100%"
-
-            slider
-        } else {
-            def textField = new TextField(caption)
-            textField.setNullRepresentation('')
-
-            if ('description'.equals(propertyId)) {
-                textField.setRows(10)
-                textField.setColumns(30)
-            } else if ('name'.equals(propertyId)) {
-                textField.setColumns(30)
-            }
-
-            textField
         }
     }
 
