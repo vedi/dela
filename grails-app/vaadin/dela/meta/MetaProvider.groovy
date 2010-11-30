@@ -47,6 +47,7 @@ class MetaProvider {
             columns: [
                     new MetaColumn(field: 'login', readOnly: true, sortable: true),
                     new MetaColumn(field: 'email', sortable: true),
+                    new MetaColumn(field: 'password'),
                     new MetaColumn(field: 'role'),
                     new MetaColumn(field: 'state'),
             ],

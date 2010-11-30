@@ -44,6 +44,9 @@ class AccountForm extends EntityForm implements FormFieldFactory {
         } else {
             TextField textField = field = new TextField(caption)
             textField.setNullRepresentation('')
+            if ('password'.equals(propertyId)) {
+                textField.secret = true
+            }
         }
 
         addDomainValidator(field, item, propertyId)
