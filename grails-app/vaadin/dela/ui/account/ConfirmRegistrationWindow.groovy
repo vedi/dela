@@ -59,7 +59,10 @@ class ConfirmRegistrationWindow extends Window implements ClickListener {
         StoreService storeService = getBean(StoreService.class)
 
         if (storeService.confirmRegistration(uuid, password.value.toString())) {
+            // TODO: Delegate application
             application.refreshTopPanelContent()
+            application.refreshAppBarContent()
+
             open(new ExternalResource(application.mainWindow.URL))
             application.mainWindow.showNotification(i18n('confirmation.complete.message'))
         } else {

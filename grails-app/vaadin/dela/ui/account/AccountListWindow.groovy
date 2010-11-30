@@ -14,6 +14,8 @@ class AccountListWindow extends Window {
 
     def void attach() {
 
+        assert sessionContext?.account?.isAdmin()
+
         super.attach()
 
         def dataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.accountMeta)

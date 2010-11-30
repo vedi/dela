@@ -47,6 +47,7 @@ public class DelaApplication extends Application implements ClickListener {
     HorizontalLayout topLayout
 
     ConfirmRegistrationWindow confirmRegistrationWindow
+    VerticalLayout appBar
 
     @Override
 	public void init() {
@@ -88,12 +89,37 @@ public class DelaApplication extends Application implements ClickListener {
 	}
 
     private def initAppBar(HorizontalLayout horizontalLayout) {
-        VerticalLayout appBar = new VerticalLayout()
+        appBar = new VerticalLayout()
         appBar.setHeight('100%')
         appBar.setWidth('120px')
+
+        refreshAppBarContent()
+
+        horizontalLayout.addComponent(appBar)
+
+        VerticalLayout spacer = new VerticalLayout()
+        spacer.setWidth("10px")
+        horizontalLayout.addComponent(spacer)
+
+    }
+
+    def refreshAppBarContent() {
+
+        appBar.removeAllComponents()
+
         def accordion = new Accordion()
         accordion.setHeight('100%')
 
+        addCommonTab(accordion)
+
+        if (sessionContext.account?.isAdmin()) {
+            addAdminTab(accordion)
+        }
+
+        appBar.addComponent(accordion)
+    }
+
+    protected def addCommonTab(Accordion accordion) {
         VerticalLayout actionTabLayout = new VerticalLayout();
         actionTabLayout.addStyleName("margintablayout");
         actionTabLayout.setMargin(false, true, false, true)
@@ -115,8 +141,9 @@ public class DelaApplication extends Application implements ClickListener {
         setupButton.addStyleName('actionButton')
         setupButton.addListener(this as ClickListener)
         actionTabLayout.addComponent(setupButton)
+    }
 
-
+    protected def addAdminTab(Accordion accordion) {
         VerticalLayout adminTabLayout = new VerticalLayout();
         adminTabLayout.addStyleName("margintablayout");
         adminTabLayout.setMargin(false, true, false, true)
@@ -130,15 +157,8 @@ public class DelaApplication extends Application implements ClickListener {
         accountButton.addStyleName('actionButton')
         accountButton.addListener(this as ClickListener)
         adminTabLayout.addComponent(accountButton)
-
-        appBar.addComponent(accordion)
-        horizontalLayout.addComponent(appBar)
-
-        VerticalLayout spacer = new VerticalLayout()
-        spacer.setWidth("10px")
-        horizontalLayout.addComponent(spacer)
-
     }
+
 
     void initTopPanel(layout) {
 
@@ -151,6 +171,7 @@ public class DelaApplication extends Application implements ClickListener {
     }
 
     def refreshTopPanelContent() {
+
         if (!storeService.isLoggedIn()) {
             showAnonymousPanel()
         } else {
@@ -175,6 +196,7 @@ public class DelaApplication extends Application implements ClickListener {
         def foundAccount = this.storeService.auth(login, password)
         if (foundAccount) {
             showLoggedInPanel()
+            refreshAppBarContent()
             this.table.refresh()
         } else {
             this.mainWindow.showNotification(this.messageService.getAuthFailedMsg())
@@ -244,6 +266,8 @@ public class DelaApplication extends Application implements ClickListener {
             void buttonClick(ClickEvent clickEvent) {
                 DelaApplication.this.storeService.logout()
                 DelaApplication.this.showAnonymousPanel()
+                DelaApplication.this.refreshAppBarContent()
+
                 DelaApplication.this.table.refresh()
             }
         })
