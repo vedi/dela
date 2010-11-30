@@ -27,19 +27,15 @@ import dela.MessageService
  * date 08.07.2010
  * time 22:33:52
  */
-class SubjectTable extends EntityTable implements FormFieldFactory {
+class SubjectTable extends EntityTable {
 
     def vaadinService
-    def taskService
     def messageService
 
     def gridVisibleColumns = ['name']
-    def formFieldFactory = this
-    def normalizeButton
 
     def SubjectTable() {
         this.vaadinService = getBean(VaadinService.class)
-        this.taskService = getBean(TaskService.class)
         this.messageService = getBean(MessageService.class)
     }
 
@@ -47,29 +43,8 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
         return getBean(SubjectService.class)
     }
 
-
     protected Container createContainer(DataContext dataContext) {
         return vaadinService.createSubjectDefaultContainer(dataContext)
-    }
-
-    Field createField(Item item, Object propertyId, Component component) {
-        String label = getColumnLabel(propertyId)
-        if ('isPublic'.equals(propertyId)) {
-            def checkBox = new CheckBox(label)
-            checkBox.readOnly = !this.dataContext.account.isAdmin()
-            checkBox
-        } else {
-            TextField textField = new TextField(label)
-            textField.setNullRepresentation('')
-
-            if ('description'.equals(propertyId)) {
-                textField.setRows(10)
-                textField.setColumns(30)
-            }
-
-            textField
-        }
-
     }
 
     def afterInsert(item) {
@@ -97,30 +72,7 @@ class SubjectTable extends EntityTable implements FormFieldFactory {
     }
 
     protected EntityForm createForm() {
-        return new SubjectForm()
-    }
-
-    class SubjectForm extends EntityForm {
-
-        protected void initButtons(ComponentContainer componentContainer) {
-            super.initButtons(componentContainer);
-
-            if (editable) {
-                normalizeButton = new Button()
-                normalizeButton.caption = messageService.getNormalizeButtonLabel()
-                normalizeButton.addListener(this as Button.ClickListener)
-                componentContainer.addComponent(normalizeButton)
-            }
-        }
-
-        def void buttonClick(ClickEvent clickEvent) {
-            if (clickEvent.button == normalizeButton) {
-                taskService.normalizeSubjectTasks(getDomain(getItemDataSource()))
-                window.application.mainWindow.showNotification(messageService.getNormalizeIsCompletedMsg())
-            } else {
-                super.buttonClick(clickEvent)
-            }
-        }
+        return new SubjectForm(dataContext: dataContext)
     }
 
 }

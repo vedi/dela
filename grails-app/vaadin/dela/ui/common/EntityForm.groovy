@@ -10,6 +10,7 @@ import com.vaadin.ui.Form
 import com.vaadin.data.Validator
 import com.vaadin.ui.AbstractField
 import com.vaadin.data.Validator.InvalidValueException
+import com.vaadin.data.util.BeanItem
 
 /**
  * @author vedi
@@ -18,6 +19,7 @@ import com.vaadin.data.Validator.InvalidValueException
  */
 class EntityForm extends Form implements Button.ClickListener {
 
+    def dataContext
     def saveHandler
 
     boolean editable = false
@@ -173,5 +175,7 @@ class EntityForm extends Form implements Button.ClickListener {
         window.close()
     }
 
-
+    final protected def getDomain(item) {
+        (item as BeanItem).bean
+    }
 }

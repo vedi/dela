@@ -20,7 +20,6 @@ import com.vaadin.ui.FormFieldFactory
 class TaskForm extends EntityForm implements FormFieldFactory {
 
     def vaadinService
-    def dataContext
 
     def leftLayout
     def rightLayout
