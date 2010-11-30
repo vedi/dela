@@ -31,7 +31,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         super.attach();
 
-        this.caption = i18n("entity.setup.caption", "setup")
+        this.caption = i18n('entity.setup.caption', 'setup')
 
         form = new EntityForm(editable:true)
 

@@ -2,7 +2,7 @@ package dela.ui.task
 
 import com.vaadin.data.Container
 import com.vaadin.data.Container.Ordered
-import com.vaadin.data.Item
+
 import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutListener
 import com.vaadin.event.dd.DragAndDropEvent
@@ -14,14 +14,8 @@ import com.vaadin.ui.AbstractSelect
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.Component
-import com.vaadin.ui.Field
 
-import com.vaadin.ui.FormFieldFactory
-import com.vaadin.ui.Slider
 import com.vaadin.ui.Table.TableDragMode
-import com.vaadin.ui.TextField
 
 import dela.Task
 import dela.VaadinService
@@ -35,7 +29,7 @@ import dela.TaskService
 import dela.context.DataContext
 import dela.MessageService
 
-import com.vaadin.ui.Form
+import dela.ui.common.EntityForm
 
 /**
  * @author vedi
@@ -59,8 +53,8 @@ public class TaskTable extends EntityTable implements DropHandler  {
         this.dropHandler = this
     }
 
-    protected Form createForm() {
-        return new TaskForm(dataContext: dataContext)
+    protected EntityForm createForm() {
+        return new TaskForm()
     }
 
     protected Container createContainer(DataContext dataContext) {

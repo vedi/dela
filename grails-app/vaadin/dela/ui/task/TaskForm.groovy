@@ -19,13 +19,10 @@ import com.vaadin.ui.FormFieldFactory
  */
 class TaskForm extends EntityForm implements FormFieldFactory {
 
-    def vaadinService
-
     def leftLayout
     def rightLayout
 
     def TaskForm() {
-        this.vaadinService = getBean(dela.VaadinService.class)
         this.formFieldFactory = this
 
         def mainLayout = new HorizontalLayout()
@@ -54,7 +51,7 @@ class TaskForm extends EntityForm implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component component) {
-        String caption = vaadinService.getColumnCaption(dataContext, propertyId)
+        String caption = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {
             def comboBox = new ComboBox(caption:caption, immediate: true)
             dataContext.storeService.getSubjects().each {

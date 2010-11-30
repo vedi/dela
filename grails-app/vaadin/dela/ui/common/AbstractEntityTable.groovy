@@ -6,26 +6,16 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutListener
 import com.vaadin.terminal.FileResource
-import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.Form
-import com.vaadin.ui.FormFieldFactory
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Table
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.Window
-import dela.YesNoDialog
-import dela.VaadinService
-import dela.IDataService
-import dela.CommonDataService
-import dela.context.DataContext
-import com.vaadin.ui.Window.CloseListener
 import com.vaadin.ui.Window.CloseEvent
-import dela.DomainFieldValidator
-import com.vaadin.data.Item
-import com.vaadin.ui.AbstractField
-import dela.ServiceValidator
+import com.vaadin.ui.Window.CloseListener
+import dela.CommonDataService
+import dela.IDataService
+import dela.VaadinService
+import dela.YesNoDialog
+import dela.context.DataContext
+import com.vaadin.ui.*
 
 /**
  * @author vedi
@@ -50,16 +40,13 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     protected Container container
 
-    @Deprecated
-    def formFieldFactory
-
     def saveHandler = {item ->
         this.saveItem(item)
     }
 
     def AbstractEntityTable() {
         this.dataService = initDataService()
-        this.vaadinService = getBean(VaadinService.class)
+        this.vaadinService = getBean(dela.VaadinService.class)
         this.table = new Table()
     }
 
@@ -221,17 +208,14 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     void showForm(selectedItem, editable = true) {
         Window window = new Window(vaadinService.getMetaCaption(dataContext))
 
-        Form form = createForm()
-        form.editable = editable
+        EntityForm entityForm = createForm()
+        entityForm.dataContext = this.dataContext
+        entityForm.editable = editable
 
-        if (getFormFieldFactory()) {
-            form.formFieldFactory = getFormFieldFactory() as FormFieldFactory
-        }
+        entityForm.setItemDataSource(selectedItem, getEditVisibleColumns())
+        entityForm.saveHandler = saveHandler
 
-        form.setItemDataSource(selectedItem, getEditVisibleColumns())
-        form.saveHandler = saveHandler
-
-        window.addComponent(form)
+        window.addComponent(entityForm)
 
         window.layout.setSizeUndefined()
         window.center()
@@ -254,7 +238,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         return vaadinService.getEditVisibleColumns(dataContext)
     }
 
-    protected Form createForm() {
+    protected EntityForm createForm() {
         return new EntityForm()
     }
 
@@ -297,19 +281,6 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def afterEdit(item) {
-    }
-
-    protected def addDomainValidator(AbstractField field, Item item, propertyId) {
-        if (field) {
-            field.addValidator(new DomainFieldValidator(domain: item.bean, propertyName: propertyId))
-        }
-    }
-
-    protected def addServiceValidator(AbstractField field, Item item) {
-        if (field) {
-            field.addValidator(
-                    new ServiceValidator(dataService: dataService, dataContext: dataContext, domain: item.bean))
-        }
     }
 
     /**

@@ -11,6 +11,7 @@ import com.vaadin.data.Validator
 import com.vaadin.ui.AbstractField
 import com.vaadin.data.Validator.InvalidValueException
 import com.vaadin.data.util.BeanItem
+import com.vaadin.data.Item
 
 /**
  * @author vedi
@@ -22,6 +23,8 @@ class EntityForm extends Form implements Button.ClickListener {
     def dataContext
     def saveHandler
 
+    def vaadinService
+
     boolean editable = false
 
     def defaultComponent = null
@@ -32,6 +35,7 @@ class EntityForm extends Form implements Button.ClickListener {
     def EntityForm() {
         this.writeThrough =  false
         this.invalidCommitted = false
+        this.vaadinService = getBean(dela.VaadinService)
     }
 
     def void attach() {
@@ -178,4 +182,18 @@ class EntityForm extends Form implements Button.ClickListener {
     final protected def getDomain(item) {
         (item as BeanItem).bean
     }
+
+    def getColumnLabel(columnName) {
+        vaadinService.getColumnCaption(dataContext, columnName)
+    }
+
+    protected def addDomainValidator(AbstractField field, Item item, propertyId) {
+        vaadinService.addDomainValidator(field, getDomain(item), propertyId)
+    }
+
+    protected def addServiceValidator(AbstractField field, Item item) {
+        //TODO: Inject dataService
+        vaadinService.addServiceValidator(field, null, dataContext, getDomain(item))
+    }
+
 }

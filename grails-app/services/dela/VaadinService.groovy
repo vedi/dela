@@ -3,6 +3,7 @@ package dela
 import dela.container.DomainLazyContainer
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.vaadin.terminal.FileResource
+import com.vaadin.ui.AbstractField
 
 class VaadinService {
 
@@ -93,4 +94,18 @@ class VaadinService {
     def getFile(fileName) {
         return ApplicationHolder.application.parentContext.getResource(fileName).file
     }
+
+    def addDomainValidator(AbstractField field, domain, propertyId) {
+        if (field) {
+            field.addValidator(new DomainFieldValidator(domain: domain, propertyName: propertyId))
+        }
+    }
+
+    def addServiceValidator(AbstractField field, dataService, dataContext, domain) {
+        if (field) {
+            field.addValidator(
+                    new ServiceValidator(dataService: dataService, dataContext: dataContext, domain: domain))
+        }
+    }
+
 }

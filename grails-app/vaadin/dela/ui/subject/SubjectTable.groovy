@@ -1,26 +1,10 @@
 package dela.ui.subject
 
-import com.vaadin.data.Item
-import com.vaadin.ui.Button
-import com.vaadin.ui.Button.ClickEvent
-import com.vaadin.ui.CheckBox
-import com.vaadin.ui.Component
-import com.vaadin.ui.ComponentContainer
-import com.vaadin.ui.Field
-import com.vaadin.ui.FormFieldFactory
-import com.vaadin.ui.TextField
-
-import dela.YesNoDialog
+import com.vaadin.data.Container
+import dela.context.DataContext
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
-import com.vaadin.data.Container
-import dela.VaadinService
-
-import dela.SubjectService
-import dela.IDataService
-import dela.context.DataContext
-import dela.TaskService
-import dela.MessageService
+import dela.*
 
 /**
  * @author vedi
@@ -72,7 +56,7 @@ class SubjectTable extends EntityTable {
     }
 
     protected EntityForm createForm() {
-        return new SubjectForm(dataContext: dataContext)
+        return new SubjectForm()
     }
 
 }
