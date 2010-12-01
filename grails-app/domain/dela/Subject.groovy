@@ -11,12 +11,12 @@ class Subject {
     boolean isPublic
 
     static constraints = {
+        name(unique:true)
         description(nullable:true)
     }
 
     static mapping = {
         owner lazy:false
-        versions lazy:false
     }
 
     def String toString() {
