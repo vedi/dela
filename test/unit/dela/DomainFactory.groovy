@@ -19,7 +19,20 @@ class DomainFactory {
         account
     }
 
+    def createSubject(params = [:]) {
+        Subject subject = new Subject(
+                name: 'subject' + UUID.randomUUID().toString(),
+                description: "subject's desc",
+                isPublic: false,
+                owner : createAccount()
+        )
+        applyParams(subject, params)
+        subject
+    }
+
     def applyParams(domain, params = [:]) {
-        domain.properties = params
+        if (params) {
+            domain.properties = params
+        }
     }
 }
