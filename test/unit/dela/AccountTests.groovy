@@ -40,8 +40,7 @@ class AccountTests extends GrailsUnitTestCase {
 
     void testPasswordContraints() {
         mockDomain(Account)
-        def account = domainFactory.createAccount()
-        account.password = '1234'
+        def account = domainFactory.createAccount(password : '1234')
         assertFalse(account.validate())
         assertEquals('minSize', account.errors['password'])
 
@@ -51,8 +50,7 @@ class AccountTests extends GrailsUnitTestCase {
 
     void testEmailContraints() {
         mockDomain(Account)
-        def account = domainFactory.createAccount()
-        account.email = 'non-email'
+        def account = domainFactory.createAccount(email : 'non-email')
         assertFalse(account.validate())
         assertEquals('email', account.errors['email'])
 
@@ -65,8 +63,7 @@ class AccountTests extends GrailsUnitTestCase {
         byte wrongRole = 77
         def inList = [Account.ROLE_ANONYMOUS, Account.ROLE_USER, Account.ROLE_ADMIN]
         assert !inList.contains(wrongRole)
-        def account = domainFactory.createAccount()
-        account.role = wrongRole
+        def account = domainFactory.createAccount(role:wrongRole)
         assertFalse(account.validate())
         assertEquals('inList', account.errors['role'])
 
@@ -79,8 +76,7 @@ class AccountTests extends GrailsUnitTestCase {
         byte wrongState = 77
         def inList = [Account.STATE_BLOCKED, Account.STATE_CREATING, Account.STATE_ACTIVE]
         assert !inList.contains(wrongState)
-        def account = domainFactory.createAccount()
-        account.state = wrongState
+        def account = domainFactory.createAccount(state: wrongState)
         assertFalse(account.validate())
         assertEquals('inList', account.errors['state'])
 
