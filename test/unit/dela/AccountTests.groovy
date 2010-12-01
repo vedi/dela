@@ -4,7 +4,7 @@ import grails.test.GrailsUnitTestCase
 
 class AccountTests extends GrailsUnitTestCase {
 
-    DomainFactory domainFactory = new DomainFactory()
+    private DomainFactory domainFactory = new DomainFactory()
 
     protected void setUp() {
         super.setUp()
@@ -29,6 +29,10 @@ class AccountTests extends GrailsUnitTestCase {
         def anotherAccount = domainFactory.createAccount(login: account.login)
         assertFalse(anotherAccount.validate())
         assertEquals('unique', anotherAccount.errors['login'])
+
+        anotherAccount.login = null
+        assertFalse(anotherAccount.validate())
+        assertEquals('nullable', anotherAccount.errors['login'])
 
         anotherAccount.login = '12'
         assertFalse(anotherAccount.validate())
