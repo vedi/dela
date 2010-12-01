@@ -8,8 +8,6 @@ class Task {
 
     String description
 
-    Version subjectVersion
-
     Date dateCreated
     Date lastUpdated
 
@@ -19,7 +17,6 @@ class Task {
 
     static constraints = {
         description(nullable:true)
-        subjectVersion(nullable:true)
     }
 
     static mapping = {

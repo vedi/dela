@@ -3,7 +3,6 @@ package dela
 class Subject {
 
     static belongsTo = [owner : Account]
-    static hasMany = [versions : Version]
 
     String name
 

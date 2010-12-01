@@ -3,7 +3,6 @@ package dela.meta
 import dela.State
 import dela.Subject
 import dela.Task
-import dela.Version
 import dela.Account
 
 /**
@@ -22,7 +21,6 @@ class MetaProvider {
                     new MetaColumn(field: 'power', type:Double.class, ),
                     new MetaColumn(field: 'subject', type:Subject.class),
                     new MetaColumn(field: 'state', type:State.class),
-                    new MetaColumn(field: 'subjectVersion',type:Version.class),
                     new MetaColumn(field: 'dateCreated', type:Date.class),
             ],
     )
