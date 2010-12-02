@@ -1,4 +1,5 @@
 out
 target
-workspace.xml
 application.properties
+stacktrace.log
+workspace.xml
