@@ -26,6 +26,7 @@ import dela.Setup
 import dela.Subject
 import dela.Account
 import dela.ui.account.AccountListWindow
+import dela.ui.account.ProfileWindow
 
 public class DelaApplication extends Application implements ClickListener {
 

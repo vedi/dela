@@ -44,6 +44,7 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
         this.forgetPasswordCallback = forgetPasswordCallback
         this.caption = messageService.getLoginWindowCaptionMsg()
 
+
         form = new EntityForm() {
 
             protected void initButtons(ComponentContainer componentContainer) {

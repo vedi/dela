@@ -10,9 +10,7 @@ import com.vaadin.ui.FormFieldFactory
 import com.vaadin.ui.OptionGroup
 import com.vaadin.ui.Window
 import dela.Setup
-import dela.State
 
-import dela.Subject
 import dela.ui.common.EntityForm
 
 /**
@@ -25,7 +23,7 @@ class SetupWindow extends Window implements FormFieldFactory {
     Setup setup
     def sessionContext
 
-    private Form form
+    private Form entityForm
 
     def void attach() {
 
@@ -33,24 +31,23 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         this.caption = i18n('entity.setup.caption', 'setup')
 
-        form = new EntityForm(editable:true)
-
         setup = sessionContext.setup
 
         def setupItem = new BeanItem(setup)
 
-        form.formFieldFactory = this
-        form.itemDataSource = setupItem
-        form.visibleItemProperties = ['activeSubject', 'filterStates', 'filterSubjects']
+        entityForm = new EntityForm()
+        entityForm.formFieldFactory = this
+        entityForm.editable = true
 
-        form.saveHandler = saveSetup
+        entityForm.setItemDataSource(setupItem, ['activeSubject', 'filterStates', 'filterSubjects'])
+        entityForm.saveHandler = saveSetup
 
-        this.addComponent(form)
+        this.addComponent(entityForm)
 
         this.layout.setSizeUndefined()
         this.center()
 
-        form.layout.components[0].focus()
+        entityForm.layout.components[0].focus()
     }
 
     def saveSetup = {item ->
