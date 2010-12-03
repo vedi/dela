@@ -191,7 +191,6 @@ public class DelaApplication extends Application implements ClickListener {
         }
     }
 
-
     def loginCallback = {login, password ->
         def foundAccount = this.storeService.auth(login, password)
         if (foundAccount) {
@@ -276,7 +275,7 @@ public class DelaApplication extends Application implements ClickListener {
         Button profileButton = new Button(messageService.getProfileButtonLabel())
         profileButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
-                //TODO: DelaApplication.this.mainWindow.addWindow(new ProfileWindow(registerCallback))
+                DelaApplication.this.mainWindow.addWindow(new ProfileWindow(sessionContext:sessionContext))
             }
         })
         loggedInLayout.addComponent(profileButton)

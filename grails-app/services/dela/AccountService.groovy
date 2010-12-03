@@ -14,6 +14,7 @@ class AccountService extends DataService<Account> {
             return null
         }
     }
+
     /**
      * @param account
      * @param setup

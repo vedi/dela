@@ -49,6 +49,14 @@ class AccountForm extends EntityForm implements FormFieldFactory {
             }
         }
 
+        if (field && !this.dataContext.account.isAdmin()) {
+            if (['email', 'password'].contains(propertyId)) {
+                field.readOnly = (getDomain(item) != dataContext.account)
+            } else {
+                field.readOnly = true
+            }
+        }
+
         addDomainValidator(field, item, propertyId)
 
         return field

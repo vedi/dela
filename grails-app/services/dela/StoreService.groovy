@@ -23,7 +23,7 @@ class StoreService implements InitializingBean {
     def saveSetup(setup) {
         if (isLoggedIn()) {
             sessionContext.account = accountService.saveSetup(sessionContext.account, setup)
-            sessionContext.setup = sessionContext.account.setup 
+            sessionContext.setup = sessionContext.account.setup
         } else {
             sessionContext.setup = setup
         }
@@ -39,9 +39,9 @@ class StoreService implements InitializingBean {
         } else {
             return null
         }
-        
+
     }
-    
+
     def logout() {
         assert isLoggedIn()
         sessionContext.account = accountService.anonymous
@@ -78,7 +78,7 @@ class StoreService implements InitializingBean {
 
         Account account = accountService.confirmRegistration(uuid, password)
         if (account) {
-            // TODO: Не происходит автоматический вход
+            // TODO: РќРµ РїСЂРѕРёСЃС…РѕРґРёС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ РІС…РѕРґ
             def subject = subjectService.createDefault(account)
             assert subject.save(), subject.errors
 
