@@ -1,5 +1,7 @@
+.idea
 out
 target
+*.iml
 application.properties
 stacktrace.log
 workspace.xml
