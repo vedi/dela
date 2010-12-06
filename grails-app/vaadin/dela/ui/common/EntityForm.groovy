@@ -12,13 +12,14 @@ import com.vaadin.ui.AbstractField
 import com.vaadin.data.Validator.InvalidValueException
 import com.vaadin.data.util.BeanItem
 import com.vaadin.data.Item
+import dela.Utils
 
 /**
  * @author vedi
  * date 02.07.2010
  * time 23:15:53
  */
-class EntityForm extends Form implements Button.ClickListener {
+class EntityForm extends Form, Utils implements Button.ClickListener {
 
     def dataContext
     def saveHandler
@@ -177,10 +178,6 @@ class EntityForm extends Form implements Button.ClickListener {
         }
 
         window.close()
-    }
-
-    final protected def getDomain(item) {
-        (item as BeanItem).bean
     }
 
     def getColumnLabel(columnName) {

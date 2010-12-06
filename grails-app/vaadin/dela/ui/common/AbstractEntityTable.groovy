@@ -16,13 +16,14 @@ import dela.VaadinService
 import dela.YesNoDialog
 import dela.context.DataContext
 import com.vaadin.ui.*
+import dela.Utils
 
 /**
  * @author vedi
  * date 28.06.2010
  * time 18:11:29
  */
-public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
+public abstract class AbstractEntityTable extends VerticalLayout, Utils implements ClickListener {
 
     VaadinService vaadinService
     IDataService dataService
@@ -41,7 +42,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     protected Container container
 
     def saveHandler = {item ->
-        this.saveItem(item)
+        this.saveItem(this.fromFormItem(item))
     }
 
     def AbstractEntityTable() {
@@ -205,6 +206,14 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         refresh()
     }
 
+    protected def toFormItem(item) {
+        item
+    }
+
+    protected def fromFormItem(item) {
+        item
+    }
+
     void showForm(selectedItem, editable = true) {
         Window window = new Window(vaadinService.getMetaCaption(dataContext))
 
@@ -212,7 +221,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         entityForm.dataContext = this.dataContext
         entityForm.editable = editable
 
-        entityForm.setItemDataSource(selectedItem, getEditVisibleColumns())
+        entityForm.setItemDataSource(toFormItem(selectedItem), getEditVisibleColumns())
         entityForm.saveHandler = saveHandler
 
         window.addComponent(entityForm)
@@ -303,10 +312,6 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         }
 
         domain
-    }
-
-    final protected def getDomain(item) {
-        (item as BeanItem).bean
     }
 
     final protected addWindow(Window window) {
