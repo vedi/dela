@@ -48,7 +48,9 @@ class SubjectService extends DataService<Subject> {
 
         def owner = subject.owner
 
-        //TODO: Удаляется только из настроек сессии!
+        //TODO: РЈРґР°Р»СЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РёР· РЅР°СЃС‚СЂРѕРµРє СЃРµСЃСЃРёРё!
+        dataContext.account.removeFromSubjects(subject)
+
         owner.removeFromSubjects(subject)
         def setup = dataContext.setup
         setup.removeFromFilterSubjects(subject)
