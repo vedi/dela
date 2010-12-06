@@ -50,6 +50,11 @@ class TaskForm extends EntityForm implements FormFieldFactory {
         }
     }
 
+    @Override
+    protected List<String> getEditVisibleColumns() {
+        ['name', 'description', 'subject', 'state', 'power']
+    }
+
     Field createField(Item item, Object propertyId, Component component) {
         String caption = getColumnLabel(propertyId)
         if (propertyId.equals("subject")) {

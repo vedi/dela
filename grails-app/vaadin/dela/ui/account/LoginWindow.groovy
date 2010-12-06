@@ -55,14 +55,20 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
                 button.addListener(LoginWindow.this as ClickListener)
                 componentContainer.addComponent button
             }
+
+            @Override
+            protected List<String> getEditVisibleColumns() {
+                ['login', 'password']
+            }
+
+
         }
 
         account = new Account()
 
         form.editable = true
         form.formFieldFactory = this
-        form.itemDataSource = new BeanItem(account)
-        form.visibleItemProperties = ['login', 'password']
+        form.data = new BeanItem(account)
 
         form.saveHandler = login
 

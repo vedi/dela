@@ -10,7 +10,7 @@ import com.vaadin.ui.Form
 import com.vaadin.data.Validator
 import com.vaadin.ui.AbstractField
 import com.vaadin.data.Validator.InvalidValueException
-import com.vaadin.data.util.BeanItem
+
 import com.vaadin.data.Item
 import dela.Utils
 
@@ -24,7 +24,7 @@ class EntityForm extends Form implements Button.ClickListener {
 
     def dataContext
     def saveHandler
-    def data1
+    def data
 
     def vaadinService
 
@@ -45,7 +45,7 @@ class EntityForm extends Form implements Button.ClickListener {
 
         initButtons(footer)
 
-        setItemDataSource(data1 as Item, getEditVisibleColumns())
+        setItemDataSource(data as Item, getEditVisibleColumns())
 
         super.attach();
 

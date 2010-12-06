@@ -17,7 +17,6 @@ import dela.YesNoDialog
 import dela.context.DataContext
 import com.vaadin.ui.*
 import dela.Utils
-import com.vaadin.data.Item
 
 /**
  * @author vedi
@@ -221,7 +220,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         EntityForm entityForm = createForm()
         entityForm.dataContext = this.dataContext
-        entityForm.data1 = toFormItem(selectedItem)
+        entityForm.data = toFormItem(selectedItem)
         entityForm.editable = editable
         entityForm.saveHandler = saveHandler
 

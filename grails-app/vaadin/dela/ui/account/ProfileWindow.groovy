@@ -34,7 +34,7 @@ class ProfileWindow extends Window {
         entityForm.dataContext = this.dataContext
         entityForm.editable = true
 
-        entityForm.setItemDataSource(accountItem, vaadinService.getEditVisibleColumns(dataContext))
+        entityForm.data = accountItem
         entityForm.saveHandler = saveAccount
 
         this.addComponent(entityForm)
