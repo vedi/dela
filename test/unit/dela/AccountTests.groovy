@@ -1,6 +1,7 @@
 package dela
 
 import grails.test.GrailsUnitTestCase
+import dela.utils.DomainFactory
 
 class AccountTests extends GrailsUnitTestCase {
 

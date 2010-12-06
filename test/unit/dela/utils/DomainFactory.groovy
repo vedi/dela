@@ -1,11 +1,14 @@
-package dela
+package dela.utils
+
+import dela.Account
+import dela.Subject
 
 /**
  * @author vedi
  * date 22.11.10
  * time 20:15
  */
-class DomainFactory {
+class DomainFactory extends AbstractTestFactory {
 
     def createAccount(params = [:]) {
         Account account = new Account(
@@ -30,9 +33,4 @@ class DomainFactory {
         subject
     }
 
-    def applyParams(domain, params = [:]) {
-        if (params) {
-            domain.properties = params
-        }
-    }
 }

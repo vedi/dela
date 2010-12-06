@@ -1,6 +1,7 @@
 package dela
 
 import grails.test.GrailsUnitTestCase
+import dela.utils.DomainFactory
 
 class SubjectTests extends GrailsUnitTestCase {
 
@@ -40,4 +41,11 @@ class SubjectTests extends GrailsUnitTestCase {
         assertTrue(anotherSubject.validate())
     }
 
+    void testOwnerConstraints() {
+        mockDomain(Subject)
+
+        def anotherSubject = domainFactory.createSubject(owner:null)
+        assertFalse(anotherSubject.validate())
+        assertEquals('nullable', anotherSubject.errors['owner'])
+    }
 }
