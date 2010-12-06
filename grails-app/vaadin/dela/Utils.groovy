@@ -7,10 +7,10 @@ import com.vaadin.data.util.BeanItem
  * date 06.12.10
  * time 17:43
  */
-@Mixin
+@Category(Object)
 class Utils {
 
-    final protected def getDomain(item) {
+    final public def getDomain(item) {
         (item as BeanItem).bean
     }
 }

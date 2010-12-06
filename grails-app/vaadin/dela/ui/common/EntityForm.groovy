@@ -19,7 +19,8 @@ import dela.Utils
  * date 02.07.2010
  * time 23:15:53
  */
-class EntityForm extends Form, Utils implements Button.ClickListener {
+@Mixin(Utils)
+class EntityForm extends Form implements Button.ClickListener {
 
     def dataContext
     def saveHandler

@@ -17,13 +17,15 @@ import dela.YesNoDialog
 import dela.context.DataContext
 import com.vaadin.ui.*
 import dela.Utils
+import com.vaadin.data.Item
 
 /**
  * @author vedi
  * date 28.06.2010
  * time 18:11:29
  */
-public abstract class AbstractEntityTable extends VerticalLayout, Utils implements ClickListener {
+@Mixin(Utils)
+public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
 
     VaadinService vaadinService
     IDataService dataService
@@ -127,7 +129,7 @@ public abstract class AbstractEntityTable extends VerticalLayout, Utils implemen
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
             public void itemClick(ItemClickEvent event) {
                 if (event.doubleClick) {
-                    showForm(event.item, canEdit(getDomain(event.item)))
+                    showForm(event.item, canEdit(AbstractEntityTable.this.getDomain(event.item)))
                 }
             }
         })
@@ -221,7 +223,7 @@ public abstract class AbstractEntityTable extends VerticalLayout, Utils implemen
         entityForm.dataContext = this.dataContext
         entityForm.editable = editable
 
-        entityForm.setItemDataSource(toFormItem(selectedItem), getEditVisibleColumns())
+        entityForm.setItemDataSource(toFormItem(selectedItem) as Item, getEditVisibleColumns())
         entityForm.saveHandler = saveHandler
 
         window.addComponent(entityForm)
