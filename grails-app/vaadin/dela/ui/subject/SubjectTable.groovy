@@ -5,6 +5,7 @@ import dela.context.DataContext
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import dela.*
+import com.vaadin.data.util.BeanItem
 
 /**
  * @author vedi
@@ -58,5 +59,22 @@ class SubjectTable extends EntityTable {
     protected EntityForm createForm() {
         return new SubjectForm()
     }
+
+    @Override
+    protected def toFormItem(item) {
+        assert item
+        assert item.bean instanceof Subject
+
+        return new BeanItem(new SubjectCommand(item.bean))
+    }
+
+    @Override
+    protected fromFormItem(Object item) {
+        assert item
+        assert item.bean instanceof SubjectCommand
+
+        return new BeanItem(((SubjectCommand)item.bean).getSubject())
+    }
+
 
 }
