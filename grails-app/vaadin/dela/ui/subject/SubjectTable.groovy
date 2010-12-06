@@ -76,5 +76,4 @@ class SubjectTable extends EntityTable {
         return new BeanItem(((SubjectCommand)item.bean).getSubject())
     }
 
-
 }

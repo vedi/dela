@@ -5,7 +5,7 @@ import com.vaadin.data.Validator.InvalidValueException
 
 /**
  * canInsert, canEdit - is action available in current context, runs twice or more times in UI and in logic
- * canSave - can the domain be persisted, for edit action ititial state gives
+ * canSave - can the domain be persisted, for edit action initial state gives
  * domain's validate - last validation 
  */
 class DataService<T> implements IDataService<T> {
