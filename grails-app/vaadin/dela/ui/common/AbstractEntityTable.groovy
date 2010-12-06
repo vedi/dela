@@ -221,9 +221,8 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         EntityForm entityForm = createForm()
         entityForm.dataContext = this.dataContext
+        entityForm.data1 = toFormItem(selectedItem)
         entityForm.editable = editable
-
-        entityForm.setItemDataSource(toFormItem(selectedItem) as Item, getEditVisibleColumns())
         entityForm.saveHandler = saveHandler
 
         window.addComponent(entityForm)

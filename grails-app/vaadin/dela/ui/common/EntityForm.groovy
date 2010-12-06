@@ -24,6 +24,7 @@ class EntityForm extends Form implements Button.ClickListener {
 
     def dataContext
     def saveHandler
+    def data1
 
     def vaadinService
 
@@ -43,6 +44,8 @@ class EntityForm extends Form implements Button.ClickListener {
     def void attach() {
 
         initButtons(footer)
+
+        setItemDataSource(data1 as Item, getEditVisibleColumns())
 
         super.attach();
 
@@ -183,6 +186,10 @@ class EntityForm extends Form implements Button.ClickListener {
 
     def getColumnLabel(columnName) {
         vaadinService.getColumnCaption(dataContext, columnName)
+    }
+
+    protected List<String> getEditVisibleColumns() {
+        return vaadinService.getEditVisibleColumns(dataContext)
     }
 
     protected def addDomainValidator(AbstractField field, Item item, propertyId) {
