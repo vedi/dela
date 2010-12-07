@@ -65,7 +65,14 @@ class SubjectTable extends EntityTable {
         assert item
         assert item.bean instanceof Subject
 
-        return new BeanItem(new SubjectCommand(item.bean))
+        def subjectCommand = null
+
+        Subject.withTransaction {
+            def subject = item.bean.id ? item.bean.merge() : item.bean
+            assert subject
+            subjectCommand = new SubjectCommand(subject)
+            return new BeanItem(subjectCommand)
+        }
     }
 
     @Override
@@ -73,7 +80,9 @@ class SubjectTable extends EntityTable {
         assert item
         assert item.bean instanceof SubjectCommand
 
-        return new BeanItem(((SubjectCommand)item.bean).getSubject())
+        Subject.withTransaction {
+            return new BeanItem(((SubjectCommand)item.bean).getSubject())
+        }
     }
 
 }

@@ -10,6 +10,9 @@ abstract class AbstractTestFactory {
     protected def applyParams(domain, params = [:]) {
         if (params) {
             domain.properties = params
+            if (params.save) {
+                domain.save()
+            }
         }
     }
 

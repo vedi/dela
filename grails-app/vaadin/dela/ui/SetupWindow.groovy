@@ -88,7 +88,7 @@ class SetupWindow extends Window implements FormFieldFactory {
             select
 
         } else {
-            null
+            assert false
         }
     }
 }
