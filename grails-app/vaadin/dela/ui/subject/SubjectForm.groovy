@@ -19,13 +19,11 @@ import com.vaadin.ui.TextField
 class SubjectForm extends EntityForm implements FormFieldFactory {
 
     def taskService
-    def messageService
 
     def normalizeButton
 
     SubjectForm() {
         this.taskService = getBean(dela.TaskService.class)
-        this.messageService = getBean(dela.MessageService.class)
 
         this.formFieldFactory = this
     }
@@ -51,7 +49,7 @@ class SubjectForm extends EntityForm implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component component) {
-        String label = getColumnLabel(propertyId)
+        String label = getFieldLabel(propertyId)
         if ('isPublic'.equals(propertyId)) {
             def checkBox = new CheckBox(label)
             checkBox.readOnly = !this.dataContext.account.isAdmin()

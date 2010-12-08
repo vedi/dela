@@ -1,7 +1,7 @@
 package dela.ui.subject
 
 import com.vaadin.data.Container
-import dela.context.DataContext
+
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import dela.*
@@ -14,22 +14,10 @@ import com.vaadin.data.util.BeanItem
  */
 class SubjectTable extends EntityTable {
 
-    def vaadinService
-    def messageService
-
-    def gridVisibleColumns = ['name']
-
-    def SubjectTable() {
-        this.vaadinService = getBean(VaadinService.class)
-        this.messageService = getBean(MessageService.class)
-    }
+    def gridFields = ['name']
 
     protected IDataService initDataService() {
         return getBean(SubjectService.class)
-    }
-
-    protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createSubjectDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     def afterInsert(item) {

@@ -44,8 +44,12 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
         this.forgetPasswordCallback = forgetPasswordCallback
         this.caption = messageService.getLoginWindowCaptionMsg()
 
-
         form = new EntityForm() {
+            @Override
+            protected def getFormFields() {
+                return ['login', 'password']
+            }
+
 
             protected void initButtons(ComponentContainer componentContainer) {
                 super.initButtons(componentContainer)
@@ -55,12 +59,6 @@ class LoginWindow extends Window implements FormFieldFactory, ClickListener {
                 button.addListener(LoginWindow.this as ClickListener)
                 componentContainer.addComponent button
             }
-
-            @Override
-            protected List<String> getEditVisibleColumns() {
-                ['login', 'password']
-            }
-
 
         }
 

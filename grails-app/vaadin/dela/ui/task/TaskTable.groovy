@@ -2,7 +2,6 @@ package dela.ui.task
 
 import com.vaadin.data.Container
 import com.vaadin.data.Container.Ordered
-
 import com.vaadin.event.ShortcutAction
 import com.vaadin.event.ShortcutListener
 import com.vaadin.event.dd.DragAndDropEvent
@@ -14,22 +13,11 @@ import com.vaadin.ui.AbstractSelect
 import com.vaadin.ui.Button
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-
 import com.vaadin.ui.Table.TableDragMode
-
-import dela.Task
-import dela.VaadinService
-import dela.YesNoDialog
-
+import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import dela.ui.common.Searcher
-
-import dela.IDataService
-import dela.TaskService
-import dela.context.DataContext
-import dela.MessageService
-
-import dela.ui.common.EntityForm
+import dela.*
 
 /**
  * @author vedi
@@ -38,27 +26,16 @@ import dela.ui.common.EntityForm
  */
 public class TaskTable extends EntityTable implements DropHandler  {
 
-    VaadinService vaadinService
-    MessageService messageService
-
     Button completeButton
 
-    def gridVisibleColumns = ['subject', 'name']
-
-    def editVisibleColumns = ['subject', 'name', 'description', 'state', 'power']
+    def gridFields = ['subject', 'name']
 
     def TaskTable() {
-        this.vaadinService = getBean(VaadinService.class)
-        this.messageService = getBean(MessageService.class)
         this.dropHandler = this
     }
 
     protected EntityForm createForm() {
         return new TaskForm()
-    }
-
-    protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createTaskDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     protected IDataService initDataService() {
@@ -112,7 +89,7 @@ public class TaskTable extends EntityTable implements DropHandler  {
 
         completeButton = new Button();
         completeButton.setDescription(messageService.getCompleteButtonLabel())
-        completeButton.setIcon(new FileResource(vaadinService.getFile('images/skin/task_done.png'), this.window.application))
+        completeButton.setIcon(new FileResource(getFile('images/skin/task_done.png'), this.window.application))
         completeButton.addListener(this as ClickListener)
         toolBar.addComponent(completeButton)
 

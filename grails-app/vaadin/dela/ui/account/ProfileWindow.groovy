@@ -19,11 +19,13 @@ class ProfileWindow extends Window {
     def sessionContext
     def dataContext
 
+    def accountService
+
     def void attach() {
 
-        super.attach();
+        accountService = getBean(AccountService)
 
-        def vaadinService = getBean(dela.VaadinService)
+        super.attach();
 
         this.caption = i18n('entity.account.caption', 'account')
 
@@ -32,6 +34,7 @@ class ProfileWindow extends Window {
 
         EntityForm entityForm = new AccountForm()
         entityForm.dataContext = this.dataContext
+        entityForm.dataService = accountService
         entityForm.editable = true
 
         entityForm.data = accountItem
@@ -46,7 +49,6 @@ class ProfileWindow extends Window {
     }
 
     def saveAccount = {item ->
-        def accountService = getBean(AccountService)
         accountService.save(dataContext, item.bean)
     }
 

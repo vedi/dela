@@ -1,6 +1,7 @@
 package dela
 
 import dela.context.DataContext
+import dela.meta.MetaColumn
 
 /**
  * @author vedi
@@ -8,6 +9,10 @@ import dela.context.DataContext
  * time 9:13:00
  */
 public interface IDataService<T> {
+
+    def getColumns()
+
+    DataView getDataView(dataContext)
 
     T save(DataContext dataContext, T domain)
 

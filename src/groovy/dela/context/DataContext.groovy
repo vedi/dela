@@ -10,6 +10,11 @@ class DataContext {
     def sessionContext
     def domainClass
 
+    /**
+     * Data view name
+     */
+    def dataViewName = 'default'
+
     def getAccount() {
         sessionContext.account
     }

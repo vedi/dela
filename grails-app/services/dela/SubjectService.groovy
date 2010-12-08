@@ -1,12 +1,38 @@
 package dela
 
 import dela.context.DataContext
+import dela.meta.MetaColumn
 
 class SubjectService extends DataService<Subject> {
+
+    static OWN_AND_PUBLIC_DATA_VIEW = 'ownAndPublicDataView'
+
+    def columns = [
+            new MetaColumn(field: 'login'),
+            new MetaColumn(field: 'name'),
+            new MetaColumn(field: 'description'),
+            new MetaColumn(field: 'isPublic'),
+            new MetaColumn(field: 'owner')
+    ]
+
+    def dataViewFactories = [(OWN_AND_PUBLIC_DATA_VIEW): {dataContext ->
+            new DataView(
+                    selector: {startIndex, count, sortProperty, ascendingState ->
+                        Subject.findAllByOwnerOrIsPublic(dataContext.account, true, [offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
+                    },
+                    counter: {
+                        Subject.countByOwnerOrIsPublic(dataContext.account, true)
+                    }
+            )
+        }]
 
     static transactional = true
 
     def messageService
+
+    SubjectService() {
+        super(Subject)
+    }
 
     def Subject create(DataContext dataContext) {
         return new Subject(owner: dataContext.account as Account)

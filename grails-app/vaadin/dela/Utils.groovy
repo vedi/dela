@@ -1,6 +1,7 @@
 package dela
 
 import com.vaadin.data.util.BeanItem
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 /**
  * @author vedi
@@ -10,30 +11,34 @@ import com.vaadin.data.util.BeanItem
 @Category(Object)
 class Utils {
 
-    def messageService
-
-    final public def getDomain(item) {
+    final def getDomain(item) {
         (item as BeanItem).bean
     }
 
-    final String getEntityListCaption(dataContext) {
+    final def getEntityListCaption(dataContext) {
         messageService.getEntityListCaptionMsg(dataContext.domainClass.simpleName.toLowerCase())
     }
 
-    final String getEntityCaption(dataContext) {
+    final def getEntityCaption(dataContext) {
         messageService.getEntityCaptionMsg(dataContext.domainClass.simpleName.toLowerCase())
     }
 
-    final String getFieldLabel(dataContext, column) {
+    final def getFieldLabel(dataContext, column) {
         messageService.getFieldLabelMsg(dataContext.domainClass.simpleName.toLowerCase(), column)
     }
 
-    def List<String> getGridVisibleColumns(dataContext) {
-        dataContext.domainClass.properties.collect {it.key}   //  TODO: Tests
+    final def getGridFields(dataContext) {
+        dataContext.domainClass.withTransaction {
+            dataContext.domainClass.newInstance().properties.collect {it.key}   //  TODO: Tests
+        }
     }
 
-    def List<String> getEditVisibleColumns(dataContext) {
-        getGridVisibleColumns(dataContext)
+    final def getFormFields(dataContext) {
+        getGridFields(dataContext)
+    }
+
+    final def getFile(fileName) {
+        return ApplicationHolder.application.parentContext.getResource(fileName).file
     }
 
 }

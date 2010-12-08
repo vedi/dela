@@ -29,7 +29,7 @@ class AccountForm extends EntityForm implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component component) {
-        String caption = getColumnLabel(propertyId)
+        String caption = getFieldLabel(propertyId)
         Field field = null
         if ('role'.equals(propertyId)) {
             def select = field = new OptionGroup(caption: caption, immediate: true)

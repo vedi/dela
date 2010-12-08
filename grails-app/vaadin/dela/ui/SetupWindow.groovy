@@ -35,13 +35,7 @@ class SetupWindow extends Window implements FormFieldFactory {
 
         def setupItem = new BeanItem(setup)
 
-        entityForm = new EntityForm() {
-            @Override
-            protected List<String> getEditVisibleColumns() {
-                ['activeSubject', 'filterStates', 'filterSubjects']
-            }
-
-        }
+        entityForm = new EntityForm(formFields: ['activeSubject', 'filterStates', 'filterSubjects'])
         entityForm.formFieldFactory = this
         entityForm.editable = true
 

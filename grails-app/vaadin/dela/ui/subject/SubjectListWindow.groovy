@@ -3,6 +3,7 @@ package dela.ui.subject
 import com.vaadin.ui.Window
 import dela.context.DataContext
 import dela.Subject
+import dela.SubjectService
 
 /**
  * @author vedi
@@ -17,7 +18,8 @@ class SubjectListWindow extends Window {
 
         super.attach()
 
-        def dataContext = new DataContext(sessionContext: sessionContext, domainClass: Subject)
+        def dataContext = new DataContext(sessionContext: sessionContext,
+                domainClass: Subject, dataViewName: SubjectService.OWN_AND_PUBLIC_DATA_VIEW)
 
         def table = new SubjectTable(dataContext: dataContext)
         table.setWidth "100%"

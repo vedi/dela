@@ -1,8 +1,18 @@
 package dela
 
+import dela.meta.MetaColumn
+
 class AccountService extends DataService<Account> {
 
     static transactional = true
+
+    def columns = [
+            new MetaColumn(field: 'login'),
+            new MetaColumn(field: 'email'),
+            new MetaColumn(field: 'password'),
+            new MetaColumn(field: 'role'),
+            new MetaColumn(field: 'state')
+    ]
 
     def anonymous
 
@@ -15,7 +25,10 @@ class AccountService extends DataService<Account> {
         }
     }
 
-    /**
+    AccountService() {
+        super(Account)
+    }
+/**
      * @param account
      * @param setup
      * @return merged account

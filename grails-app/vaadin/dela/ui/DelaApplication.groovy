@@ -11,7 +11,6 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.Window
 import dela.MessageService
 import dela.StoreService
-import dela.VaadinService
 import dela.context.DataContext
 import dela.ui.account.ConfirmRegistrationWindow
 import dela.ui.account.ForgetPasswordWindow
@@ -28,7 +27,10 @@ import dela.Account
 import dela.ui.account.AccountListWindow
 import dela.ui.account.ProfileWindow
 import dela.Task
+import dela.TaskService
+import dela.Utils
 
+@Mixin(Utils)
 public class DelaApplication extends Application implements ClickListener {
 
     final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
@@ -40,7 +42,6 @@ public class DelaApplication extends Application implements ClickListener {
     AccountService accountService
     StoreService storeService
     MessageService messageService
-    def vaadinService
 
     def subjectButton
     def setupButton
@@ -58,7 +59,6 @@ public class DelaApplication extends Application implements ClickListener {
         accountService = getBean(AccountService.class)
         messageService = getBean(MessageService.class)
         storeService = getBean(StoreService.class)
-        vaadinService = getBean(VaadinService.class)
         sessionContext = storeService.sessionContext
     
         Window mainWindow
@@ -78,8 +78,7 @@ public class DelaApplication extends Application implements ClickListener {
 
         initAppBar(horizontalLayout)
 
-        // TODO: ?Hide metaProvider in TaskTable
-        def taskDataContext = new DataContext(sessionContext: sessionContext, domainClass: Task)
+        def taskDataContext = new DataContext(sessionContext: sessionContext, domainClass: Task, dataViewName: TaskService.OWN_TASKS_DATA_VIEW)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
 
@@ -130,7 +129,7 @@ public class DelaApplication extends Application implements ClickListener {
 
         subjectButton = new Button();
         subjectButton.caption = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
-        subjectButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this))
+        subjectButton.setIcon(new FileResource(getFile('images/skin/category.png'), this))
         subjectButton.setWidth('100%')
         subjectButton.addStyleName('actionButton')
         subjectButton.addListener(this as ClickListener)
@@ -138,7 +137,7 @@ public class DelaApplication extends Application implements ClickListener {
 
         setupButton = new Button();
         setupButton.caption = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
-        setupButton.setIcon(new FileResource(vaadinService.getFile('images/skin/blue_config.png'), this))
+        setupButton.setIcon(new FileResource(getFile('images/skin/blue_config.png'), this))
         setupButton.setWidth('100%')
         setupButton.addStyleName('actionButton')
         setupButton.addListener(this as ClickListener)
@@ -154,7 +153,7 @@ public class DelaApplication extends Application implements ClickListener {
 
         accountButton = new Button();
         accountButton.caption = messageService.getEntityListCaptionMsg(Account.simpleName.toLowerCase())
-        accountButton.setIcon(new FileResource(vaadinService.getFile('images/skin/category.png'), this))
+        accountButton.setIcon(new FileResource(getFile('images/skin/category.png'), this))
         accountButton.setWidth('100%')
         accountButton.addStyleName('actionButton')
         accountButton.addListener(this as ClickListener)

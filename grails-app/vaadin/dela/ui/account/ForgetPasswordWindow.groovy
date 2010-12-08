@@ -40,8 +40,8 @@ class ForgetPasswordWindow extends Window implements FormFieldFactory {
 
         form.editable = true
         form.formFieldFactory = this
-        form.itemDataSource = new BeanItem(new ForgetPasswordBean())
-        form.visibleItemProperties = ['email']
+        form.data = new BeanItem(new ForgetPasswordBean())
+        form.formFields = ['email']
 
         form.saveHandler = resetPassword
 

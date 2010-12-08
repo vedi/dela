@@ -10,13 +10,8 @@ import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
 import com.vaadin.ui.Window.CloseEvent
 import com.vaadin.ui.Window.CloseListener
-import dela.CommonDataService
-import dela.IDataService
-import dela.VaadinService
-import dela.YesNoDialog
-import dela.context.DataContext
 import com.vaadin.ui.*
-import dela.Utils
+import dela.*
 
 /**
  * @author vedi
@@ -26,8 +21,8 @@ import dela.Utils
 @Mixin(Utils)
 public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
 
-    VaadinService vaadinService
     IDataService dataService
+    def messageService
 
     def dataContext
 
@@ -47,8 +42,8 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def AbstractEntityTable() {
+        this.messageService = getBean(MessageService)
         this.dataService = initDataService()
-        this.vaadinService = getBean(dela.VaadinService.class)
         this.table = new Table()
     }
 
@@ -83,36 +78,32 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     }
 
-    protected IDataService initDataService() {
-        return getBean(CommonDataService.class)
-    }
-
     protected void initToolBar(toolBar) {
 
         addButton = new Button();
         addButton.setDescription(i18n('button.create.label', 'create'))
         addButton.setClickShortcut(ShortcutAction.KeyCode.INSERT)
-        addButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_add.png'), this.window.application))
+        addButton.setIcon(new FileResource(getFile('images/skin/database_add.png'), this.window.application))
         addButton.addListener(this as ClickListener)
         toolBar.addComponent addButton
 
         editButton = new Button();
         editButton.setDescription(i18n('button.edit.label', 'edit'))
         editButton.setClickShortcut(ShortcutAction.KeyCode.ENTER)
-        editButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_edit.png'), this.window.application))
+        editButton.setIcon(new FileResource(getFile('images/skin/database_edit.png'), this.window.application))
         editButton.addListener(this as ClickListener)
         toolBar.addComponent editButton
 
         deleteButton = new Button();
         deleteButton.setDescription(i18n('button.delete.label', 'delete'))
         deleteButton.setClickShortcut(ShortcutAction.KeyCode.DELETE)
-        deleteButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_delete.png'), this.window.application))
+        deleteButton.setIcon(new FileResource(getFile('images/skin/database_delete.png'), this.window.application))
         deleteButton.addListener(this as ClickListener)
         toolBar.addComponent deleteButton
 
         refreshButton = new Button();
         refreshButton.setDescription(i18n('button.refresh.label', 'refresh'))
-        refreshButton.setIcon(new FileResource(vaadinService.getFile('images/skin/database_refresh.png'), this.window.application))
+        refreshButton.setIcon(new FileResource(getFile('images/skin/database_refresh.png'), this.window.application))
         refreshButton.addListener(this as ClickListener)
         toolBar.addComponent refreshButton
     }
@@ -133,11 +124,13 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
             }
         })
 
-        container = createContainer(dataContext)
+        def dataView = getDataView(dataContext)
+        assert dataView
+        container = createContainer(dataView)
 
         this.table.setContainerDataSource(this.container)
 
-        this.table.setVisibleColumns(getGridVisibleColumns() as Object[]);
+        this.table.setVisibleColumns(getGridFields() as Object[]);
         this.table.setColumnHeaders(getColumnHeaders())
 
         initGrid();
@@ -148,7 +141,15 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         this.setExpandRatio(this.table, 1.0f)
     }
 
-    abstract protected Container createContainer(DataContext dataContext)
+    protected DataView getDataView(dataContext) {
+        return dataService.getDataView(dataContext)
+    }
+
+    protected def getGridColumns() {
+        return dataService.columns.findAll {this.gridFields.contains(it.field)}
+    }
+
+    abstract protected Container createContainer(DataView dataView)
 
     abstract protected void refreshContainer()
 
@@ -219,6 +220,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         Window window = new Window(getEntityCaption(dataContext))
 
         EntityForm entityForm = createForm()
+        entityForm.dataService = this.dataService
         entityForm.dataContext = this.dataContext
         entityForm.data = toFormItem(selectedItem)
         entityForm.editable = editable
@@ -239,24 +241,16 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         addWindow(window)
     }
 
-    protected List<String> getGridVisibleColumns() {
-        return getGridVisibleColumns(dataContext)
-    }
+    protected abstract def getGridFields()
 
-    protected List<String> getEditVisibleColumns() {
-        return getEditVisibleColumns(dataContext)
-    }
-
-    protected EntityForm createForm() {
-        return new EntityForm()
-    }
+    protected abstract EntityForm createForm()
 
     protected createDomain() {
         return dataService.create(dataContext)
     }
 
     protected String[] getColumnHeaders() {
-        return getGridVisibleColumns().collect {getColumnLabel(it)} as String[]
+        return getGridFields().collect {getColumnLabel(it)} as String[]
     }
 
     protected select(Long id) {

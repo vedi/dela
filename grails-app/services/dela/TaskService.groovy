@@ -1,10 +1,49 @@
 package dela
 
 import dela.context.DataContext
+import dela.meta.MetaColumn
 
 class TaskService extends DataService<Task> {
 
+    static OWN_TASKS_DATA_VIEW = 'ownTasks'
     static transactional = true
+
+    def columns = [
+                    new MetaColumn(field: 'id', type:Long.class, readOnly: true),
+                    new MetaColumn(field: 'name', readOnly: true),
+                    new MetaColumn(field: 'description'),
+                    new MetaColumn(field: 'power', type:Double.class, ),
+                    new MetaColumn(field: 'subject', type:Subject.class),
+                    new MetaColumn(field: 'state', type:State.class),
+                    new MetaColumn(field: 'dateCreated', type:Date.class),
+            ]
+
+    def dataViewFactories = [(OWN_TASKS_DATA_VIEW): {dataContext ->
+            new DataView(
+                    selector: {startIndex, count, sortProperty, ascendingState ->
+                        if (sortProperty) {
+                            throw new UnsupportedOperationException()
+                        }
+
+                        Setup setup = dataContext.setup
+                        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
+                            Task.findAllByStateInListAndSubjectInList(
+                                    setup.filterStates,
+                                    setup.filterSubjects,
+                                    [offset:startIndex,  max:count, sort:'power', order:'desc']) :
+                            []
+                    },
+                    counter: {
+                        Setup setup = dataContext.setup
+                        (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
+                            Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects) : 0
+                    }
+            )
+        }]
+
+    TaskService() {
+        super(Task)
+    }
 
     def Task create(DataContext dataContext) {
 

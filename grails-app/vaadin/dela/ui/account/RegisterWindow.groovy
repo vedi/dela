@@ -39,8 +39,8 @@ class RegisterWindow extends Window implements FormFieldFactory {
 
         form.editable = true
         form.formFieldFactory = this
-        form.itemDataSource = new BeanItem(account)
-        form.visibleItemProperties = ['login', 'email']
+        form.data = new BeanItem(account)
+        form.formFields = ['login', 'email']
 
         form.saveHandler = register
 

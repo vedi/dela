@@ -2,9 +2,10 @@ package dela.ui.account
 
 import com.vaadin.data.Container
 import dela.IDataService
-import dela.context.DataContext
+
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
+import dela.DataView
 
 /**
  * @author vedi
@@ -13,20 +14,10 @@ import dela.ui.common.EntityTable
  */
 class AccountTable extends EntityTable {
 
-    def vaadinService
-
-    def gridVisibleColumns = ['login', 'email']
-
-    def AccountTable() {
-        this.vaadinService = getBean(dela.VaadinService.class)
-    }
+    def gridFields = ['login', 'email']
 
     protected IDataService initDataService() {
         return getBean(dela.AccountService.class)
-    }
-
-    protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createAccountDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     protected EntityForm createForm() {

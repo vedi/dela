@@ -13,6 +13,8 @@ import com.vaadin.data.Validator.InvalidValueException
 
 import com.vaadin.data.Item
 import dela.Utils
+import dela.DomainFieldValidator
+import dela.ServiceValidator
 
 /**
  * @author vedi
@@ -22,11 +24,13 @@ import dela.Utils
 @Mixin(Utils)
 class EntityForm extends Form implements Button.ClickListener {
 
+    def messageService
     def dataContext
+    def dataService
+
     def saveHandler
     def data
-
-    def vaadinService
+    def formFields = null
 
     boolean editable = false
 
@@ -36,16 +40,16 @@ class EntityForm extends Form implements Button.ClickListener {
     Button cancelButton
 
     def EntityForm() {
+        this.messageService = getBean(dela.MessageService)
         this.writeThrough =  false
         this.invalidCommitted = false
-        this.vaadinService = getBean(dela.VaadinService)
     }
 
     def void attach() {
 
         initButtons(footer)
 
-        setItemDataSource(data as Item, getEditVisibleColumns())
+        setItemDataSource(data as Item, getFormFields() as List)
 
         super.attach();
 
@@ -184,21 +188,34 @@ class EntityForm extends Form implements Button.ClickListener {
         window.close()
     }
 
-    def getColumnLabel(columnName) {
+    def getFieldLabel(columnName) {
         getFieldLabel(dataContext, columnName)
     }
 
-    protected List<String> getEditVisibleColumns() {
-        return getEditVisibleColumns(dataContext)
+    protected def getFormFields() {
+        return formFields?:dataService.columns.collect{it.field}
     }
 
     protected def addDomainValidator(AbstractField field, Item item, propertyId) {
-        vaadinService.addDomainValidator(field, getDomain(item), propertyId)
+        addDomainValidator(field, getDomain(item), propertyId)
     }
 
     protected def addServiceValidator(AbstractField field, Item item) {
         //TODO: Inject dataService
-        vaadinService.addServiceValidator(field, null, dataContext, getDomain(item))
+        addServiceValidator(field, null, dataContext, getDomain(item))
+    }
+
+    protected def addDomainValidator(AbstractField field, domain, propertyId) {
+        if (field) {
+            field.addValidator(new DomainFieldValidator(domain: domain, propertyName: propertyId))
+        }
+    }
+
+    protected def addServiceValidator(AbstractField field, dataService, dataContext, domain) {
+        if (field) {
+            field.addValidator(
+                    new ServiceValidator(dataService: dataService, dataContext: dataContext, domain: domain))
+        }
     }
 
 }
