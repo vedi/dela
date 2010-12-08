@@ -7,27 +7,26 @@ import com.vaadin.ui.AbstractField
 
 class VaadinService {
 
-    def metaService
-
     static transactional = true
 
     def createDefaultLazyContainer(dataContext) {
         def counter = {
-            dataContext.metaDomain.domainClass.count()
+            dataContext.domainClass.count()
         }
 
         def selector = {startIndex, count, sortProperty, ascendingState ->
             if (sortProperty) {
-                dataContext.metaDomain.domainClass.list(offset:startIndex,  max:count, sort:sortProperty, order:ascendingState)
+                dataContext.domainClass.list(offset:startIndex,  max:count, sort:sortProperty, order:ascendingState)
             } else {
-                dataContext.metaDomain.domainClass.list(offset:startIndex,  max:count)
+                dataContext.domainClass.list(offset:startIndex,  max:count)
             }
         }
 
-        return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
+        return new DomainLazyContainer(dataContext.domainClass, selector, counter,
+                dataContext.domainClass.properties) // TODO: Test
     }
 
-    def createTaskDefaultContainer(dataContext) {
+    def createTaskDefaultContainer(dataContext, columns) {
         def selector = {startIndex, count, sortProperty, ascendingState ->
             if (sortProperty) {
                 throw new UnsupportedOperationException()
@@ -35,7 +34,11 @@ class VaadinService {
 
             Setup setup = dataContext.setup
             (setup.filterStates.size() > 0 && setup.filterSubjects.size() > 0) ?
-                Task.findAllByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects, [offset:startIndex,  max:count, sort:'power', order:'desc']) : []
+                Task.findAllByStateInListAndSubjectInList(
+                        setup.filterStates,
+                        setup.filterSubjects,
+                        [offset:startIndex,  max:count, sort:'power', order:'desc']) :
+                []
         }
 
         def counter = {
@@ -44,10 +47,10 @@ class VaadinService {
                 Task.countByStateInListAndSubjectInList(setup.filterStates, setup.filterSubjects) : 0
         }
 
-        return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
+        return new DomainLazyContainer(dataContext.domainClass, selector, counter, columns)
     }
 
-    def createSubjectDefaultContainer(dataContext) {
+    def createSubjectDefaultContainer(dataContext, columns) {
         def selector = {startIndex, count, sortProperty, ascendingState ->
             Subject.findAllByOwnerOrIsPublic(dataContext.account, true, [offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
         }
@@ -56,10 +59,10 @@ class VaadinService {
             Subject.countByOwnerOrIsPublic(dataContext.account, true)
         }
 
-        return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
+        return new DomainLazyContainer(dataContext.domainClass, selector, counter, columns)
     }
 
-    def createAccountDefaultContainer(dataContext) {
+    def createAccountDefaultContainer(dataContext, columns) {
         def selector = {startIndex, count, sortProperty, ascendingState ->
             Account.findAll([offset:startIndex,  max:count, sort:sortProperty, order:ascendingState])
         }
@@ -68,27 +71,7 @@ class VaadinService {
             Account.count()
         }
 
-        return new DomainLazyContainer(dataContext.metaDomain.domainClass, selector, counter, dataContext.metaDomain.columns)
-    }
-
-    def getMetaListCaption(dataContext) {
-        metaService.getMetaListCaption(dataContext.metaDomain)
-    }
-
-    def getMetaCaption(dataContext) {
-        metaService.getMetaCaption(dataContext.metaDomain)
-    }
-
-    def getColumnCaption(dataContext, column) {
-        metaService.getColumnCaption(dataContext.metaDomain, column)
-    }
-
-    def List<String> getGridVisibleColumns(dataContext) {
-        dataContext.metaDomain.columns.collect {it.field}
-    }
-
-    def List<String> getEditVisibleColumns(dataContext) {
-        dataContext.metaDomain.columns.collect {it.field}
+        return new DomainLazyContainer(dataContext.domainClass, selector, counter, columns)
     }
 
     def getFile(fileName) {

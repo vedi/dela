@@ -185,11 +185,11 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     def getColumnLabel(columnName) {
-        vaadinService.getColumnCaption(dataContext, columnName)
+        getFieldLabel(dataContext, columnName)
     }
 
     protected List<String> getEditVisibleColumns() {
-        return vaadinService.getEditVisibleColumns(dataContext)
+        return getEditVisibleColumns(dataContext)
     }
 
     protected def addDomainValidator(AbstractField field, Item item, propertyId) {

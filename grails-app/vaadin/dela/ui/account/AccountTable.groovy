@@ -26,7 +26,7 @@ class AccountTable extends EntityTable {
     }
 
     protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createAccountDefaultContainer(dataContext)
+        return vaadinService.createAccountDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     protected EntityForm createForm() {

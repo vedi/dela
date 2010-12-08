@@ -7,7 +7,6 @@ package dela.context
  */
 class SessionContext {
     def storeService //TODO: Remove bidirectional dependency
-    def metaProvider
     def account
     def setup
 }

@@ -2,6 +2,7 @@ package dela.ui.account
 
 import com.vaadin.ui.Window
 import dela.context.DataContext
+import dela.Account
 
 /**
  * @author vedi
@@ -18,7 +19,7 @@ class AccountListWindow extends Window {
 
         super.attach()
 
-        def dataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.accountMeta)
+        def dataContext = new DataContext(sessionContext: sessionContext, domainClass: Account)
 
         def table = new AccountTable(dataContext: dataContext)
         table.setWidth "100%"

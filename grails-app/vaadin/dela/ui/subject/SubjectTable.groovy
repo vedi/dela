@@ -29,7 +29,7 @@ class SubjectTable extends EntityTable {
     }
 
     protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createSubjectDefaultContainer(dataContext)
+        return vaadinService.createSubjectDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     def afterInsert(item) {

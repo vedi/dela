@@ -7,6 +7,7 @@ import dela.AccountService
 import dela.context.DataContext
 import dela.ui.account.AccountForm
 import dela.ui.common.EntityForm
+import dela.Account
 
 /**
  * @author vedi
@@ -26,8 +27,7 @@ class ProfileWindow extends Window {
 
         this.caption = i18n('entity.account.caption', 'account')
 
-        dataContext = new DataContext(sessionContext: sessionContext,
-                metaDomain: sessionContext.metaProvider.accountMeta)
+        dataContext = new DataContext(sessionContext: sessionContext, domainClass: Account)
         def accountItem = new BeanItem(sessionContext.account)
 
         EntityForm entityForm = new AccountForm()

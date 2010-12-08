@@ -8,7 +8,7 @@ package dela.context
 class DataContext {
 
     def sessionContext
-    def metaDomain
+    def domainClass
 
     def getAccount() {
         sessionContext.account
@@ -24,10 +24,6 @@ class DataContext {
 
     def setSetup(setup) {
         sessionContext.setup = setup
-    }
-
-    def getMetaProvider() {
-        sessionContext.metaProvider
     }
 
     def setMetaProvider(metaProvider) {

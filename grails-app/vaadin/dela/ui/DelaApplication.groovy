@@ -27,6 +27,7 @@ import dela.Subject
 import dela.Account
 import dela.ui.account.AccountListWindow
 import dela.ui.account.ProfileWindow
+import dela.Task
 
 public class DelaApplication extends Application implements ClickListener {
 
@@ -78,7 +79,7 @@ public class DelaApplication extends Application implements ClickListener {
         initAppBar(horizontalLayout)
 
         // TODO: ?Hide metaProvider in TaskTable
-        def taskDataContext = new DataContext(sessionContext: sessionContext, metaDomain: sessionContext.metaProvider.taskMeta)
+        def taskDataContext = new DataContext(sessionContext: sessionContext, domainClass: Task)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
 

@@ -1,7 +1,6 @@
 package dela
 
 import dela.context.SessionContext
-import dela.meta.MetaProvider
 import org.springframework.beans.factory.InitializingBean
 
 class StoreService implements InitializingBean {
@@ -126,7 +125,7 @@ class StoreService implements InitializingBean {
     }
 
     private def initSessionContext() {
-        sessionContext = new SessionContext(metaProvider: new MetaProvider(), storeService: this)
+        sessionContext = new SessionContext(storeService: this)
         sessionContext.account = accountService.anonymous
         sessionContext.setup = fillSetup()
     }

@@ -123,7 +123,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         this.table.selectable = true
         this.table.nullSelectionAllowed = false
 
-        this.caption = vaadinService.getMetaListCaption(dataContext)
+        this.caption = getEntityListCaption(dataContext)
 
         this.table.addListener(new ItemClickEvent.ItemClickListener() {
             public void itemClick(ItemClickEvent event) {
@@ -216,7 +216,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     void showForm(selectedItem, editable = true) {
-        Window window = new Window(vaadinService.getMetaCaption(dataContext))
+        Window window = new Window(getEntityCaption(dataContext))
 
         EntityForm entityForm = createForm()
         entityForm.dataContext = this.dataContext
@@ -240,11 +240,11 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected List<String> getGridVisibleColumns() {
-        return vaadinService.getGridVisibleColumns(dataContext)
+        return getGridVisibleColumns(dataContext)
     }
 
     protected List<String> getEditVisibleColumns() {
-        return vaadinService.getEditVisibleColumns(dataContext)
+        return getEditVisibleColumns(dataContext)
     }
 
     protected EntityForm createForm() {
@@ -270,7 +270,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def getColumnLabel(columnName) {
-        vaadinService.getColumnCaption(dataContext, columnName)
+        getFieldLabel(dataContext, columnName)
     }
 
     def canInsert() {

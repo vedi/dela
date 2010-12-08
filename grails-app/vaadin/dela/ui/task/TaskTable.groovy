@@ -58,7 +58,7 @@ public class TaskTable extends EntityTable implements DropHandler  {
     }
 
     protected Container createContainer(DataContext dataContext) {
-        return vaadinService.createTaskDefaultContainer(dataContext)
+        return vaadinService.createTaskDefaultContainer(dataContext, gridVisibleColumns)
     }
 
     protected IDataService initDataService() {

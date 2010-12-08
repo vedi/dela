@@ -11,7 +11,7 @@ import com.vaadin.data.Validator.InvalidValueException
 class DataService<T> implements IDataService<T> {
 
     def create(DataContext dataContext) {
-        return dataContext.metaDomain.domainClass.newInstance()
+        return dataContext.domainClass.newInstance()
     }
 
     def save(DataContext dataContext, T domain) {
@@ -73,6 +73,6 @@ class DataService<T> implements IDataService<T> {
     }
 
     protected T gainDomain(DataContext dataContext, T domain) {
-        dataContext.metaDomain.domainClass.get(domain.id) //TODO: Test the same
+        dataContext.domainClass.get(domain.id) //TODO: Test the same
     }
 }
