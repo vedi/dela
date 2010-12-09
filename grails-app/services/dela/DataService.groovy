@@ -114,6 +114,12 @@ abstract class DataService<T> implements IDataService<T> {
         return true
     }
 
+    @Override
+    def createDataContext(sessionContext, dataViewName = DataService.DEFAULT_DATA_VIEW) {
+        new DataContext(sessionContext: sessionContext,
+                dataService: this, domainClass: domainClass, dataViewName: dataViewName)
+    }
+
     protected T gainDomain(DataContext dataContext, T domain) {
         dataContext.domainClass.get(domain.id) //TODO: Test the same
     }

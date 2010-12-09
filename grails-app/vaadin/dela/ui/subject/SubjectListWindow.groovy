@@ -18,8 +18,10 @@ class SubjectListWindow extends Window {
 
         super.attach()
 
-        def dataContext = new DataContext(sessionContext: sessionContext,
-                domainClass: Subject, dataViewName: SubjectService.OWN_AND_PUBLIC_DATA_VIEW)
+        def subjectService = getBean(dela.SubjectService)
+        assert subjectService
+
+        def dataContext = subjectService.createDataContext(sessionContext, SubjectService.OWN_AND_PUBLIC_DATA_VIEW)
 
         def table = new SubjectTable(dataContext: dataContext)
         table.setWidth "100%"

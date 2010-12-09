@@ -38,10 +38,6 @@ public class TaskTable extends EntityTable implements DropHandler  {
         return new TaskForm()
     }
 
-    protected IDataService initDataService() {
-        return getBean(TaskService.class)
-    }
-
     protected createDomain() {
 
         Task task = super.createDomain() as Task

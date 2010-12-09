@@ -29,7 +29,10 @@ class ProfileWindow extends Window {
 
         this.caption = i18n('entity.account.caption', 'account')
 
-        dataContext = new DataContext(sessionContext: sessionContext, domainClass: Account)
+        def accountService = getBean(dela.AccountService)
+        assert accountService
+
+        dataContext = accountService.createDataContext(sessionContext)
         def accountItem = new BeanItem(sessionContext.account)
 
         EntityForm entityForm = new AccountForm()

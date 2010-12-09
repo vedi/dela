@@ -38,4 +38,6 @@ public interface IDataService<T> {
      * @return can or can't )
      */
     def Boolean canSave(DataContext dataContext, T oldDomain, T newDomain)
+
+    def createDataContext(sessionContext, dataViewName)
 }

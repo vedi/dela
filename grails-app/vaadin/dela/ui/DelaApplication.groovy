@@ -78,7 +78,10 @@ public class DelaApplication extends Application implements ClickListener {
 
         initAppBar(horizontalLayout)
 
-        def taskDataContext = new DataContext(sessionContext: sessionContext, domainClass: Task, dataViewName: TaskService.OWN_TASKS_DATA_VIEW)
+        def taskService = getBean(dela.TaskService)
+        assert taskService
+
+        def taskDataContext = taskService.createDataContext(sessionContext, TaskService.OWN_TASKS_DATA_VIEW)
         table = new TaskTable(dataContext: taskDataContext)
         table.setSizeFull()
 

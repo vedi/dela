@@ -19,7 +19,10 @@ class AccountListWindow extends Window {
 
         super.attach()
 
-        def dataContext = new DataContext(sessionContext: sessionContext, domainClass: Account)
+        def accountService = getBean(dela.AccountService)
+        assert accountService
+
+        def dataContext = accountService.createDataContext(sessionContext)
 
         def table = new AccountTable(dataContext: dataContext)
         table.setWidth "100%"

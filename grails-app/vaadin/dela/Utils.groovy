@@ -19,7 +19,7 @@ class Utils {
         messageService.getEntityListCaptionMsg(dataContext.domainClass.simpleName.toLowerCase())
     }
 
-    final def getEntityCaption(dataContext) {
+    final String getEntityCaption(dataContext) {
         messageService.getEntityCaptionMsg(dataContext.domainClass.simpleName.toLowerCase())
     }
 

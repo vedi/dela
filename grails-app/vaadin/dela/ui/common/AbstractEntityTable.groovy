@@ -21,7 +21,6 @@ import dela.*
 @Mixin(Utils)
 public abstract class AbstractEntityTable extends VerticalLayout implements ClickListener {
 
-    IDataService dataService
     def messageService
 
     def dataContext
@@ -43,7 +42,6 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     def AbstractEntityTable() {
         this.messageService = getBean(MessageService)
-        this.dataService = initDataService()
         this.table = new Table()
     }
 
@@ -124,7 +122,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
             }
         })
 
-        def dataView = getDataView(dataContext)
+        def dataView = getDataView()
         assert dataView
         container = createContainer(dataView)
 
@@ -141,17 +139,15 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         this.setExpandRatio(this.table, 1.0f)
     }
 
-    protected DataView getDataView(dataContext) {
-        return dataService.getDataView(dataContext)
+    protected DataView getDataView() {
+        return dataContext.dataService.getDataView(dataContext)
     }
 
     protected def getGridColumns() {
-        return dataService.columns.findAll {this.gridFields.contains(it.field)}
+        return dataContext.dataService.columns.findAll {this.gridFields.contains(it.field)}
     }
 
     abstract protected Container createContainer(DataView dataView)
-
-    abstract protected IDataService initDataService()
 
     abstract protected void refreshContainer()
 
@@ -206,7 +202,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected void doRemove(domain) {
-        dataService.delete(dataContext, domain)
+        dataContext.dataService.delete(dataContext, domain)
         refresh()
     }
 
@@ -222,29 +218,26 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         EntityForm entityForm = createForm()
 
-        if (entityForm) {
-            entityForm.dataService = this.dataService
-            entityForm.dataContext = this.dataContext
-            entityForm.data = toFormItem(selectedItem)
-            entityForm.editable = editable
-            entityForm.saveHandler = saveHandler
+        entityForm.dataContext = this.dataContext
+        entityForm.data = toFormItem(selectedItem)
+        entityForm.editable = editable
+        entityForm.saveHandler = saveHandler
 
-            Window window = new Window(getEntityCaption(dataContext))
+        Window window = new Window(getEntityCaption(dataContext))
 
-            window.addComponent(entityForm)
+        window.addComponent(entityForm)
 
-            window.layout.setSizeUndefined()
-            window.center()
+        window.layout.setSizeUndefined()
+        window.center()
 
-            window.addListener(new CloseListener() {
-                @Override
-                void windowClose(CloseEvent closeEvent) {
-                    AbstractEntityTable.this.addButton.focus()
-                }
-            })
+        window.addListener(new CloseListener() {
+            @Override
+            void windowClose(CloseEvent closeEvent) {
+                AbstractEntityTable.this.addButton.focus()
+            }
+        })
 
-            addWindow(window)
-        }
+        addWindow(window)
     }
 
     protected abstract def getGridFields()
@@ -254,7 +247,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     protected createDomain() {
-        return dataService.create(dataContext)
+        return dataContext.dataService.create(dataContext)
     }
 
     protected String[] getColumnHeaders() {
@@ -276,15 +269,15 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     def canInsert() {
-        return dataService.canInsert(dataContext)
+        return dataContext.dataService.canInsert(dataContext)
     }
 
     def canEdit(domain) {
-        return dataService.canEdit(dataContext, domain)
+        return dataContext.dataService.canEdit(dataContext, domain)
     }
 
     def canDelete(domain) {
-        return dataService.canDelete(dataContext, domain)
+        return dataContext.dataService.canDelete(dataContext, domain)
     }
 
     def afterInsert(item) {
@@ -304,7 +297,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
         boolean isNew = domain.id == null
 
-        domain = dataService.save(dataContext, domain)
+        domain = dataContext.dataService.save(dataContext, domain)
 
         this.refresh()
         if (isNew) {
@@ -320,4 +313,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         this.window.application.mainWindow.addWindow(window)
     }
 
+    final protected def getDataService() {
+        dataContext.dataService
+    }
 }

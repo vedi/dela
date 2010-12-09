@@ -16,10 +16,6 @@ class SubjectTable extends EntityTable {
 
     def gridFields = ['name']
 
-    protected IDataService initDataService() {
-        return getBean(SubjectService.class)
-    }
-
     def afterInsert(item) {
 
         super.afterInsert(item)

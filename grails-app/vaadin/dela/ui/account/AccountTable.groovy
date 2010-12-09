@@ -16,10 +16,6 @@ class AccountTable extends EntityTable {
 
     def gridFields = ['login', 'email']
 
-    protected IDataService initDataService() {
-        return getBean(dela.AccountService.class)
-    }
-
     protected EntityForm createForm() {
         return new AccountForm()
     }

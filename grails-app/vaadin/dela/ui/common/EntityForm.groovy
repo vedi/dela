@@ -193,7 +193,7 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     protected def getFormFields() {
-        return formFields?:dataService.columns.collect{it.field}
+        return formFields?:dataContext.dataService.columns.collect{it.field}
     }
 
     protected def addDomainValidator(AbstractField field, Item item, propertyId) {
@@ -201,8 +201,7 @@ class EntityForm extends Form implements Button.ClickListener {
     }
 
     protected def addServiceValidator(AbstractField field, Item item) {
-        //TODO: Inject dataService
-        addServiceValidator(field, null, dataContext, getDomain(item))
+        addServiceValidator(field, dataContext, getDomain(item))
     }
 
     protected def addDomainValidator(AbstractField field, domain, propertyId) {
@@ -211,10 +210,10 @@ class EntityForm extends Form implements Button.ClickListener {
         }
     }
 
-    protected def addServiceValidator(AbstractField field, dataService, dataContext, domain) {
+    protected def addServiceValidator(AbstractField field, dataContext, domain) {
         if (field) {
             field.addValidator(
-                    new ServiceValidator(dataService: dataService, dataContext: dataContext, domain: domain))
+                    new ServiceValidator(dataContext: dataContext, domain: domain))
         }
     }
 

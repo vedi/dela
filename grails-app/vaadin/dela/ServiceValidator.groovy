@@ -10,7 +10,6 @@ import java.text.MessageFormat
  */
 class ServiceValidator implements Validator {
 
-    def dataService
     def dataContext
     def domain
 
@@ -19,7 +18,7 @@ class ServiceValidator implements Validator {
 
     @Override
     boolean isValid(Object value) {
-        return dataService.canSave(dataContext, domain, value)
+        return dataContext.dataService.canSave(dataContext, domain, value)
     }
 
     void validate(Object value) throws Validator.InvalidValueException {
