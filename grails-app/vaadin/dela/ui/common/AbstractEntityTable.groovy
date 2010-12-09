@@ -151,6 +151,8 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     abstract protected Container createContainer(DataView dataView)
 
+    abstract protected IDataService initDataService()
+
     abstract protected void refreshContainer()
 
     def initGrid() {
@@ -245,7 +247,7 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
         }
     }
 
-    protected abstract def getGrid()
+    protected abstract def getGridFields()
 
     protected EntityForm createForm() {
         return new EntityForm()
