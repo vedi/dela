@@ -27,16 +27,6 @@ class Utils {
         messageService.getFieldLabelMsg(dataContext.domainClass.simpleName.toLowerCase(), column)
     }
 
-    final def getGridFields(dataContext) {
-        dataContext.domainClass.withTransaction {
-            dataContext.domainClass.newInstance().properties.collect {it.key}   //  TODO: Tests
-        }
-    }
-
-    final def getFormFields(dataContext) {
-        getGridFields(dataContext)
-    }
-
     final def getFile(fileName) {
         return ApplicationHolder.application.parentContext.getResource(fileName).file
     }
