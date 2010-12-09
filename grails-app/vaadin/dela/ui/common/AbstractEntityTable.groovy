@@ -217,33 +217,39 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
     }
 
     void showForm(selectedItem, editable = true) {
-        Window window = new Window(getEntityCaption(dataContext))
 
         EntityForm entityForm = createForm()
-        entityForm.dataService = this.dataService
-        entityForm.dataContext = this.dataContext
-        entityForm.data = toFormItem(selectedItem)
-        entityForm.editable = editable
-        entityForm.saveHandler = saveHandler
 
-        window.addComponent(entityForm)
+        if (entityForm) {
+            entityForm.dataService = this.dataService
+            entityForm.dataContext = this.dataContext
+            entityForm.data = toFormItem(selectedItem)
+            entityForm.editable = editable
+            entityForm.saveHandler = saveHandler
 
-        window.layout.setSizeUndefined()
-        window.center()
+            Window window = new Window(getEntityCaption(dataContext))
 
-        window.addListener(new CloseListener() {
-            @Override
-            void windowClose(CloseEvent closeEvent) {
-                AbstractEntityTable.this.addButton.focus()
-            }
-        })
+            window.addComponent(entityForm)
 
-        addWindow(window)
+            window.layout.setSizeUndefined()
+            window.center()
+
+            window.addListener(new CloseListener() {
+                @Override
+                void windowClose(CloseEvent closeEvent) {
+                    AbstractEntityTable.this.addButton.focus()
+                }
+            })
+
+            addWindow(window)
+        }
     }
 
     protected abstract def getGridFields()
 
-    protected abstract EntityForm createForm()
+    protected EntityForm createForm() {
+        return null
+    }
 
     protected createDomain() {
         return dataService.create(dataContext)
