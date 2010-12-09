@@ -26,7 +26,6 @@ class EntityForm extends Form implements Button.ClickListener {
 
     def messageService
     def dataContext
-    def dataService
 
     def saveHandler
     def data

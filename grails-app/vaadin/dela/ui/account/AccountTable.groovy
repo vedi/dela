@@ -1,11 +1,7 @@
 package dela.ui.account
 
-import com.vaadin.data.Container
-import dela.IDataService
-
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
-import dela.DataView
 
 /**
  * @author vedi
@@ -16,7 +12,7 @@ class AccountTable extends EntityTable {
 
     def gridFields = ['login', 'email']
 
-    protected EntityForm createForm() {
+    protected def createForm() {
         return new AccountForm()
     }
 

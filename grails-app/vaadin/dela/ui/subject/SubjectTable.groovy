@@ -1,7 +1,5 @@
 package dela.ui.subject
 
-import com.vaadin.data.Container
-
 import dela.ui.common.EntityForm
 import dela.ui.common.EntityTable
 import dela.*
@@ -40,7 +38,7 @@ class SubjectTable extends EntityTable {
                 }))
     }
 
-    protected EntityForm createForm() {
+    protected def createForm() {
         return new SubjectForm()
     }
 

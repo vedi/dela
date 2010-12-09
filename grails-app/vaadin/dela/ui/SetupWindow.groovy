@@ -23,7 +23,7 @@ class SetupWindow extends Window implements FormFieldFactory {
     Setup setup
     def sessionContext
 
-    private Form entityForm
+    private def entityForm
 
     def void attach() {
 

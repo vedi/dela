@@ -242,7 +242,8 @@ public abstract class AbstractEntityTable extends VerticalLayout implements Clic
 
     protected abstract def getGridFields()
 
-    protected EntityForm createForm() {
+    protected def createForm() {
+
         return new EntityForm()
     }
 

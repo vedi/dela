@@ -34,7 +34,7 @@ public class TaskTable extends EntityTable implements DropHandler  {
         this.dropHandler = this
     }
 
-    protected EntityForm createForm() {
+    protected def createForm() {
         return new TaskForm()
     }
 
