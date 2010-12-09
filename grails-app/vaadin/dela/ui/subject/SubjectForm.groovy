@@ -20,6 +20,8 @@ class SubjectForm extends EntityForm implements FormFieldFactory {
 
     def taskService
 
+    def formFields = ['name', 'description', 'isPublic']
+
     def normalizeButton
 
     SubjectForm() {

@@ -8,7 +8,6 @@ class SubjectService extends DataService<Subject> {
     static OWN_AND_PUBLIC_DATA_VIEW = 'ownAndPublicDataView'
 
     def columns = [
-            new MetaColumn(field: 'login'),
             new MetaColumn(field: 'name'),
             new MetaColumn(field: 'description'),
             new MetaColumn(field: 'isPublic'),
