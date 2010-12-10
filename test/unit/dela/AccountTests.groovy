@@ -1,9 +1,8 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
 import dela.utils.DomainFactory
 
-class AccountTests extends GrailsUnitTestCase {
+class AccountTests extends AbstractDelaUnitTestCase {
 
     private DomainFactory domainFactory = new DomainFactory()
 

@@ -1,6 +1,6 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
+
 import dela.utils.CommandFactory
 
 /**
@@ -8,7 +8,7 @@ import dela.utils.CommandFactory
  * date 03.12.10
  * time 18:21
  */
-class SubjectCommandTests extends GrailsUnitTestCase {
+class SubjectCommandTests extends AbstractDelaUnitTestCase {
 
     def commandFactory = new CommandFactory()
 
@@ -21,7 +21,6 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testCreateSubjectCommandFromSubject() {
         mockDomain(Subject)
-        commandFactory.improveMockDomain(Subject)
 
         def subject = commandFactory.createSubject()
 
@@ -34,7 +33,6 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testGetSubjectForNew() {
         mockDomain(Subject)
-        commandFactory.improveMockDomain(Subject)
 
         mockForConstraintsTests(SubjectCommand)
 
@@ -50,7 +48,6 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testGetSubject() {
         mockDomain(Subject)
-        commandFactory.improveMockDomain(Subject)
         mockForConstraintsTests(SubjectCommand)
 
         def subject = commandFactory.createSubject()

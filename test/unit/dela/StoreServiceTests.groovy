@@ -1,8 +1,8 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
 
-class StoreServiceTests extends GrailsUnitTestCase {
+
+class StoreServiceTests extends AbstractDelaUnitTestCase {
 
     def anonymous
     def accountService

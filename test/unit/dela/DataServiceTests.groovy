@@ -1,8 +1,8 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
 
-class DataServiceTests extends GrailsUnitTestCase {
+
+class DataServiceTests extends AbstractDelaUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

@@ -2,7 +2,7 @@ package dela
 
 import grails.test.*
 
-class AccountServiceTests extends GrailsUnitTestCase {
+class AccountServiceTests extends AbstractDelaUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

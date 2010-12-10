@@ -1,8 +1,8 @@
 package dela
 
-import grails.test.GrailsUnitTestCase
 
-class TaskTests extends GrailsUnitTestCase {
+
+class TaskTests extends AbstractDelaUnitTestCase {
     protected void setUp() {
         super.setUp()
     }
