@@ -44,17 +44,9 @@ class SubjectTable extends EntityTable {
 
     @Override
     protected def toFormItem(item) {
-        assert item
-        assert item.bean instanceof Subject
+        assert item?.bean instanceof Subject
 
-        def subjectCommand = null
-
-        Subject.withTransaction {
-            def subject = item.bean.id ? item.bean.merge() : item.bean
-            assert subject
-            subjectCommand = new SubjectCommand(subject)
-            return new BeanItem(subjectCommand)
-        }
+        return new BeanItem(new SubjectCommand(item.bean))
     }
 
     @Override
@@ -62,9 +54,7 @@ class SubjectTable extends EntityTable {
         assert item
         assert item.bean instanceof SubjectCommand
 
-        Subject.withTransaction {
-            return new BeanItem(((SubjectCommand)item.bean).getSubject())
-        }
+        return new BeanItem(item.bean.getSubject())
     }
 
 }
