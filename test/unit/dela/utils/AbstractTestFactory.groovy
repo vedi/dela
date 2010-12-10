@@ -7,6 +7,12 @@ package dela.utils
  */
 abstract class AbstractTestFactory {
 
+    public improveMockDomain(domainClass) {
+        domainClass.metaClass.'static'.withTransaction = {closure -> closure()}
+        domainClass.metaClass.merge = {delegate}
+
+    }
+
     protected def applyParams(domain, params = [:]) {
         if (params) {
             domain.properties = params

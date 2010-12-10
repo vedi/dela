@@ -21,7 +21,7 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testCreateSubjectCommandFromSubject() {
         mockDomain(Subject)
-        Subject.metaClass.'static'.withTransaction = {closure -> closure()}
+        commandFactory.improveMockDomain(Subject)
 
         def subject = commandFactory.createSubject()
 
@@ -34,7 +34,7 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testGetSubjectForNew() {
         mockDomain(Subject)
-        Subject.metaClass.'static'.withTransaction = {closure -> closure()}
+        commandFactory.improveMockDomain(Subject)
 
         mockForConstraintsTests(SubjectCommand)
 
@@ -50,8 +50,7 @@ class SubjectCommandTests extends GrailsUnitTestCase {
 
     void testGetSubject() {
         mockDomain(Subject)
-        Subject.metaClass.'static'.withTransaction = {closure -> closure()}
-        Subject.metaClass.merge = {delegate}
+        commandFactory.improveMockDomain(Subject)
         mockForConstraintsTests(SubjectCommand)
 
         def subject = commandFactory.createSubject()
