@@ -2,6 +2,7 @@ package dela.utils
 
 import dela.Account
 import dela.Subject
+import dela.State
 
 /**
  * @author vedi
@@ -33,4 +34,11 @@ class DomainFactory extends AbstractTestFactory {
         subject
     }
 
+    def createState(params = [:]) {
+        State state = new State(
+                name: 'state' + UUID.randomUUID().toString(),
+        )
+        applyParams(state, params)
+        state
+    }
 }

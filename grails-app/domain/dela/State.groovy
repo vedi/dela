@@ -5,6 +5,7 @@ class State {
     String name
 
     static constraints = {
+        name(unique:true)
     }
 
     def boolean equals(Object obj) {
