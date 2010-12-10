@@ -21,7 +21,7 @@ class AccountTests extends AbstractDelaUnitTestCase {
         assertTrue(account.errors.toString(), result)
     }
 
-    void testLoginContraints() {
+    void testLoginConstraints() {
         mockDomain(Account)
         def account = domainFactory.createAccount()
         assert account.save()
@@ -42,7 +42,7 @@ class AccountTests extends AbstractDelaUnitTestCase {
         assertTrue(anotherAccount.validate())
     }
 
-    void testPasswordContraints() {
+    void testPasswordConstraints() {
         mockDomain(Account)
         def account = domainFactory.createAccount(password : '1234')
         assertFalse(account.validate())
@@ -52,7 +52,7 @@ class AccountTests extends AbstractDelaUnitTestCase {
         assertTrue(account.validate())
     }
 
-    void testEmailContraints() {
+    void testEmailConstraints() {
         mockDomain(Account)
         def account = domainFactory.createAccount(email : 'non-email')
         assertFalse(account.validate())
@@ -62,7 +62,7 @@ class AccountTests extends AbstractDelaUnitTestCase {
         assertTrue(account.validate())
     }
 
-    void testRoleContraints() {
+    void testRoleConstraints() {
         mockDomain(Account)
         byte wrongRole = 77
         def inList = [Account.ROLE_ANONYMOUS, Account.ROLE_USER, Account.ROLE_ADMIN]
@@ -75,7 +75,7 @@ class AccountTests extends AbstractDelaUnitTestCase {
         assertTrue(account.validate())
     }
 
-    void testStateContraints() {
+    void testStateConstraints() {
         mockDomain(Account)
         byte wrongState = 77
         def inList = [Account.STATE_BLOCKED, Account.STATE_CREATING, Account.STATE_ACTIVE]
