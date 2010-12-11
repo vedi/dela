@@ -26,6 +26,10 @@ class MessageService {
         getMessage('auth.failed.message')
     }
 
+    public String getForgetPasswordWindowCaptionMsg() {
+        getMessage('window.forgetPassword.caption')
+    }
+
     public String getForgetPasswordSuccessMsg() {
         getMessage('forgetPassword.success.message')
     }

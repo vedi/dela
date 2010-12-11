@@ -14,13 +14,13 @@ import dela.ui.common.EntityForm
  * date 30.07.2010
  * time 08:16:06
  */
-
 class ForgetPasswordWindow extends Window implements FormFieldFactory {
 
     class ForgetPasswordBean {
         String email
     }
 
+    def messageService
     def form
 
     TextField emailField
@@ -34,7 +34,9 @@ class ForgetPasswordWindow extends Window implements FormFieldFactory {
     def ForgetPasswordWindow(resetPasswordCallback) {
 
         this.resetPasswordCallback = resetPasswordCallback
-        this.caption = i18n("window.forgetPassword.caption", "forgetPassword")
+
+        messageService = getBean(dela.MessageService)
+        this.caption = messageService.getForgetPasswordWindowCaptionMsg()
 
         form = new EntityForm()
 
@@ -59,7 +61,7 @@ class ForgetPasswordWindow extends Window implements FormFieldFactory {
     }
 
     Field createField(Item item, Object propertyId, Component uiContext) {
-        String label = i18n("entity.account.field.${propertyId}.label", propertyId)
+        String label = messageService.getFieldLabelMsg('account', propertyId.toString())
         if (propertyId == 'email') {
             emailField = new TextField(label)
             emailField.setNullRepresentation('')
