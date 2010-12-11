@@ -16,6 +16,7 @@ class Setup {
 
     static constraints = {
         activeSubject(nullable:true)
+        account(unique: true)
     }
 
 

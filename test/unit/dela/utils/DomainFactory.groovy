@@ -3,6 +3,7 @@ package dela.utils
 import dela.Account
 import dela.Subject
 import dela.State
+import dela.Setup
 
 /**
  * @author vedi
@@ -40,5 +41,14 @@ class DomainFactory extends AbstractTestFactory {
         )
         applyParams(state, params)
         state
+    }
+
+    def createSetup(params = [:]) {
+        Setup setup = new Setup(
+                account: createAccount(save: params.save),
+                activeSubject: createSubject(save: params.save),
+        )
+        applyParams(setup, params)
+        setup
     }
 }

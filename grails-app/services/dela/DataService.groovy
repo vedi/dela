@@ -123,6 +123,6 @@ abstract class DataService<T> implements IDataService<T> {
     }
 
     protected T gainDomain(DataContext dataContext, T domain) {
-        dataContext.domainClass.get(domain.id) //TODO: Test the same
+        dataContext.domainClass.get(domain.id)
     }
 }
