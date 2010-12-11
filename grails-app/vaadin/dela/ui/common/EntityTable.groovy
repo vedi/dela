@@ -6,6 +6,8 @@ import dela.DataView
 import dela.container.DomainLazyContainer
 
 /**
+ * This implementation supports DomainLazyContainer only.
+ *
  * @author vedi
  * date 28.06.2010
  * time 18:11:29
@@ -19,7 +21,6 @@ public abstract class EntityTable extends AbstractEntityTable {
     }
 
     protected void refreshContainer() {
-        // TODO: Supports DomainLazyContainer only
         container.refresh()
     }
 }

@@ -9,9 +9,9 @@ import org.vaadin.addons.lazyquerycontainer.LazyQueryContainer
  */
 class DomainLazyContainer extends LazyQueryContainer {
 
-    def DomainLazyContainer(domainClass, selector, counter, columns) {
+    def DomainLazyContainer(domainClass, selector, counter, columns, int batchSize = 500) {
 
-        super(new DomainQueryFactory(domainClass: domainClass, selector: selector, counter: counter), 500); // TODO: Remove hard code
+        super(new DomainQueryFactory(domainClass: domainClass, selector: selector, counter: counter), batchSize);
 
         columns.each {
             addContainerProperty(it.field, it.type as Class, it.defaultValue, it.readOnly, it.sortable)
