@@ -1,34 +1,14 @@
 package dela.ui
 
 import com.vaadin.Application
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
+import com.vaadin.terminal.FileResource
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.Window
-import dela.MessageService
-import dela.StoreService
-import dela.context.DataContext
-import dela.ui.account.ConfirmRegistrationWindow
-import dela.ui.account.ForgetPasswordWindow
-import dela.ui.account.LoginWindow
-import dela.ui.account.RegisterWindow
+import dela.ui.subject.SubjectTable
 import dela.ui.task.TaskTable
-import dela.AccountService
-import com.vaadin.ui.Accordion
-import com.vaadin.terminal.FileResource
-import dela.ui.subject.SubjectListWindow
-import dela.Setup
-import dela.Subject
-import dela.Account
-import dela.ui.account.AccountListWindow
-import dela.ui.account.ProfileWindow
-import dela.Task
-import dela.TaskService
-import dela.Utils
+import com.vaadin.ui.*
+import dela.*
+import dela.ui.account.*
 
 @Mixin(Utils)
 public class DelaApplication extends Application implements ClickListener {
@@ -39,9 +19,11 @@ public class DelaApplication extends Application implements ClickListener {
 
     def table
 
-    AccountService accountService
-    StoreService storeService
-    MessageService messageService
+    def accountService
+    def storeService
+    def messageService
+
+    def uiTools
 
     def subjectButton
     def setupButton
@@ -56,11 +38,13 @@ public class DelaApplication extends Application implements ClickListener {
 	public void init() {
         setTheme('dela')
 
-        accountService = getBean(AccountService.class)
-        messageService = getBean(MessageService.class)
-        storeService = getBean(StoreService.class)
+        accountService = getBean(dela.AccountService.class)
+        messageService = getBean(dela.MessageService.class)
+        storeService = getBean(dela.StoreService.class)
         sessionContext = storeService.sessionContext
     
+        uiTools = getBean(dela.ui.common.UiTools.class)
+
         Window mainWindow
 		mainWindow = new Window("Dela");
 
@@ -185,11 +169,20 @@ public class DelaApplication extends Application implements ClickListener {
 
     def void buttonClick(ClickEvent clickEvent) {
         if (clickEvent.button == subjectButton) {
-            this.mainWindow.addWindow(new SubjectListWindow(sessionContext: sessionContext))
+            this.mainWindow.addWindow(uiTools.createListWindow(
+                    sessionContext, SubjectService,
+                    [
+                            tableFactory: {new SubjectTable()},
+                            dataViewName: SubjectService.OWN_AND_PUBLIC_DATA_VIEW,
+                    ]))
         } else if (clickEvent.button == setupButton) {
             this.mainWindow.addWindow(new SetupWindow(sessionContext: sessionContext))
         } else if (clickEvent.button == accountButton) {
-            this.mainWindow.addWindow(new AccountListWindow(sessionContext: sessionContext))
+            this.mainWindow.addWindow(uiTools.createListWindow(
+                    sessionContext, AccountService, [
+                            gridFields: ['login', 'email'],
+                            formFactory: {new AccountForm()}
+                    ]))
         } else {
             throw new IllegalArgumentException()
         }

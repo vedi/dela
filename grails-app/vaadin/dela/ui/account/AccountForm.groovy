@@ -17,17 +17,6 @@ class AccountForm extends EntityForm implements FormFieldFactory {
         this.formFieldFactory = this
     }
 
-    protected void initButtons(ComponentContainer componentContainer) {
-        super.initButtons(componentContainer);
-
-        if (editable) {
-        }
-    }
-
-    def void buttonClick(ClickEvent clickEvent) {
-        super.buttonClick(clickEvent)
-    }
-
     Field createField(Item item, Object propertyId, Component component) {
         String caption = getFieldLabel(propertyId)
         Field field = null
