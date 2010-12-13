@@ -30,11 +30,16 @@ class UiTools {
                 if (params.gridFields) {
                     table.gridFields = params.gridFields
                 }
-                if (params.formFactory) {
-                    table.formFactory = params.formFactory
-                } else {
-                    table.formFactory = simpleFormFactory
+
+                if (!params.tableFactory) {
+                    if (params.formFactory) {
+                        table.formFactory = params.formFactory
+                    } else {
+                        table.formFactory = simpleFormFactory
+                        table.formFactoryParams = params
+                    }
                 }
+
                 def dataService = ApplicationHolder.application.mainContext.getBean(dataServiceClass)
                 if (params.dataViewName) {
                     table.dataContext = dataService.createDataContext(sessionContext, params.dataViewName)
@@ -64,6 +69,8 @@ class UiTools {
         if (params.formFields) {
             form.formFields = params.formFields
         }
+
+        form
     }
 
 }

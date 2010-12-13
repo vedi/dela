@@ -32,6 +32,9 @@ class SimpleEntityForm extends EntityForm {
 
             field
         }
+    }
 
+    SimpleEntityForm() {
+        this.formFieldFactory = new FormFieldFactory()
     }
 }

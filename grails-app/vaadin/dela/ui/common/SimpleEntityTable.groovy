@@ -9,11 +9,12 @@ class SimpleEntityTable extends EntityTable {
 
     def gridFields
     def formFactory
+    def formFactoryParams
 
     @Override
     protected createForm() {
         if (formFactory) {
-            formFactory()
+            formFactory(formFactoryParams)
         } else {
             super.createForm()
         }
