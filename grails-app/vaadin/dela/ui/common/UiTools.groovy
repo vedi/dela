@@ -14,7 +14,8 @@ class UiTools {
      *
      * @param sessionContext
      * @param dataServiceClass
-     * @param params recognized keys are tableFactory, gridFields, dataViewName, formFactory
+     * @param params recognized keys are tableFactory, gridFields, dataViewName, formFactory,
+     *      formFields (for default form factory)
      * @return
      */
     def createListWindow(sessionContext, Class dataServiceClass, params) {
@@ -31,6 +32,8 @@ class UiTools {
                 }
                 if (params.formFactory) {
                     table.formFactory = params.formFactory
+                } else {
+                    table.formFactory = simpleFormFactory
                 }
                 def dataService = ApplicationHolder.application.mainContext.getBean(dataServiceClass)
                 if (params.dataViewName) {
@@ -52,6 +55,15 @@ class UiTools {
 
     def simpleTableFactory = {
         new SimpleEntityTable()
+    }
+
+    def simpleFormFactory = {params ->
+
+        def form = new SimpleEntityForm()
+
+        if (params.formFields) {
+            form.formFields = params.formFields
+        }
     }
 
 }

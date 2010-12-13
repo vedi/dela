@@ -1,7 +1,6 @@
 package dela.ui.account
 
 import com.vaadin.data.Item
-import com.vaadin.ui.Button.ClickEvent
 import dela.Account
 import dela.ui.common.EntityForm
 import com.vaadin.ui.*
