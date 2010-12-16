@@ -140,7 +140,7 @@ public class TaskTable extends EntityTable implements DropHandler  {
                     anotherItemId = container.prevItemId(targetItemId)
                     defaultPowerValue = 1.0
                 }
-                if (!targetItemId.equals(anotherItemId)) {
+                if (anotherItemId >= 0 && !targetItemId.equals(anotherItemId)) {
                     moveItem(container, targetItemId, anotherItemId, defaultPowerValue, sourceItemId)
                 }
             }
