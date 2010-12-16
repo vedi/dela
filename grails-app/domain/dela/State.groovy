@@ -8,8 +8,16 @@ class State {
         name(unique:true)
     }
 
-    def boolean equals(Object obj) {
-        return id?.equals(obj?.id);
+
+    boolean equals(o) {
+        if (this.is(o)) return true;
+        if (!(o instanceof State)) return false;
+
+        State state = (State) o;
+
+        if (id != state.id) return false;
+
+        return true;
     }
 
     def int hashCode() {
@@ -17,7 +25,7 @@ class State {
     }
 
     def String toString() {
-        return "$name($id)"
+        return name
     }
 
 }
