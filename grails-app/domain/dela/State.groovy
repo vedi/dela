@@ -8,7 +8,6 @@ class State {
         name(unique:true)
     }
 
-
     boolean equals(o) {
         if (this.is(o)) return true;
         if (!(o instanceof State)) return false;
