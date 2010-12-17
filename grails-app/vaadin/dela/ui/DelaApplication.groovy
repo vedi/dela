@@ -1,17 +1,14 @@
 package dela.ui
 
 import com.vaadin.Application
-import com.vaadin.terminal.FileResource
 import com.vaadin.ui.Button.ClickEvent
 import com.vaadin.ui.Button.ClickListener
-import dela.ui.subject.SubjectTable
+import dela.TaskService
 import dela.ui.task.TaskTable
 import com.vaadin.ui.*
-import dela.*
 import dela.ui.account.*
 
-@Mixin(Utils)
-public class DelaApplication extends Application implements ClickListener {
+public class DelaApplication extends Application {
 
     final String CONFIRM_REGISTRATION_NAME = 'confirmRegistration'
 
@@ -23,7 +20,7 @@ public class DelaApplication extends Application implements ClickListener {
     def storeService
     def messageService
 
-    def uiTools
+    def delaVaadinFacade
 
     def subjectButton
     def setupButton
@@ -38,12 +35,12 @@ public class DelaApplication extends Application implements ClickListener {
 	public void init() {
         setTheme('dela')
 
-        accountService = getBean(dela.AccountService.class)
-        messageService = getBean(dela.MessageService.class)
-        storeService = getBean(dela.StoreService.class)
+        accountService = getBean(dela.AccountService)
+        messageService = getBean(dela.MessageService)
+        storeService = getBean(dela.StoreService)
         sessionContext = storeService.sessionContext
     
-        uiTools = getBean(dela.ui.common.UiTools.class)
+        delaVaadinFacade = getBean(dela.ui.common.DelaVaadinFacade)
 
         Window mainWindow
 		mainWindow = new Window("Dela");
@@ -111,23 +108,13 @@ public class DelaApplication extends Application implements ClickListener {
         VerticalLayout actionTabLayout = new VerticalLayout();
         actionTabLayout.addStyleName("margintablayout");
         actionTabLayout.setMargin(false, true, false, true)
-        actionTabLayout.setHeight(null)
+        actionTabLayout.setHeight(null as String)
         accordion.addTab(actionTabLayout, messageService.getMessage("actions.label"), null)
 
-        subjectButton = new Button();
-        subjectButton.caption = messageService.getEntityListCaptionMsg(Subject.simpleName.toLowerCase())
-        subjectButton.setIcon(new FileResource(getFile('images/skin/category.png'), this))
-        subjectButton.setWidth('100%')
-        subjectButton.addStyleName('actionButton')
-        subjectButton.addListener(this as ClickListener)
+        subjectButton = delaVaadinFacade.createSubjectListButton(sessionContext, this)
         actionTabLayout.addComponent(subjectButton)
 
-        setupButton = new Button();
-        setupButton.caption = messageService.getEntityListCaptionMsg(Setup.simpleName.toLowerCase())
-        setupButton.setIcon(new FileResource(getFile('images/skin/blue_config.png'), this))
-        setupButton.setWidth('100%')
-        setupButton.addStyleName('actionButton')
-        setupButton.addListener(this as ClickListener)
+        setupButton = delaVaadinFacade.createOwnSetupButton(sessionContext, this)
         actionTabLayout.addComponent(setupButton)
     }
 
@@ -135,18 +122,12 @@ public class DelaApplication extends Application implements ClickListener {
         VerticalLayout adminTabLayout = new VerticalLayout();
         adminTabLayout.addStyleName("margintablayout");
         adminTabLayout.setMargin(false, true, false, true)
-        adminTabLayout.setHeight(null)
+        adminTabLayout.setHeight(null as String)
         accordion.addTab(adminTabLayout, messageService.getMessage("admin.area.label"), null)
 
-        accountButton = new Button();
-        accountButton.caption = messageService.getEntityListCaptionMsg(Account.simpleName.toLowerCase())
-        accountButton.setIcon(new FileResource(getFile('images/skin/category.png'), this))
-        accountButton.setWidth('100%')
-        accountButton.addStyleName('actionButton')
-        accountButton.addListener(this as ClickListener)
+        accountButton = delaVaadinFacade.createAccountListButton(sessionContext, this)
         adminTabLayout.addComponent(accountButton)
     }
-
 
     void initTopPanel(layout) {
 
@@ -167,27 +148,6 @@ public class DelaApplication extends Application implements ClickListener {
         }
     }
 
-    def void buttonClick(ClickEvent clickEvent) {
-        if (clickEvent.button == subjectButton) {
-            this.mainWindow.addWindow(uiTools.createListWindow(
-                    sessionContext, SubjectService,
-                    [
-                            tableFactory: {new SubjectTable()},
-                            dataViewName: SubjectService.OWN_AND_PUBLIC_DATA_VIEW,
-                    ]))
-        } else if (clickEvent.button == setupButton) {
-            this.mainWindow.addWindow(new SetupWindow(sessionContext: sessionContext))
-        } else if (clickEvent.button == accountButton) {
-            this.mainWindow.addWindow(uiTools.createListWindow(
-                    sessionContext, AccountService, [
-                            gridFields: ['login', 'email'],
-                            formFactory: {new AccountForm()}
-                    ]))
-        } else {
-            throw new IllegalArgumentException()
-        }
-    }
-
     def loginCallback = {login, password ->
         def foundAccount = this.storeService.auth(login, password)
         if (foundAccount) {
@@ -195,7 +155,7 @@ public class DelaApplication extends Application implements ClickListener {
             refreshAppBarContent()
             this.table.refresh()
         } else {
-            this.mainWindow.showNotification(this.messageService.getAuthFailedMsg())
+            this.mainWindow.showNotification(this.messageService.getAuthFailedMsg() as String)
         }
     }
 
@@ -205,17 +165,17 @@ public class DelaApplication extends Application implements ClickListener {
 
     def resetPasswordCallback = {email ->
         if (this.storeService.resetPassword(email, getWindow(this.CONFIRM_REGISTRATION_NAME).getURL().toString())) {
-            this.mainWindow.showNotification(this.messageService.getForgetPasswordSuccessMsg())
+            this.mainWindow.showNotification(this.messageService.getForgetPasswordSuccessMsg() as String)
         } else {
-            this.mainWindow.showNotification(this.messageService.getForgetPasswordFailedMsg())
+            this.mainWindow.showNotification(this.messageService.getForgetPasswordFailedMsg() as String)
         }
     }
 
     def registerCallback = {account ->
         if (this.storeService.register(account, getWindow(this.CONFIRM_REGISTRATION_NAME).getURL().toString())) {
-            this.mainWindow.showNotification(this.messageService.getRegistrationSuccessMsg())
+            this.mainWindow.showNotification(this.messageService.getRegistrationSuccessMsg() as String)
         } else {
-            this.mainWindow.showNotification(this.messageService.getRegistrationFailedMsg())
+            this.mainWindow.showNotification(this.messageService.getRegistrationFailedMsg() as String)
         }
     }
 
@@ -272,7 +232,7 @@ public class DelaApplication extends Application implements ClickListener {
         Button profileButton = new Button(messageService.getProfileButtonLabel())
         profileButton.addListener(new ClickListener() {
             void buttonClick(ClickEvent clickEvent) {
-                DelaApplication.this.mainWindow.addWindow(new ProfileWindow(sessionContext:sessionContext))
+                DelaApplication.this.mainWindow.addWindow(new ProfileWindow(sessionContext:sessionContext)) // TODO: RF
             }
         })
         loggedInLayout.addComponent(profileButton)
