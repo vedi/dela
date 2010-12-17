@@ -37,7 +37,6 @@ class ProfileWindow extends Window {
 
         EntityForm entityForm = new AccountForm()
         entityForm.dataContext = this.dataContext
-        entityForm.dataService = accountService
         entityForm.editable = true
 
         entityForm.data = accountItem
